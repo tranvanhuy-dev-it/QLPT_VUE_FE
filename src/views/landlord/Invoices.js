@@ -1,16 +1,21 @@
-import { ref, onMounted } from 'vue';
-import Sidebar from '../../components/Sidebar.vue';
+import { ref, onMounted, computed } from 'vue';
+import PageHeader from '../../components/PageHeader.vue';
 import api from '../../services/api.js';
 
 export default {
   name: 'Invoices',
   components: {
-    Sidebar,
+    PageHeader,
   },
   setup() {
+    const invoiceIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>`;
+    
     const invoices = ref([]);
     const activeContracts = ref([]);
     const loading = ref(false);
+
+    // Search
+    const searchQuery = ref('');
 
     // Pagination
     const page = ref(0);
@@ -70,6 +75,16 @@ export default {
       }
     };
 
+    const filteredInvoices = computed(() => {
+      if (!searchQuery.value) return invoices.value;
+      const q = searchQuery.value.toLowerCase().trim();
+      return invoices.value.filter(inv => 
+        inv.contract.tenant.fullName.toLowerCase().includes(q) ||
+        inv.contract.room.roomNumber.toLowerCase().includes(q) ||
+        inv.contract.room.boardingHouse.name.toLowerCase().includes(q)
+      );
+    });
+
     const fetchActiveContracts = async () => {
       try {
         const response = await api.get('/api/contracts', { params: { size: 100 } });
@@ -80,7 +95,6 @@ export default {
       }
     };
 
-    // Khi chọn hợp đồng dọn vào, tự động gợi ý chỉ số cũ và tính toán kỳ hóa đơn
     const onContractChange = () => {
       selectedContract.value = activeContracts.value.find(c => c.id === form.value.contractId);
       if (selectedContract.value) {
@@ -88,12 +102,8 @@ export default {
         form.value.newElectricityIndex = room.currentElectricityIndex;
         form.value.newWaterIndex = room.currentWaterIndex;
 
-        // Tự động thiết lập kỳ thanh toán:
-        // Lấy ngày thuê hợp đồng làm ngày bắt đầu nếu chưa có hóa đơn cũ
-        // Chúng ta tạm thời để trống cho chủ trọ tự nhập hoặc điền ngày hiện tại
         form.value.billingPeriodStart = selectedContract.value.startDate;
         
-        // Gợi ý kết thúc sau đó 1 tháng
         const start = new Date(selectedContract.value.startDate);
         start.setMonth(start.getMonth() + 1);
         form.value.billingPeriodEnd = start.toISOString().substring(0, 10);
@@ -163,7 +173,7 @@ export default {
             <title>Phiếu thu tiền trọ - Phòng ${invoiceDetails.value.contract.room.roomNumber}</title>
             <style>
               body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 30px; color: #333; }
-              h2 { text-align: center; color: #4f46e5; margin-bottom: 5px; }
+              h2 { text-align: center; color: #0066cc; margin-bottom: 5px; }
               table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px; }
               th, td { padding: 10px; border-bottom: 1px dashed #cbd5e1; font-size: 14px; }
               th { text-align: left; font-weight: bold; background-color: #f8fafc; }
@@ -222,9 +232,12 @@ export default {
     });
 
     return {
+      invoiceIcon,
       invoices,
+      filteredInvoices,
       activeContracts,
       loading,
+      searchQuery,
       page,
       totalPages,
       totalElements,

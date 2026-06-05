@@ -1,13 +1,17 @@
 import { ref, onMounted } from 'vue';
-import Sidebar from '../../components/Sidebar.vue';
+import PageHeader from '../../components/PageHeader.vue';
+import EmptyState from '../../components/EmptyState.vue';
 import api from '../../services/api.js';
 
 export default {
   name: 'BoardingHouses',
   components: {
-    Sidebar,
+    PageHeader,
+    EmptyState,
   },
   setup() {
+    const houseIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>`;
+
     const boardingHouses = ref([]);
     const loading = ref(false);
     const showAddModal = ref(false);
@@ -39,7 +43,6 @@ export default {
     const fetchBoardingHouses = async () => {
       loading.value = true;
       try {
-        // Lấy danh sách không phân trang hoặc phân trang kích thước lớn cho quản lý
         const response = await api.get('/api/rooms/boarding-houses', {
           params: { page: 0, size: 100 },
         });
@@ -106,6 +109,7 @@ export default {
     });
 
     return {
+      houseIcon,
       boardingHouses,
       loading,
       showAddModal,

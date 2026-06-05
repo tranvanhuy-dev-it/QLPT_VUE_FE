@@ -1,18 +1,22 @@
-import { ref, onMounted } from 'vue';
-import Sidebar from '../../components/Sidebar.vue';
+import { ref, onMounted, computed } from 'vue';
+import PageHeader from '../../components/PageHeader.vue';
 import api from '../../services/api.js';
 
 export default {
   name: 'Contracts',
   components: {
-    Sidebar,
+    PageHeader,
   },
   setup() {
+    const contractIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`;
     const contracts = ref([]);
     const vacantRooms = ref([]);
     const tenantsList = ref([]);
     const availableExtraFees = ref([]);
     const loading = ref(false);
+
+    // Search
+    const searchQuery = ref('');
 
     // Pagination
     const page = ref(0);
@@ -61,11 +65,21 @@ export default {
       }
     };
 
+    const filteredContracts = computed(() => {
+      if (!searchQuery.value) return contracts.value;
+      const q = searchQuery.value.toLowerCase().trim();
+      return contracts.value.filter(contract => 
+        contract.tenant.fullName.toLowerCase().includes(q) ||
+        contract.tenant.username.toLowerCase().includes(q) ||
+        contract.room.roomNumber.toLowerCase().includes(q) ||
+        contract.room.boardingHouse.name.toLowerCase().includes(q)
+      );
+    });
+
     const fetchVacantRooms = async () => {
       try {
         const response = await api.get('/api/rooms', { params: { size: 200 } });
         const rooms = response.data.content || [];
-        // Lọc các phòng trống
         vacantRooms.value = rooms.filter(r => r.status === 'VACANT');
       } catch (err) {
         console.error('Không tải được danh sách phòng trống:', err);
@@ -81,20 +95,18 @@ export default {
       }
     };
 
-    // Khi thay đổi chọn phòng, tự động lấy giá phòng mặc định và danh sách dịch vụ của dãy trọ đó
     const onRoomChange = async () => {
       const selectedRoom = vacantRooms.value.find(r => r.id === form.value.roomId);
       if (selectedRoom) {
         form.value.contractedRoomPrice = selectedRoom.basePrice;
-        form.value.deposit = selectedRoom.basePrice; // Gợi ý cọc = 1 tháng tiền nhà
+        form.value.deposit = selectedRoom.basePrice;
         
-        // Tải các dịch vụ phụ phí của dãy trọ đó
         try {
           const response = await api.get(`/api/rooms/boarding-houses/${selectedRoom.boardingHouse.id}/extra-fees`);
           availableExtraFees.value = (response.data || []).map(ef => ({
             ...ef,
-            selected: true, // Mặc định chọn áp dụng hết
-            customPrice: ef.defaultPrice, // Giá ban đầu lấy mặc định
+            selected: true,
+            customPrice: ef.defaultPrice,
           }));
         } catch (err) {
           console.error('Không tải được dịch vụ dãy trọ:', err);
@@ -117,7 +129,6 @@ export default {
 
     const saveContract = async () => {
       try {
-        // Cấu trúc lại danh sách phụ phí áp dụng
         const extraFeesPayload = availableExtraFees.value
           .filter(ef => ef.selected)
           .map(ef => ({
@@ -183,11 +194,14 @@ export default {
     });
 
     return {
+      contractIcon,
       contracts,
+      filteredContracts,
       vacantRooms,
       tenantsList,
       availableExtraFees,
       loading,
+      searchQuery,
       page,
       totalPages,
       totalElements,

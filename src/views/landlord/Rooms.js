@@ -1,19 +1,22 @@
-import { ref, onMounted } from 'vue';
-import Sidebar from '../../components/Sidebar.vue';
+import { ref, onMounted, computed } from 'vue';
+import PageHeader from '../../components/PageHeader.vue';
 import api from '../../services/api.js';
 
 export default {
   name: 'Rooms',
   components: {
-    Sidebar,
+    PageHeader,
   },
   setup() {
+    const roomIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>`;
+    
     const rooms = ref([]);
     const boardingHouses = ref([]);
     const loading = ref(false);
     
     // Dropdown filters
     const selectedHouseId = ref(null);
+    const searchQuery = ref('');
     
     // Pagination states
     const page = ref(0);
@@ -58,12 +61,10 @@ export default {
       try {
         let response;
         if (selectedHouseId.value) {
-          // Lọc theo dãy trọ cụ thể
           response = await api.get(`/api/rooms/boarding-houses/${selectedHouseId.value}/rooms`, {
             params: { page: page.value, size: size.value },
           });
         } else {
-          // Lấy tất cả phòng của chủ trọ
           response = await api.get('/api/rooms', {
             params: { page: page.value, size: size.value },
           });
@@ -77,6 +78,12 @@ export default {
         loading.value = false;
       }
     };
+
+    const filteredRooms = computed(() => {
+      if (!searchQuery.value) return rooms.value;
+      const q = searchQuery.value.toLowerCase().trim();
+      return rooms.value.filter(room => room.roomNumber.toLowerCase().includes(q));
+    });
 
     const openAddModal = () => {
       if (boardingHouses.value.length > 0) {
@@ -155,9 +162,12 @@ export default {
     });
 
     return {
+      roomIcon,
       rooms,
+      filteredRooms,
       boardingHouses,
       selectedHouseId,
+      searchQuery,
       loading,
       page,
       totalPages,
