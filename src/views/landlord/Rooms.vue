@@ -4,11 +4,11 @@
       :icon="roomIcon" :showAdd="true" addText="Thêm" :disableAdd="boardingHouses.length === 0"
       searchPlaceholder="Tìm theo số phòng..." v-model="searchQuery" @add-click="openAddModal">
       <template #filter-addons>
-        <div class="flex items-center gap-2 ml-auto">
-          <span class="font-medium text-[0.85rem] text-text-sub whitespace-nowrap">Dãy trọ:</span>
-          <select class="w-[200px] px-3 py-1.5 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-[0.85rem] outline-none focus:bg-white focus:border-primary"
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <span class="font-medium text-[0.85rem] text-text-sub whitespace-nowrap hidden sm:inline">Dãy trọ:</span>
+          <select class="w-[120px] sm:w-[200px] px-2 sm:px-3 py-1 sm:py-1.5 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-[11px] sm:text-[0.85rem] outline-none focus:bg-white focus:border-primary"
             v-model="selectedHouseId" @change="onHouseFilterChange">
-            <option :value="null">-- Tất cả dãy trọ --</option>
+            <option :value="null">-- Tất cả --</option>
             <option v-for="house in boardingHouses" :key="house.id" :value="house.id">
               {{ house.name }}
             </option>

@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full bg-card p-3 rounded-xl border border-border-main shadow-xs mb-4">
+  <div class="flex items-center justify-between gap-2 w-full bg-card p-2 sm:p-3 rounded-xl border border-border-main shadow-xs mb-4 flex-nowrap">
     <!-- Left Side: Search input & Lọc button -->
-    <div v-if="showSearch" class="flex items-center gap-2 flex-1 max-w-lg">
+    <div v-if="showSearch" class="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0 max-w-lg">
       <!-- Search Input -->
       <div class="relative flex-1">
         <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-sub" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -9,14 +9,14 @@
         </svg>
         <input 
           type="text" 
-          class="w-full pl-9 pr-4 py-1.5 rounded-lg border border-border-main bg-white dark:bg-slate-900 text-text-main text-xs outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,102,204,0.08)]" 
+          class="w-full pl-8 sm:pl-9 pr-2 sm:pr-4 py-1 sm:py-1.5 rounded-lg border border-border-main bg-white dark:bg-slate-900 text-text-main text-[11px] sm:text-xs outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,102,204,0.08)]" 
           :placeholder="searchPlaceholder || 'Tìm theo tên, địa chỉ...'" 
           :value="modelValue"
           @input="$emit('update:modelValue', $event.target.value)"
         />
       </div>
       <!-- Lọc button -->
-      <button @click="$emit('filter-click')" class="inline-flex items-center px-3.5 py-1.5 text-xs font-semibold bg-white dark:bg-slate-900 border border-border-main rounded-lg text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer gap-1.5 transition-all">
+      <button @click="$emit('filter-click')" class="inline-flex items-center px-2 sm:px-3.5 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold bg-white dark:bg-slate-900 border border-border-main rounded-lg text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer gap-1 sm:gap-1.5 transition-all shrink-0">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-4 h-4 text-text-sub">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v3.022a1.2 1.2 0 01-.328.814l-4.756 4.905a1.2 1.2 0 00-.328.814v4.32a1.2 1.2 0 01-.6.1l-2.4-.6a1.2 1.2 0 01-.6-.1v-3.62a1.2 1.2 0 00-.328-.814l-4.756-4.905A1.2 1.2 0 013 7.796V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
         </svg>
@@ -25,7 +25,7 @@
     </div>
 
     <!-- Right Side: Filter addons & Action buttons (Export, Import, custom-actions, Add Button) -->
-    <div class="flex items-center gap-2 flex-wrap sm:ml-auto">
+    <div class="flex items-center gap-1.5 sm:gap-2 flex-nowrap shrink-0">
       <!-- Slot for custom filter options (like select dropdowns) -->
       <slot name="filter-addons"></slot>
 
@@ -49,7 +49,7 @@
       <slot name="custom-actions"></slot>
 
       <!-- Add Button -->
-      <button v-if="showAdd" @click="$emit('add-click')" :disabled="disableAdd" class="inline-flex items-center px-3.5 py-1.5 text-xs font-extrabold rounded-lg bg-primary text-white hover:bg-primary-hover disabled:bg-slate-300 disabled:cursor-not-allowed cursor-pointer gap-1.5 transition-all shadow-xs">
+      <button v-if="showAdd" @click="$emit('add-click')" :disabled="disableAdd" class="inline-flex items-center px-2.5 sm:px-3.5 py-1 sm:py-1.5 text-[11px] sm:text-xs font-extrabold rounded-lg bg-primary text-white hover:bg-primary-hover disabled:bg-slate-300 disabled:cursor-not-allowed cursor-pointer gap-1 sm:gap-1.5 transition-all shadow-xs shrink-0">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
         </svg>
