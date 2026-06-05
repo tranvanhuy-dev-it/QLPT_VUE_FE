@@ -90,6 +90,18 @@ export default {
       router.push({ name: 'Contracts' });
     };
 
+    const terminateContract = async () => {
+      if (confirm('Bạn có chắc chắn muốn thanh lý hợp đồng này ngay bây giờ? Phòng trọ sẽ chuyển sang trạng thái trống.')) {
+        try {
+          await api.post(`/api/contracts/${contract.value.id}/terminate`);
+          alert('Đã thanh lý hợp đồng thành công!');
+          await fetchContractDetail();
+        } catch (err) {
+          alert(err.response?.data?.error || 'Thanh lý hợp đồng thất bại');
+        }
+      }
+    };
+
     onMounted(() => {
       fetchContractDetail();
     });
@@ -105,7 +117,8 @@ export default {
       formatDate,
       toggleEditMode,
       submitEdit,
-      goBack
+      goBack,
+      terminateContract
     };
   }
 };

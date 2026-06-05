@@ -25,6 +25,13 @@
         >
           {{ isEditMode ? 'Hủy Sửa' : 'Sửa Số Người Ở' }}
         </button>
+        <button 
+          v-if="contract && contract.status === 'ACTIVE'" 
+          @click="terminateContract" 
+          class="btn btn-danger"
+        >
+          Thanh Lý Hợp Đồng
+        </button>
       </div>
     </div>
 

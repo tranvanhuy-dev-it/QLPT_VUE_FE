@@ -159,18 +159,6 @@ export default {
       }
     };
 
-    const terminateContract = async (id) => {
-      if (confirm('Bạn có chắc chắn muốn thanh lý hợp đồng này ngay bây giờ? Phòng trọ sẽ chuyển sang trạng thái trống.')) {
-        try {
-          await api.post(`/api/contracts/${id}/terminate`);
-          alert('Đã thanh lý hợp đồng thành công!');
-          fetchContracts();
-        } catch (err) {
-          alert(err.response?.data?.error || 'Thanh lý hợp đồng thất bại');
-        }
-      }
-    };
-
     const changePage = (newPage) => {
       if (newPage >= 0 && newPage < totalPages.value) {
         page.value = newPage;
@@ -225,7 +213,6 @@ export default {
       openAddModal,
       onRoomChange,
       saveContract,
-      terminateContract,
       changePage,
       closeModal,
       formatMoney,

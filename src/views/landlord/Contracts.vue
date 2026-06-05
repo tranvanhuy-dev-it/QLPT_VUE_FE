@@ -65,14 +65,6 @@
                   >
                     Sửa
                   </button>
-                  <button 
-                    v-if="contract.status === 'ACTIVE'"
-                    @click.stop="terminateContract(contract.id)" 
-                    class="btn btn-danger"
-                    style="padding: 0.4rem 0.8rem; font-size: 0.85rem;"
-                  >
-                    Thanh Lý
-                  </button>
                 </td>
               </tr>
               <tr v-if="filteredContracts.length === 0">
