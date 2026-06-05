@@ -1,16 +1,25 @@
 import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import api from '../../services/api.js';
 
 export default {
   name: 'LandlordDashboard',
   components: {},
   setup() {
+    const router = useRouter();
+
     const currentDate = computed(() => {
       const d = new Date();
       const days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
       return `${days[d.getDay()]}, ${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`;
     });
 
+    const greeting = computed(() => {
+      const hour = new Date().getHours();
+      if (hour < 12) return 'Chào buổi sáng,';
+      if (hour < 18) return 'Chào buổi chiều,';
+      return 'Chào buổi tối,';
+    });
 
     const loading = ref(true);
     const stats = ref({
@@ -26,6 +35,12 @@ export default {
     const vacantRoomList = ref([]);
     const unpaidInvoiceList = ref([]);
 
+    const occupancyRate = computed(() => {
+      return stats.value.roomsCount > 0 
+        ? Math.round((stats.value.occupiedRooms / stats.value.roomsCount) * 100) 
+        : 0;
+    });
+
     const formatMoney = (amount) => {
       if (amount === undefined || amount === null) return '0';
       return Math.round(amount).toLocaleString('vi-VN');
@@ -35,6 +50,10 @@ export default {
       if (!dateString) return '';
       const d = new Date(dateString);
       return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+    };
+
+    const navigateTo = (path) => {
+      router.push(path);
     };
 
     const loadDashboardData = async () => {
@@ -82,12 +101,15 @@ export default {
 
     return {
       currentDate,
+      greeting,
       loading,
       stats,
       vacantRoomList,
       unpaidInvoiceList,
+      occupancyRate,
       formatMoney,
       formatDate,
+      navigateTo,
     };
   },
 };

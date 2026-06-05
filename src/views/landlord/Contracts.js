@@ -1,4 +1,5 @@
 import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import PageHeader from '../../components/PageHeader.vue';
 import api from '../../services/api.js';
 
@@ -8,6 +9,7 @@ export default {
     PageHeader,
   },
   setup() {
+    const router = useRouter();
     const contractIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`;
     const contracts = ref([]);
     const vacantRooms = ref([]);
@@ -25,13 +27,6 @@ export default {
     const totalElements = ref(0);
 
     const showAddModal = ref(false);
-    const showEditModal = ref(false);
-    const editForm = ref({
-      id: '',
-      roomNumber: '',
-      tenantName: '',
-      numberOfTenants: 1,
-    });
 
     const form = ref({
       roomId: '',
@@ -199,37 +194,12 @@ export default {
       };
     };
 
-    const editContract = (contract) => {
-      editForm.value = {
-        id: contract.id,
-        roomNumber: contract.room.roomNumber,
-        tenantName: contract.tenant.fullName,
-        numberOfTenants: contract.numberOfTenants,
-      };
-      showEditModal.value = true;
-    };
-
-    const closeEditModal = () => {
-      showEditModal.value = false;
-      editForm.value = {
-        id: '',
-        roomNumber: '',
-        tenantName: '',
-        numberOfTenants: 1,
-      };
-    };
-
-    const submitEditContract = async () => {
-      try {
-        await api.put(`/api/contracts/${editForm.value.id}`, {
-          numberOfTenants: editForm.value.numberOfTenants,
-        });
-        alert('Cập nhật số người ở của hợp đồng thành công!');
-        closeEditModal();
-        fetchContracts();
-      } catch (err) {
-        alert(err.response?.data?.error || 'Cập nhật hợp đồng thất bại');
-      }
+    const viewContractDetail = (id, edit = false) => {
+      router.push({
+        name: 'ContractDetail',
+        params: { id },
+        query: edit ? { edit: 'true' } : {},
+      });
     };
 
     onMounted(async () => {
@@ -260,11 +230,7 @@ export default {
       closeModal,
       formatMoney,
       formatDate,
-      showEditModal,
-      editForm,
-      editContract,
-      closeEditModal,
-      submitEditContract,
+      viewContractDetail,
     };
   },
 };

@@ -51,6 +51,12 @@ const routes = [
     meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
   },
   {
+    path: '/landlord/contracts/:id',
+    name: 'ContractDetail',
+    component: () => import('../views/landlord/ContractDetail.vue'),
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+  },
+  {
     path: '/landlord/invoices',
     name: 'Invoices',
     component: () => import('../views/landlord/Invoices.vue'),

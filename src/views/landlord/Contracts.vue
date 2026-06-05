@@ -28,7 +28,6 @@
                 <th>Dãy trọ</th>
                 <th>Người thuê</th>
                 <th>Ngày bắt đầu</th>
-                <th>Giá hợp đồng</th>
                 <th>Tiền cọc</th>
                 <th>Chu kỳ đóng tiền</th>
                 <th>Trạng thái</th>
@@ -37,11 +36,12 @@
             </thead>
             <tbody>
               <tr v-for="contract in filteredContracts" :key="contract.id">
-                <td style="font-weight: 600; color: var(--primary-color);">Phòng {{ contract.room.roomNumber }}</td>
+                <td style="font-weight: 600; color: var(--primary-color); cursor: pointer;" @click="viewContractDetail(contract.id)">
+                  Phòng {{ contract.room.roomNumber }}
+                </td>
                 <td>{{ contract.room.boardingHouse.name }}</td>
                 <td>{{ contract.tenant.fullName }} ({{ contract.tenant.username }})</td>
                 <td>{{ formatDate(contract.startDate) }}</td>
-                <td style="font-weight: 600;">{{ formatMoney(contract.contractedRoomPrice) }} đ</td>
                 <td>{{ formatMoney(contract.deposit) }} đ</td>
                 <td>
                   <span v-if="contract.billingMode === 'BY_RENTAL_DAYS'">
@@ -59,7 +59,7 @@
                 <td style="text-align: right; display: flex; gap: 0.25rem; justify-content: flex-end;">
                   <button 
                     v-if="contract.status === 'ACTIVE'"
-                    @click="editContract(contract)" 
+                    @click="viewContractDetail(contract.id, true)" 
                     class="btn btn-outline"
                     style="padding: 0.4rem 0.8rem; font-size: 0.85rem;"
                   >
@@ -76,7 +76,7 @@
                 </td>
               </tr>
               <tr v-if="filteredContracts.length === 0">
-                <td colspan="9" style="text-align: center; color: var(--text-secondary); padding: 2rem;">
+                <td colspan="8" style="text-align: center; color: var(--text-secondary); padding: 2rem;">
                   Không tìm thấy hợp đồng nào.
                 </td>
               </tr>
@@ -227,27 +227,7 @@
       </div>
     </div>
 
-    <!-- Edit Contract Modal -->
-    <div v-if="showEditModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
-      <div class="card" style="width: 100%; max-width: 450px; padding: 2rem; position: relative; margin: 1rem;">
-        <h3 class="card-title">Chỉnh Sửa Hợp Đồng</h3>
-        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
-          Phòng {{ editForm.roomNumber }} - Khách thuê: {{ editForm.tenantName }}
-        </p>
 
-        <form @submit.prevent="submitEditContract">
-          <div class="form-group">
-            <label class="form-label">Số người ở thực tế *</label>
-            <input type="number" class="form-input" v-model.number="editForm.numberOfTenants" min="1" required />
-          </div>
-
-          <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1.5rem;">
-            <button type="button" @click="closeEditModal" class="btn btn-outline">Hủy</button>
-            <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
-          </div>
-        </form>
-      </div>
-    </div>
   </div>
 </template>
 
