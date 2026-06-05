@@ -312,3 +312,126 @@ a:hover {
   text-align: center;
   margin-bottom: 2rem;
 }
+
+/* Seamless Flat Layout System Overrides */
+.main-content {
+  flex: 1;
+  padding: 0 !important; /* Remove outer layout padding */
+  overflow-y: auto;
+}
+
+/* Page containers */
+.contracts-page, 
+.invoices-page, 
+.rooms-page, 
+.boarding-houses-page, 
+.tenants-page,
+.contract-detail-page,
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 60px);
+  background-color: var(--card-bg);
+}
+
+/* Page headers inside main pages (PageHeader.vue toolbar) */
+.contracts-page .page-toolbar,
+.invoices-page .page-toolbar,
+.rooms-page .page-toolbar,
+.boarding-houses-page .page-toolbar,
+.tenants-page .page-toolbar {
+  border-radius: 0 !important;
+  border: none !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  box-shadow: none !important;
+  padding: 1.25rem 2rem !important;
+  margin-bottom: 0 !important;
+  background-color: var(--card-bg) !important;
+}
+
+/* Main card wrapper inside list pages */
+.contracts-page > .card,
+.invoices-page > .card,
+.rooms-page > .card,
+.boarding-houses-page > .card,
+.tenants-page > .card {
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 2rem !important;
+  margin-bottom: 0 !important;
+  flex: 1;
+  background-color: var(--card-bg);
+}
+
+/* Tables inside these flat cards */
+.contracts-page .table-responsive,
+.invoices-page .table-responsive,
+.rooms-page .table-responsive,
+.boarding-houses-page .table-responsive,
+.tenants-page .table-responsive {
+  border-radius: 8px !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: none !important;
+}
+
+/* Boarding Houses Flat Grid overrides */
+.boarding-houses-page {
+  padding: 2rem;
+}
+.boarding-houses-page .grid {
+  gap: 1.5rem !important;
+}
+
+/* Dashboard Page Flat overrides */
+.dashboard-page {
+  background-color: var(--card-bg);
+}
+.dashboard-page .welcome-banner {
+  border-radius: 0 !important;
+  margin-bottom: 0 !important;
+  padding: 2rem 2.5rem !important;
+  box-shadow: none !important;
+}
+.dashboard-page .stats-grid {
+  gap: 0 !important;
+  margin-bottom: 0 !important;
+  border-bottom: 1px solid var(--border-color);
+}
+.dashboard-page .stat-card {
+  border-radius: 0 !important;
+  border: none !important;
+  border-right: 1px solid var(--border-color) !important;
+  box-shadow: none !important;
+  padding: 2rem 1.5rem !important;
+}
+.dashboard-page .stat-card:last-child {
+  border-right: none !important;
+}
+.dashboard-page .dashboard-middle-grid {
+  gap: 0 !important;
+  margin-bottom: 0 !important;
+  border-bottom: 1px solid var(--border-color);
+}
+.dashboard-page .middle-card {
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 2rem !important;
+}
+.dashboard-page .middle-card:first-child {
+  border-right: 1px solid var(--border-color) !important;
+}
+.dashboard-page .grid {
+  gap: 0 !important;
+}
+.dashboard-page .detail-card {
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 2rem !important;
+}
+.dashboard-page .detail-card:first-child {
+  border-right: 1px solid var(--border-color) !important;
+}
+

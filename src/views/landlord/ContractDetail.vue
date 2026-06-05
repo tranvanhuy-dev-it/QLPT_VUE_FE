@@ -260,7 +260,6 @@
 
 <style scoped>
 .contract-detail-page {
-  margin: -1rem; /* Cancel default main content padding */
   padding: 0;
   display: flex;
   flex-direction: column;
