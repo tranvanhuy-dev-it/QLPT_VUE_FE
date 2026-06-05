@@ -31,7 +31,6 @@
                 <th>Tiền cọc</th>
                 <th>Chu kỳ đóng tiền</th>
                 <th>Trạng thái</th>
-                <th style="text-align: right;">Hành động</th>
               </tr>
             </thead>
             <tbody>
@@ -56,19 +55,9 @@
                     {{ contract.status === 'ACTIVE' ? 'Hoạt Động' : (contract.status === 'TERMINATED' ? 'Đã Thanh Lý' : 'Hết Hạn') }}
                   </span>
                 </td>
-                <td style="text-align: right; display: flex; gap: 0.25rem; justify-content: flex-end;">
-                  <button 
-                    v-if="contract.status === 'ACTIVE'"
-                    @click.stop="viewContractDetail(contract.id, true)" 
-                    class="btn btn-outline"
-                    style="padding: 0.4rem 0.8rem; font-size: 0.85rem;"
-                  >
-                    Sửa
-                  </button>
-                </td>
               </tr>
               <tr v-if="filteredContracts.length === 0">
-                <td colspan="8" style="text-align: center; color: var(--text-secondary); padding: 2rem;">
+                <td colspan="7" style="text-align: center; color: var(--text-secondary); padding: 2rem;">
                   Không tìm thấy hợp đồng nào.
                 </td>
               </tr>
