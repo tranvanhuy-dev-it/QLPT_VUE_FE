@@ -164,6 +164,14 @@ export default {
       }
     };
 
+    const payInvoiceFromDetails = () => {
+      if (invoiceDetails.value) {
+        const inv = invoiceDetails.value;
+        showDetailModal.value = false;
+        openPayModal(inv);
+      }
+    };
+
     const printReceipt = () => {
       const printContent = document.getElementById('receipt-print-area').innerHTML;
       const printWindow = window.open('', '_blank');
@@ -256,6 +264,7 @@ export default {
       openPayModal,
       submitPayment,
       viewDetails,
+      payInvoiceFromDetails,
       printReceipt,
       changePage,
       closeModal,

@@ -29,7 +29,6 @@
                 <th>Kỳ tính tiền</th>
                 <th>Tổng tiền</th>
                 <th>Đã thanh toán</th>
-                <th style="text-align: right;">Hành động</th>
               </tr>
             </thead>
             <tbody>
@@ -41,22 +40,9 @@
                 </td>
                 <td style="font-weight: 600; color: var(--primary-color);">{{ formatMoney(invoice.totalAmount) }} đ</td>
                 <td style="color: var(--success-color);">{{ formatMoney(invoice.paidAmount) }} đ</td>
-                <td style="text-align: right; display: flex; gap: 0.25rem; justify-content: flex-end;">
-                  <button @click.stop="viewDetails(invoice)" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
-                    Chi Tiết
-                  </button>
-                  <button 
-                    v-if="invoice.status !== 'PAID'"
-                    @click.stop="openPayModal(invoice)" 
-                    class="btn btn-secondary"
-                    style="padding: 0.4rem 0.8rem; font-size: 0.85rem;"
-                  >
-                    Thu Tiền
-                  </button>
-                </td>
               </tr>
               <tr v-if="filteredInvoices.length === 0">
-                <td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 2rem;">
+                <td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 2rem;">
                   Không tìm thấy hóa đơn nào.
                 </td>
               </tr>
@@ -279,6 +265,13 @@
         <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 2rem;">
           <button @click="closeModal" class="btn btn-outline">Đóng</button>
           <button @click="printReceipt" class="btn btn-primary">🖨️ In Hóa Đơn</button>
+          <button 
+            v-if="invoiceDetails.status !== 'PAID'" 
+            @click="payInvoiceFromDetails" 
+            class="btn btn-secondary"
+          >
+            Thu Tiền
+          </button>
         </div>
       </div>
     </div>
