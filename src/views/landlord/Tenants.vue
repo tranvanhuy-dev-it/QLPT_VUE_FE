@@ -103,7 +103,7 @@
 
           <div class="flex gap-3 justify-end mt-4">
             <button type="button" @click="closeModal" class="px-4 py-2 text-sm font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-100 cursor-pointer transition-all">Hủy</button>
-            <button type="submit" class="px-4 py-2 text-sm font-bold rounded-lg bg-primary text-white hover:bg-primary-hover cursor-pointer transition-all">Tạo Tài Khoản</button>
+            <button type="submit" class="px-4 py-2 text-sm font-bold rounded-lg bg-primary text-white hover:bg-primary-hover cursor-pointer transition-all">Tạo</button>
           </div>
         </form>
       </div>

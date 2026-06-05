@@ -29,10 +29,10 @@
           'px-3 py-1.5 text-xs font-semibold rounded-lg transition text-white cursor-pointer',
           isEditMode ? 'bg-slate-600 hover:bg-slate-700' : 'bg-primary hover:bg-primary-hover'
         ]">
-          {{ isEditMode ? 'Hủy sửa' : 'Sửa số người ở' }}
+          {{ isEditMode ? 'Hủy' : 'Sửa số người' }}
         </button>
         <button v-if="contract.status === 'ACTIVE'" @click="terminateContract" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-red-600 text-white hover:bg-red-700 transition cursor-pointer">
-          Thanh lý hợp đồng
+          Thanh lý
         </button>
       </div>
     </div>

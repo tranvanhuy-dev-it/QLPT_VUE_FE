@@ -133,7 +133,7 @@
 
           <div class="flex gap-3 justify-end mt-4">
             <button type="button" @click="closeModal" class="px-4 py-2 text-sm font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-100 cursor-pointer transition-all">Hủy</button>
-            <button type="submit" class="px-4 py-2 text-sm font-bold rounded-lg bg-primary text-white hover:bg-primary-hover cursor-pointer transition-all">Tính Tiền & Xuất Hóa Đơn</button>
+            <button type="submit" class="px-4 py-2 text-sm font-bold rounded-lg bg-primary text-white hover:bg-primary-hover cursor-pointer transition-all">Lập hóa đơn</button>
           </div>
         </form>
       </div>
@@ -155,7 +155,7 @@
 
           <div class="flex gap-3 justify-end mt-4">
             <button type="button" @click="closeModal" class="px-4 py-2 text-sm font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-100 cursor-pointer transition-all">Hủy</button>
-            <button type="submit" class="px-4 py-2 text-sm font-bold rounded-lg bg-primary text-white hover:bg-primary-hover cursor-pointer transition-all">Xác Nhận Thu Tiền</button>
+            <button type="submit" class="px-4 py-2 text-sm font-bold rounded-lg bg-primary text-white hover:bg-primary-hover cursor-pointer transition-all">Xác nhận</button>
           </div>
         </form>
       </div>
@@ -269,20 +269,20 @@
         <!-- Modal control buttons -->
         <div class="flex gap-3 justify-end mt-6">
           <button @click="closeModal" class="px-4 py-2 text-sm font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-100 cursor-pointer transition-all">Đóng</button>
-          <button @click="printReceipt" class="px-4 py-2 text-sm font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-100 cursor-pointer transition-all">🖨️ In Hóa Đơn</button>
+          <button @click="printReceipt" class="px-4 py-2 text-sm font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-100 cursor-pointer transition-all">🖨️ In</button>
           <button 
             v-if="invoiceDetails.status !== 'PAID'" 
             @click="payInvoiceFromDetails" 
             class="px-4 py-2 text-sm font-bold rounded-lg bg-secondary text-white hover:bg-secondary-hover cursor-pointer transition-all"
           >
-            Thu Một Phần
+            Thu trước
           </button>
           <button 
             v-if="invoiceDetails.status !== 'PAID'" 
             @click="quickPayInvoice" 
             class="px-4 py-2 text-sm font-bold rounded-lg bg-primary text-white hover:bg-primary-hover cursor-pointer transition-all"
           >
-            Đã Thu Tiền
+            Thu đủ
           </button>
         </div>
       </div>
