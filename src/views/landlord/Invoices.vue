@@ -14,8 +14,9 @@
 
     <!-- Invoices List -->
     <div class="card">
-      <div v-if="loading" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-        Đang tải danh sách hóa đơn...
+      <div v-if="loading" class="loading-container">
+        <div class="spinner"></div>
+        <span>Đang tải danh sách hóa đơn...</span>
       </div>
 
       <div v-else>
@@ -26,10 +27,8 @@
                 <th>Phòng</th>
                 <th>Khách thuê</th>
                 <th>Kỳ tính tiền</th>
-                <th>Tiền phòng</th>
                 <th>Tổng tiền</th>
                 <th>Đã thanh toán</th>
-                <th>Trạng thái</th>
                 <th style="text-align: right;">Hành động</th>
               </tr>
             </thead>
@@ -40,17 +39,8 @@
                 <td style="font-size: 0.85rem;">
                   {{ formatDate(invoice.billingPeriodStart) }} - {{ formatDate(invoice.billingPeriodEnd) }}
                 </td>
-                <td style="font-weight: 500;">{{ formatMoney(invoice.roomPrice) }} đ</td>
                 <td style="font-weight: 600; color: var(--primary-color);">{{ formatMoney(invoice.totalAmount) }} đ</td>
                 <td style="color: var(--success-color);">{{ formatMoney(invoice.paidAmount) }} đ</td>
-                <td>
-                  <span :class="['badge', 
-                    invoice.status === 'PAID' ? 'badge-success' : 
-                    (invoice.status === 'PARTIALLY_PAID' ? 'badge-warning' : 'badge-danger')
-                  ]">
-                    {{ invoice.status === 'PAID' ? 'Đã Thanh Toán' : (invoice.status === 'PARTIALLY_PAID' ? 'Trả Một Phần' : 'Chưa Thanh Toán') }}
-                  </span>
-                </td>
                 <td style="text-align: right; display: flex; gap: 0.25rem; justify-content: flex-end;">
                   <button @click="viewDetails(invoice)" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
                     Chi Tiết
@@ -66,7 +56,7 @@
                 </td>
               </tr>
               <tr v-if="filteredInvoices.length === 0">
-                <td colspan="8" style="text-align: center; color: var(--text-secondary); padding: 2rem;">
+                <td colspan="6" style="text-align: center; color: var(--text-secondary); padding: 2rem;">
                   Không tìm thấy hóa đơn nào.
                 </td>
               </tr>

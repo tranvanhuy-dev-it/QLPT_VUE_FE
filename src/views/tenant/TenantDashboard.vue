@@ -7,8 +7,9 @@
       :showSearch="false"
     />
 
-    <div v-if="loading" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-      Đang tải thông tin phòng trọ...
+    <div v-if="loading" class="loading-container" style="margin-bottom: 2rem;">
+      <div class="spinner"></div>
+      <span>Đang tải thông tin phòng trọ...</span>
     </div>
 
     <div v-else>

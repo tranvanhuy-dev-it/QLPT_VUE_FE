@@ -13,7 +13,7 @@ export default {
     const vacantRooms = ref([]);
     const tenantsList = ref([]);
     const availableExtraFees = ref([]);
-    const loading = ref(false);
+    const loading = ref(true);
 
     // Search
     const searchQuery = ref('');
@@ -122,8 +122,7 @@ export default {
     };
 
     const openAddModal = async () => {
-      await fetchVacantRooms();
-      await fetchTenants();
+      await Promise.all([fetchVacantRooms(), fetchTenants()]);
       if (vacantRooms.value.length > 0) {
         form.value.roomId = vacantRooms.value[0].id;
         onRoomChange();
@@ -231,8 +230,6 @@ export default {
 
     onMounted(() => {
       fetchContracts();
-      fetchVacantRooms();
-      fetchTenants();
     });
 
     return {

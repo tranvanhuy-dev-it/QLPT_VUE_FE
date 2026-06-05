@@ -12,7 +12,7 @@ export default {
     
     const invoices = ref([]);
     const activeContracts = ref([]);
-    const loading = ref(false);
+    const loading = ref(true);
 
     // Search
     const searchQuery = ref('');
@@ -229,7 +229,6 @@ export default {
 
     onMounted(() => {
       fetchInvoices();
-      fetchActiveContracts();
     });
 
     return {

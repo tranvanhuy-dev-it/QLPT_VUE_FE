@@ -1,15 +1,18 @@
-import { ref, onMounted } from 'vue';
-import PageHeader from '../../components/PageHeader.vue';
+import { ref, computed, onMounted } from 'vue';
 import api from '../../services/api.js';
 
 export default {
   name: 'LandlordDashboard',
-  components: {
-    PageHeader,
-  },
+  components: {},
   setup() {
-    const dashboardIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z" /></svg>`;
+    const currentDate = computed(() => {
+      const d = new Date();
+      const days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+      return `${days[d.getDay()]}, ${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`;
+    });
 
+
+    const loading = ref(true);
     const stats = ref({
       boardingHousesCount: 0,
       roomsCount: 0,
@@ -35,13 +38,19 @@ export default {
     };
 
     const loadDashboardData = async () => {
+      loading.value = true;
       try {
+        const [bhRes, roomsRes, contractsRes, invoicesRes] = await Promise.all([
+          api.get('/api/rooms/boarding-houses', { params: { size: 100 } }),
+          api.get('/api/rooms', { params: { size: 200 } }),
+          api.get('/api/contracts', { params: { size: 200 } }),
+          api.get('/api/invoices', { params: { size: 200 } })
+        ]);
+
         // Tải danh sách Dãy trọ
-        const bhRes = await api.get('/api/rooms/boarding-houses', { params: { size: 100 } });
         stats.value.boardingHousesCount = bhRes.data.totalElements || bhRes.data.content?.length || 0;
 
         // Tải danh sách Phòng trọ
-        const roomsRes = await api.get('/api/rooms', { params: { size: 200 } });
         const rooms = roomsRes.data.content || [];
         stats.value.roomsCount = rooms.length;
         stats.value.occupiedRooms = rooms.filter(r => r.status === 'OCCUPIED').length;
@@ -49,12 +58,10 @@ export default {
         vacantRoomList.value = rooms.filter(r => r.status === 'VACANT').slice(0, 5);
 
         // Tải danh sách Hợp đồng
-        const contractsRes = await api.get('/api/contracts', { params: { size: 200 } });
         const contracts = contractsRes.data.content || [];
         stats.value.activeContracts = contracts.filter(c => c.status === 'ACTIVE').length;
 
         // Tải danh sách Hóa đơn
-        const invoicesRes = await api.get('/api/invoices', { params: { size: 200 } });
         const invoices = invoicesRes.data.content || [];
         
         const unpaid = invoices.filter(i => i.status !== 'PAID');
@@ -64,6 +71,8 @@ export default {
 
       } catch (err) {
         console.error('Không thể tải dữ liệu thống kê tổng quan:', err);
+      } finally {
+        loading.value = false;
       }
     };
 
@@ -72,7 +81,8 @@ export default {
     });
 
     return {
-      dashboardIcon,
+      currentDate,
+      loading,
       stats,
       vacantRoomList,
       unpaidInvoiceList,

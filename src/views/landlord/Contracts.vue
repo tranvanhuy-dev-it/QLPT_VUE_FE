@@ -14,8 +14,9 @@
 
     <!-- Contracts List -->
     <div class="card">
-      <div v-if="loading" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
-        Đang tải danh sách hợp đồng...
+      <div v-if="loading" class="loading-container">
+        <div class="spinner"></div>
+        <span>Đang tải danh sách hợp đồng...</span>
       </div>
 
       <div v-else>

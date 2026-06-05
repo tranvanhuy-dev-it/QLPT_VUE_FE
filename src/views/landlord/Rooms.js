@@ -12,7 +12,7 @@ export default {
     
     const rooms = ref([]);
     const boardingHouses = ref([]);
-    const loading = ref(false);
+    const loading = ref(true);
     
     // Dropdown filters
     const selectedHouseId = ref(null);

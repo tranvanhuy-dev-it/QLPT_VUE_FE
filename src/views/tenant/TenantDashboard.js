@@ -12,7 +12,7 @@ export default {
     
     const activeContract = ref(null);
     const invoices = ref([]);
-    const loading = ref(false);
+    const loading = ref(true);
 
     // Pagination
     const page = ref(0);
