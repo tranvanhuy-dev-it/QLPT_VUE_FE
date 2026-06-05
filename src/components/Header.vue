@@ -123,7 +123,7 @@
 .global-search-input {
   width: 100%;
   padding: 0.5rem 1rem 0.5rem 2.25rem;
-  border-radius: 9999px;
+  border-radius: 0;
   border: 1px solid var(--border-color);
   background-color: #f9fafb;
   color: var(--text-primary);
@@ -150,7 +150,7 @@
   color: var(--text-secondary);
   cursor: pointer;
   padding: 0.375rem;
-  border-radius: 6px;
+  border-radius: 0;
   position: relative;
   display: flex;
   align-items: center;
@@ -190,7 +190,7 @@
 .user-avatar {
   width: 32px;
   height: 32px;
-  border-radius: 9999px;
+  border-radius: 0;
   background-color: #e0f2fe;
   color: var(--primary-color);
   display: flex;
@@ -224,7 +224,7 @@
   color: var(--text-secondary);
   cursor: pointer;
   padding: 0.375rem;
-  border-radius: 6px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;

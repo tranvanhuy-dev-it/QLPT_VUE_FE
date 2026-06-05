@@ -67,8 +67,8 @@
 .page-header-container {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  margin-bottom: 2rem;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .page-title-row {
@@ -90,7 +90,7 @@
   height: 40px;
   background-color: #e6f0ff;
   color: var(--primary-color);
-  border-radius: 8px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -132,7 +132,7 @@
   font-weight: 500;
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 0;
   color: var(--text-primary);
   font-size: 0.85rem;
   cursor: pointer;
@@ -158,7 +158,7 @@
   font-weight: 600;
   background-color: var(--primary-color);
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: 0;
   color: #ffffff;
   font-size: 0.85rem;
   cursor: pointer;
@@ -185,8 +185,8 @@
   align-items: center;
   gap: 0.75rem;
   background-color: var(--card-bg);
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow);
 }
@@ -210,7 +210,7 @@
 .filter-search-input {
   width: 100%;
   padding: 0.45rem 1rem 0.45rem 2.25rem;
-  border-radius: 6px;
+  border-radius: 0;
   border: 1px solid var(--border-color);
   background-color: #ffffff;
   color: var(--text-primary);
@@ -231,7 +231,7 @@
   font-weight: 500;
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 0;
   color: var(--text-primary);
   font-size: 0.85rem;
   cursor: pointer;

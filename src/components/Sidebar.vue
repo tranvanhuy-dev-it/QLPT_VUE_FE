@@ -107,7 +107,7 @@
 .brand-logo {
   width: 38px;
   height: 38px;
-  border-radius: 8px;
+  border-radius: 0;
   background-color: var(--primary-color);
   color: #ffffff;
   display: flex;
@@ -155,7 +155,7 @@
 .sidebar-search .search-input {
   width: 100%;
   padding: 0.45rem 1rem 0.45rem 2.25rem;
-  border-radius: 6px;
+  border-radius: 0;
   border: 1px solid var(--border-color);
   background-color: #f9fafb;
   color: var(--text-primary);
@@ -191,7 +191,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.625rem 0.75rem;
-  border-radius: 6px;
+  border-radius: 0;
   color: var(--text-primary);
   font-size: 0.875rem;
   font-weight: 500;
@@ -245,7 +245,7 @@
 .footer-avatar {
   width: 36px;
   height: 36px;
-  border-radius: 9999px;
+  border-radius: 0;
   background-color: #e0f2fe;
   color: var(--primary-color);
   display: flex;
@@ -284,7 +284,7 @@
   color: var(--text-secondary);
   cursor: pointer;
   padding: 0.25rem;
-  border-radius: 4px;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;

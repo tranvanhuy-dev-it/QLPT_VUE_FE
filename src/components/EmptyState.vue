@@ -30,7 +30,7 @@ export default {
   padding: 3.5rem 2rem;
   text-align: center;
   background-color: var(--card-bg);
-  border-radius: 12px;
+  border-radius: 0;
 }
 
 .empty-icon {
