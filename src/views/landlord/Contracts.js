@@ -83,6 +83,10 @@ export default {
       );
     });
 
+    const selectedRoom = computed(() => {
+      return vacantRooms.value.find(r => r.id === form.value.roomId) || null;
+    });
+
     const fetchVacantRooms = async () => {
       try {
         const response = await api.get('/api/rooms', { params: { size: 200 } });
@@ -228,8 +232,9 @@ export default {
       }
     };
 
-    onMounted(() => {
+    onMounted(async () => {
       fetchContracts();
+      await Promise.all([fetchVacantRooms(), fetchTenants()]);
     });
 
     return {
@@ -237,6 +242,7 @@ export default {
       contracts,
       filteredContracts,
       vacantRooms,
+      selectedRoom,
       tenantsList,
       availableExtraFees,
       loading,

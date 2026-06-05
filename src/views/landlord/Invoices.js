@@ -227,8 +227,9 @@ export default {
       };
     };
 
-    onMounted(() => {
+    onMounted(async () => {
       fetchInvoices();
+      await fetchActiveContracts();
     });
 
     return {

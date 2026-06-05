@@ -24,6 +24,7 @@ export default {
       defaultElectricityRate: 3500,
       defaultWaterRate: 15000,
       waterBillingType: 'BY_INDEX',
+      extraFees: [],
     });
 
     const formatMoney = (amount) => {
@@ -38,6 +39,19 @@ export default {
         case 'FIXED_PER_ROOM': return 'Theo phòng';
         default: return type;
       }
+    };
+
+    const addExtraFeeRow = () => {
+      form.value.extraFees.push({
+        id: null,
+        name: '',
+        defaultPrice: 0,
+        unitType: 'FIXED_PER_ROOM',
+      });
+    };
+
+    const removeExtraFeeRow = (index) => {
+      form.value.extraFees.splice(index, 1);
     };
 
     const fetchBoardingHouses = async () => {
@@ -76,6 +90,12 @@ export default {
         defaultElectricityRate: house.defaultElectricityRate,
         defaultWaterRate: house.defaultWaterRate,
         waterBillingType: house.waterBillingType,
+        extraFees: (house.extraFees || []).map(ef => ({
+          id: ef.id,
+          name: ef.name,
+          defaultPrice: ef.defaultPrice,
+          unitType: ef.unitType,
+        })),
       };
       showEditModal.value = true;
     };
@@ -101,6 +121,7 @@ export default {
         defaultElectricityRate: 3500,
         defaultWaterRate: 15000,
         waterBillingType: 'BY_INDEX',
+        extraFees: [],
       };
     };
 
@@ -121,6 +142,8 @@ export default {
       closeModal,
       formatMoney,
       formatWaterBillingType,
+      addExtraFeeRow,
+      removeExtraFeeRow,
     };
   },
 };

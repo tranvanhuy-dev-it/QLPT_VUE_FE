@@ -6,7 +6,7 @@
       :icon="contractIcon"
       :showAdd="true"
       addText="Tạo Hợp Đồng Mới"
-      :disableAdd="vacantRooms.length === 0 && tenantsList.length === 0"
+      :disableAdd="vacantRooms.length === 0 || tenantsList.length === 0"
       searchPlaceholder="Tìm theo phòng, dãy trọ, khách thuê..."
       v-model="searchQuery"
       @add-click="openAddModal"
@@ -128,11 +128,20 @@
             </div>
           </div>
 
+          <!-- Thông tin dịch vụ mặc định của dãy trọ (Điện, nước) -->
+          <div v-if="selectedRoom" style="background: rgba(0, 102, 204, 0.05); padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.85rem; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.25rem;">
+            <div style="font-weight: 600; color: var(--primary-color); margin-bottom: 0.25rem;">Chỉ số dịch vụ mặc định (Dãy trọ: {{ selectedRoom.boardingHouse.name }}):</div>
+            <div style="display: flex; gap: 2rem;">
+              <div>⚡ Giá điện: <span style="font-weight: 600;">{{ formatMoney(selectedRoom.boardingHouse.defaultElectricityRate) }} đ/kWh</span></div>
+              <div>💧 Giá nước: <span style="font-weight: 600;">{{ formatMoney(selectedRoom.boardingHouse.defaultWaterRate) }} đ</span> ({{ selectedRoom.boardingHouse.waterBillingType === 'BY_INDEX' ? 'Theo chỉ số' : (selectedRoom.boardingHouse.waterBillingType === 'FIXED_PER_PERSON' ? 'Cố định/đầu người' : 'Cố định/phòng') }})</div>
+            </div>
+          </div>
+
           <!-- Giá thuê và tiền đặt cọc -->
           <div class="grid grid-cols-3" style="gap: 1rem;">
             <div class="form-group">
               <label class="form-label">Giá thuê / tháng *</label>
-              <input type="number" class="form-input" v-model.number="form.contractedRoomPrice" required />
+              <input type="number" class="form-input" v-model.number="form.contractedRoomPrice" readonly required style="background-color: var(--border-color); cursor: not-allowed;" />
             </div>
 
             <div class="form-group">
@@ -184,12 +193,11 @@
               <div v-for="(ef, index) in availableExtraFees" :key="ef.id" style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.02); padding: 0.5rem 1rem; border-radius: 8px;">
                 <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 500; cursor: pointer;">
                   <input type="checkbox" v-model="ef.selected" style="transform: scale(1.15);" />
-                  {{ ef.name }} (đơn giá mặc định: {{ formatMoney(ef.defaultPrice) }} đ/{{ ef.unitType === 'FIXED_PER_PERSON' ? 'người' : 'phòng' }})
+                  {{ ef.name }}
                 </label>
                 
-                <div style="display: flex; align-items: center; gap: 0.5rem;" v-if="ef.selected">
-                  <span style="font-size: 0.8rem; color: var(--text-secondary);">Giá áp dụng:</span>
-                  <input type="number" class="form-input" style="width: 120px; padding: 0.25rem 0.5rem;" v-model.number="ef.customPrice" min="0" />
+                <div style="font-size: 0.9rem; font-weight: 600; color: var(--primary-color);">
+                  {{ formatMoney(ef.defaultPrice) }} đ/{{ ef.unitType === 'FIXED_PER_PERSON' ? 'người' : 'phòng' }}
                 </div>
               </div>
             </div>
