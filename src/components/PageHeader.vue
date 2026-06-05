@@ -15,13 +15,6 @@
           @input="$emit('update:modelValue', $event.target.value)"
         />
       </div>
-      <!-- Lọc button -->
-      <button @click="$emit('filter-click')" class="inline-flex items-center px-2 sm:px-3.5 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold bg-white dark:bg-slate-900 border border-border-main rounded-lg text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer gap-1 sm:gap-1.5 transition-all shrink-0">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-4 h-4 text-text-sub">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v3.022a1.2 1.2 0 01-.328.814l-4.756 4.905a1.2 1.2 0 00-.328.814v4.32a1.2 1.2 0 01-.6.1l-2.4-.6a1.2 1.2 0 01-.6-.1v-3.62a1.2 1.2 0 00-.328-.814l-4.756-4.905A1.2 1.2 0 013 7.796V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
-        </svg>
-        Lọc
-      </button>
     </div>
 
     <!-- Right Side: Filter addons & Action buttons (Export, Import, custom-actions, Add Button) -->

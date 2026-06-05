@@ -50,7 +50,6 @@ export default {
     'update:modelValue',
     'add-click',
     'export-click',
-    'import-click',
-    'filter-click'
+    'import-click'
   ]
 };
