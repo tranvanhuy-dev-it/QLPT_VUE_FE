@@ -33,7 +33,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="invoice in filteredInvoices" :key="invoice.id">
+              <tr v-for="invoice in filteredInvoices" :key="invoice.id" style="cursor: pointer;" @click="viewDetails(invoice)">
                 <td style="font-weight: 600; color: var(--primary-color);">Phòng {{ invoice.contract.room.roomNumber }}</td>
                 <td>{{ invoice.contract.tenant.fullName }}</td>
                 <td style="font-size: 0.85rem;">
@@ -42,12 +42,12 @@
                 <td style="font-weight: 600; color: var(--primary-color);">{{ formatMoney(invoice.totalAmount) }} đ</td>
                 <td style="color: var(--success-color);">{{ formatMoney(invoice.paidAmount) }} đ</td>
                 <td style="text-align: right; display: flex; gap: 0.25rem; justify-content: flex-end;">
-                  <button @click="viewDetails(invoice)" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+                  <button @click.stop="viewDetails(invoice)" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
                     Chi Tiết
                   </button>
                   <button 
                     v-if="invoice.status !== 'PAID'"
-                    @click="openPayModal(invoice)" 
+                    @click.stop="openPayModal(invoice)" 
                     class="btn btn-secondary"
                     style="padding: 0.4rem 0.8rem; font-size: 0.85rem;"
                   >

@@ -35,8 +35,8 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="contract in filteredContracts" :key="contract.id">
-                <td style="font-weight: 600; color: var(--primary-color); cursor: pointer;" @click="viewContractDetail(contract.id)">
+              <tr v-for="contract in filteredContracts" :key="contract.id" style="cursor: pointer;" @click="viewContractDetail(contract.id)">
+                <td style="font-weight: 600; color: var(--primary-color);">
                   Phòng {{ contract.room.roomNumber }}
                 </td>
                 <td>{{ contract.room.boardingHouse.name }}</td>
@@ -59,7 +59,7 @@
                 <td style="text-align: right; display: flex; gap: 0.25rem; justify-content: flex-end;">
                   <button 
                     v-if="contract.status === 'ACTIVE'"
-                    @click="viewContractDetail(contract.id, true)" 
+                    @click.stop="viewContractDetail(contract.id, true)" 
                     class="btn btn-outline"
                     style="padding: 0.4rem 0.8rem; font-size: 0.85rem;"
                   >
@@ -67,7 +67,7 @@
                   </button>
                   <button 
                     v-if="contract.status === 'ACTIVE'"
-                    @click="terminateContract(contract.id)" 
+                    @click.stop="terminateContract(contract.id)" 
                     class="btn btn-danger"
                     style="padding: 0.4rem 0.8rem; font-size: 0.85rem;"
                   >
