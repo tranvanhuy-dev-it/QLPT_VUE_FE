@@ -128,12 +128,28 @@
             </div>
           </div>
 
-          <!-- Thông tin dịch vụ mặc định của dãy trọ (Điện, nước) -->
-          <div v-if="selectedRoom" style="background: rgba(0, 102, 204, 0.05); padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.85rem; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.25rem;">
-            <div style="font-weight: 600; color: var(--primary-color); margin-bottom: 0.25rem;">Chỉ số dịch vụ mặc định (Dãy trọ: {{ selectedRoom.boardingHouse.name }}):</div>
-            <div style="display: flex; gap: 2rem;">
-              <div>⚡ Giá điện: <span style="font-weight: 600;">{{ formatMoney(selectedRoom.boardingHouse.defaultElectricityRate) }} đ/kWh</span></div>
-              <div>💧 Giá nước: <span style="font-weight: 600;">{{ formatMoney(selectedRoom.boardingHouse.defaultWaterRate) }} đ</span> ({{ selectedRoom.boardingHouse.waterBillingType === 'BY_INDEX' ? 'Theo chỉ số' : (selectedRoom.boardingHouse.waterBillingType === 'FIXED_PER_PERSON' ? 'Cố định/đầu người' : 'Cố định/phòng') }})</div>
+          <!-- Đơn giá & Chỉ số Điện, Nước mặc định (Read-only inputs) -->
+          <div class="grid grid-cols-2" style="gap: 1rem;" v-if="selectedRoom">
+            <div class="form-group">
+              <label class="form-label">Đơn giá điện (đ/kWh)</label>
+              <input type="number" class="form-input" :value="selectedRoom.boardingHouse.defaultElectricityRate" readonly style="background-color: var(--border-color); cursor: not-allowed;" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Đơn giá nước (đ)</label>
+              <input type="text" class="form-input" :value="formatMoney(selectedRoom.boardingHouse.defaultWaterRate) + (selectedRoom.boardingHouse.waterBillingType === 'BY_INDEX' ? ' đ/m³' : (selectedRoom.boardingHouse.waterBillingType === 'FIXED_PER_PERSON' ? ' đ/người' : ' đ/phòng'))" readonly style="background-color: var(--border-color); cursor: not-allowed;" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2" style="gap: 1rem;" v-if="selectedRoom">
+            <div class="form-group">
+              <label class="form-label">Chỉ số điện đầu kỳ (kWh)</label>
+              <input type="number" class="form-input" :value="selectedRoom.currentElectricityIndex" readonly style="background-color: var(--border-color); cursor: not-allowed;" />
+            </div>
+
+            <div class="form-group" v-if="selectedRoom.boardingHouse.waterBillingType === 'BY_INDEX'">
+              <label class="form-label">Chỉ số nước đầu kỳ (m³)</label>
+              <input type="number" class="form-input" :value="selectedRoom.currentWaterIndex" readonly style="background-color: var(--border-color); cursor: not-allowed;" />
             </div>
           </div>
 
