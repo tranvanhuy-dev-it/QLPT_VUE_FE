@@ -9,6 +9,7 @@
       :disableAdd="boardingHouses.length === 0"
       searchPlaceholder="Tìm theo số phòng..."
       v-model="searchQuery"
+      @add-click="openAddModal"
     >
       <template #filter-addons>
         <div style="display: flex; align-items: center; gap: 0.5rem; margin-left: auto;">

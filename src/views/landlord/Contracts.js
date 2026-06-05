@@ -191,6 +191,8 @@ export default {
 
     onMounted(() => {
       fetchContracts();
+      fetchVacantRooms();
+      fetchTenants();
     });
 
     return {
