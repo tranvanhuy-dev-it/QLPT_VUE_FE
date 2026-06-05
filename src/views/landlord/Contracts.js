@@ -25,6 +25,13 @@ export default {
     const totalElements = ref(0);
 
     const showAddModal = ref(false);
+    const showEditModal = ref(false);
+    const editForm = ref({
+      id: '',
+      roomNumber: '',
+      tenantName: '',
+      numberOfTenants: 1,
+    });
 
     const form = ref({
       roomId: '',
@@ -189,6 +196,39 @@ export default {
       };
     };
 
+    const editContract = (contract) => {
+      editForm.value = {
+        id: contract.id,
+        roomNumber: contract.room.roomNumber,
+        tenantName: contract.tenant.fullName,
+        numberOfTenants: contract.numberOfTenants,
+      };
+      showEditModal.value = true;
+    };
+
+    const closeEditModal = () => {
+      showEditModal.value = false;
+      editForm.value = {
+        id: '',
+        roomNumber: '',
+        tenantName: '',
+        numberOfTenants: 1,
+      };
+    };
+
+    const submitEditContract = async () => {
+      try {
+        await api.put(`/api/contracts/${editForm.value.id}`, {
+          numberOfTenants: editForm.value.numberOfTenants,
+        });
+        alert('Cập nhật số người ở của hợp đồng thành công!');
+        closeEditModal();
+        fetchContracts();
+      } catch (err) {
+        alert(err.response?.data?.error || 'Cập nhật hợp đồng thất bại');
+      }
+    };
+
     onMounted(() => {
       fetchContracts();
       fetchVacantRooms();
@@ -217,6 +257,11 @@ export default {
       closeModal,
       formatMoney,
       formatDate,
+      showEditModal,
+      editForm,
+      editContract,
+      closeEditModal,
+      submitEditContract,
     };
   },
 };
