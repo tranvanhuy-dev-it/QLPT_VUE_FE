@@ -1,255 +1,185 @@
 <template>
-  <div class="contract-detail-page">
+  <div class="p-4 bg-bg-main min-h-screen">
     <!-- Header Block -->
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; border-bottom: 1px solid var(--border-color); background: var(--card-bg); width: 100%;">
+    <div class="flex justify-between items-center mb-6 pb-4 border-b border-border-main">
       <div>
-        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 0.75rem;">
-          <button @click="goBack" class="btn btn-outline" style="padding: 0; border-radius: 50%; width: 36px; height: 36px; border: 1px solid var(--border-color); display: inline-flex; align-items: center; justify-content: center; background: var(--card-bg); cursor: pointer;">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 1.1rem; height: 1.1rem;">
+        <h2 class="text-xl font-bold text-text-main flex items-center gap-2">
+          <button @click="goBack" class="inline-flex items-center justify-center p-1.5 rounded-lg border border-border-main bg-card hover:bg-slate-50 transition cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
               <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
             </svg>
           </button>
           <span>Chi Tiết Hợp Đồng</span>
+          <span v-if="contract" :class="[
+            'text-[11px] font-semibold px-2.5 py-0.5 rounded border ml-2',
+            contract.status === 'ACTIVE' 
+              ? 'bg-green-50 text-green-700 border-green-200' 
+              : 'bg-red-50 text-red-700 border-red-200'
+          ]">
+            {{ contract.status === 'ACTIVE' ? 'Hoạt động' : 'Đã thanh lý' }}
+          </span>
         </h2>
       </div>
 
-      <div style="display: flex; gap: 0.75rem;">
-        <button @click="goBack" class="btn btn-outline">Quay Lại Danh Sách</button>
-        <button 
-          v-if="contract && contract.status === 'ACTIVE'" 
-          @click="toggleEditMode" 
-          :class="['btn', isEditMode ? 'btn-secondary' : 'btn-primary']"
-        >
-          {{ isEditMode ? 'Hủy Sửa' : 'Sửa Số Người Ở' }}
+      <div v-if="contract" class="flex gap-2">
+        <button @click="goBack" class="px-3 py-1.5 text-xs font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-50 transition bg-card cursor-pointer">
+          Quay lại
         </button>
-        <button 
-          v-if="contract && contract.status === 'ACTIVE'" 
-          @click="terminateContract" 
-          class="btn btn-danger"
-        >
-          Thanh Lý Hợp Đồng
+        <button v-if="contract.status === 'ACTIVE'" @click="toggleEditMode" :class="[
+          'px-3 py-1.5 text-xs font-semibold rounded-lg transition text-white cursor-pointer',
+          isEditMode ? 'bg-slate-600 hover:bg-slate-700' : 'bg-primary hover:bg-primary-hover'
+        ]">
+          {{ isEditMode ? 'Hủy sửa' : 'Sửa số người ở' }}
+        </button>
+        <button v-if="contract.status === 'ACTIVE'" @click="terminateContract" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-red-600 text-white hover:bg-red-700 transition cursor-pointer">
+          Thanh lý hợp đồng
         </button>
       </div>
     </div>
 
     <!-- Loading Spinner -->
-    <div v-if="loading" style="display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 120px); background: var(--card-bg); flex: 1;">
-      <div style="text-align: center;">
-        <div class="spinner" style="margin-bottom: 1rem;"></div>
-        <div style="color: var(--text-secondary); font-size: 0.95rem;">Đang tải chi tiết hợp đồng...</div>
+    <div v-if="loading" class="bg-card border border-border-main rounded-xl flex justify-center items-center min-h-[300px] shadow-xs">
+      <div class="text-center flex flex-col items-center gap-2">
+        <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <div class="text-text-sub text-xs">Đang tải chi tiết hợp đồng...</div>
       </div>
     </div>
 
-    <!-- Main Content Area (Unified Flat Panels) -->
-    <div v-else-if="contract" class="grid grid-cols-3" style="gap: 0; align-items: stretch; background: var(--card-bg); flex: 1; border-bottom: 1px solid var(--border-color);">
+    <!-- Main Content Area -->
+    <div v-else-if="contract" class="flex flex-col gap-4">
       
-      <!-- Left Column: Contract & Room Details -->
-      <div style="grid-column: span 2; border-right: 1px solid var(--border-color); display: flex; flex-direction: column;">
-        
-        <!-- Room Information Section -->
-        <div style="padding: 2rem; border-bottom: 1px solid var(--border-color); flex: 1;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; margin: 0;">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="var(--primary-color)" style="width: 1.25rem; height: 1.25rem;">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-              </svg>
-              <span>Thông Tin Phòng Trọ</span>
-            </h3>
-            <span :class="['badge', contract.status === 'ACTIVE' ? 'badge-success' : 'badge-danger']" style="font-size: 0.75rem; padding: 0.25rem 0.625rem;">
-              {{ contract.status === 'ACTIVE' ? 'Hoạt Động' : (contract.status === 'TERMINATED' ? 'Đã Thanh Lý' : 'Hết Hạn') }}
-            </span>
+      <!-- Room Info Card -->
+      <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
+        <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Thông tin phòng trọ</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 text-xs">
+          <div class="flex items-center">
+            <span class="text-text-sub font-semibold w-36 shrink-0">Dãy trọ:</span>
+            <span class="font-bold text-text-main flex-1">{{ contract.room.boardingHouse.name }}</span>
           </div>
-
-          <div class="grid grid-cols-2" style="gap: 1.5rem;">
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; font-weight: 600;">Phòng Trọ</div>
-              <div style="font-size: 1.1rem; font-weight: 600; color: var(--primary-color);">Phòng {{ contract.room.roomNumber }}</div>
-            </div>
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; font-weight: 600;">Dãy Trọ</div>
-              <div style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary);">{{ contract.room.boardingHouse.name }}</div>
-            </div>
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; font-weight: 600;">Giá Thuê Gốc / Tháng</div>
-              <div style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary);">{{ formatMoney(contract.contractedRoomPrice) }} VNĐ</div>
-            </div>
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; font-weight: 600;">Sức Chứa Tối Đa</div>
-              <div style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary);">Tối đa {{ contract.room.maxPeople }} người</div>
-            </div>
+          <div class="flex items-center">
+            <span class="text-text-sub font-semibold w-36 shrink-0">Phòng số:</span>
+            <span class="font-bold text-primary flex-1">Phòng {{ contract.room.roomNumber }}</span>
           </div>
-
-          <div style="margin-top: 1.5rem; background: rgba(0, 102, 204, 0.02); border: 1px dashed var(--border-color); border-radius: 6px; padding: 1rem;">
-            <div style="font-weight: 600; font-size: 0.8rem; color: var(--primary-color); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Chỉ số điện nước ban đầu</div>
-            <div class="grid grid-cols-2" style="gap: 1rem;">
-              <div>
-                <span style="font-size: 0.85rem; color: var(--text-secondary);">Điện hiện tại:</span>
-                <strong style="margin-left: 0.5rem; color: var(--text-primary);">{{ contract.room.currentElectricityIndex }} kWh</strong>
-              </div>
-              <div>
-                <span style="font-size: 0.85rem; color: var(--text-secondary);">Nước hiện tại:</span>
-                <strong style="margin-left: 0.5rem; color: var(--text-primary);">{{ contract.room.currentWaterIndex }} m³</strong>
-              </div>
-            </div>
+          <div class="flex items-center">
+            <span class="text-text-sub font-semibold w-36 shrink-0">Giá phòng gốc:</span>
+            <span class="font-bold text-text-main flex-1">{{ formatMoney(contract.contractedRoomPrice) }} đ/tháng</span>
+          </div>
+          <div class="flex items-center">
+            <span class="text-text-sub font-semibold w-36 shrink-0">Sức chứa tối đa:</span>
+            <span class="font-bold text-text-main flex-1">{{ contract.room.maxPeople }} người</span>
+          </div>
+          <div class="flex items-center">
+            <span class="text-text-sub font-semibold w-36 shrink-0">Số điện hiện tại:</span>
+            <span class="font-bold text-text-main flex-1">{{ contract.room.currentElectricityIndex }} kWh</span>
+          </div>
+          <div class="flex items-center">
+            <span class="text-text-sub font-semibold w-36 shrink-0">Số nước hiện tại:</span>
+            <span class="font-bold text-text-main flex-1">{{ contract.room.currentWaterIndex }} m³</span>
           </div>
         </div>
-
-        <!-- Contract Details Section -->
-        <div style="padding: 2rem; flex: 1;">
-          <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; margin-top: 0; margin-bottom: 1.5rem;">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="var(--primary-color)" style="width: 1.25rem; height: 1.25rem;">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-            </svg>
-            <span>Thông Tin Điều Khoản Hợp Đồng</span>
-          </h3>
-
-          <div class="grid grid-cols-2" style="gap: 1.5rem;">
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; font-weight: 600;">Ngày Bắt Đầu Thuê</div>
-              <div style="font-size: 1rem; font-weight: 600; color: var(--text-primary);">{{ formatDate(contract.startDate) }}</div>
-            </div>
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; font-weight: 600;">Ngày Hết Hạn</div>
-              <div style="font-size: 1rem; font-weight: 600; color: var(--text-primary);">{{ formatDate(contract.endDate) }}</div>
-            </div>
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; font-weight: 600;">Tiền Đặt Cọc</div>
-              <div style="font-size: 1.1rem; font-weight: 700; color: var(--success-color);">{{ formatMoney(contract.deposit) }} VNĐ</div>
-            </div>
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; font-weight: 600;">Chu Kỳ Tính Tiền</div>
-              <div style="font-size: 1rem; font-weight: 600; color: var(--text-primary);">
-                <span v-if="contract.billingMode === 'BY_RENTAL_DAYS'">
-                  Tính từ ngày thuê (Anniversary)
-                </span>
-                <span v-else>
-                  Ngày {{ contract.fixedBillingDay }} cố định hàng tháng
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
 
-      <!-- Right Column: Tenant & Extra Fees Info -->
-      <div style="display: flex; flex-direction: column;">
-        
-        <!-- Tenant Information Section -->
-        <div style="padding: 2rem; border-bottom: 1px solid var(--border-color); flex: 1;">
-          <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; margin-top: 0; margin-bottom: 1.5rem;">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="var(--primary-color)" style="width: 1.25rem; height: 1.25rem;">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-            </svg>
-            <span>Khách Thuê Phòng</span>
-          </h3>
-
-          <div style="display: flex; flex-direction: column; gap: 1rem;">
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.15rem; font-weight: 600;">Họ Tên Khách Thuê</div>
-              <div style="font-size: 1.05rem; font-weight: 600; color: var(--text-primary);">{{ contract.tenant.fullName }}</div>
-            </div>
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.15rem; font-weight: 600;">Tài Khoản Đăng Nhập</div>
-              <div style="font-size: 0.95rem; font-weight: 500; color: var(--text-secondary);">{{ contract.tenant.username }}</div>
-            </div>
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.15rem; font-weight: 600;">Số Điện Thoại</div>
-              <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-primary);">{{ contract.tenant.phoneNumber || 'Chưa cập nhật' }}</div>
-            </div>
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.15rem; font-weight: 600;">Email Liên Hệ</div>
-              <div style="font-size: 0.95rem; font-weight: 500; color: var(--text-primary);">{{ contract.tenant.email || 'Chưa cập nhật' }}</div>
-            </div>
+      <!-- Contract Terms Card -->
+      <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
+        <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Điều khoản hợp đồng</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 text-xs">
+          <div class="flex items-center">
+            <span class="text-text-sub font-semibold w-36 shrink-0">Ngày bắt đầu thuê:</span>
+            <span class="font-semibold text-text-main flex-1">{{ formatDate(contract.startDate) }}</span>
+          </div>
+          <div class="flex items-center">
+            <span class="text-text-sub font-semibold w-36 shrink-0">Ngày hết hạn:</span>
+            <span class="font-semibold text-text-main flex-1">{{ formatDate(contract.endDate) }}</span>
+          </div>
+          <div class="flex items-center">
+            <span class="text-text-sub font-semibold w-36 shrink-0">Tiền đặt cọc:</span>
+            <span class="font-bold text-green-600 flex-1">{{ formatMoney(contract.deposit) }} đ</span>
+          </div>
+          <div class="flex items-center">
+            <span class="text-text-sub font-semibold w-36 shrink-0">Kỳ hạn tính tiền:</span>
+            <span class="font-semibold text-text-main flex-1">
+              <span v-if="contract.billingMode === 'BY_RENTAL_DAYS'">Theo ngày thuê</span>
+              <span v-else>Cố định ngày {{ contract.fixedBillingDay }} hằng tháng</span>
+            </span>
           </div>
         </div>
+      </div>
 
-        <!-- Occupancy & Extra Fees Section -->
-        <div style="padding: 2rem; flex: 1;">
-          <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; margin-top: 0; margin-bottom: 1.5rem;">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="var(--primary-color)" style="width: 1.25rem; height: 1.25rem;">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.079-13.137a3 3 0 1 1 5.996 0 3 3 0 0 1-5.996 0Zm6 0a3 3 0 1 1 5.996 0 3 3 0 0 1-5.996 0Z" />
-            </svg>
-            <span>Số Người Ở & Dịch Vụ</span>
-          </h3>
+      <!-- Tenant Info Card -->
+      <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
+        <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Thông tin khách thuê</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 text-xs">
+          <div class="flex items-center">
+            <span class="text-text-sub font-semibold w-36 shrink-0">Đại diện thuê:</span>
+            <span class="font-bold text-text-main flex-1">{{ contract.tenant.fullName }}</span>
+          </div>
+          <div class="flex items-center">
+            <span class="text-text-sub font-semibold w-36 shrink-0">Tài khoản:</span>
+            <span class="font-mono text-text-main flex-1">{{ contract.tenant.username }}</span>
+          </div>
+          <div class="flex items-center">
+            <span class="text-text-sub font-semibold w-36 shrink-0">Số điện thoại:</span>
+            <span class="font-bold text-text-main flex-1">{{ contract.tenant.phoneNumber || 'Chưa cập nhật' }}</span>
+          </div>
+          <div class="flex items-center">
+            <span class="text-text-sub font-semibold w-36 shrink-0">Email liên hệ:</span>
+            <span class="font-semibold text-text-main flex-1 break-all">{{ contract.tenant.email || 'Chưa cập nhật' }}</span>
+          </div>
+        </div>
+      </div>
 
-          <!-- Occupants Inline Form -->
-          <div style="background: rgba(0, 102, 204, 0.02); border: 1px solid var(--border-color); border-radius: 6px; padding: 1rem; margin-bottom: 1.5rem;">
-            <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.5rem; font-weight: 600;">Số người ở thực tế</div>
+      <!-- Occupants & Extra fees Card -->
+      <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
+        <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Số người ở & Dịch vụ</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+          <!-- Left Side: Occupants editor -->
+          <div class="bg-slate-50 dark:bg-slate-900/30 rounded-lg p-3 border border-border-main/50 text-xs">
+            <span class="text-text-sub block mb-2 font-medium">Số người đang ở thực tế:</span>
             
-            <div v-if="!isEditMode" style="display: flex; justify-content: space-between; align-items: center;">
-              <div style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">
-                {{ contract.numberOfTenants }} <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-secondary);">người</span>
-              </div>
-              <button 
-                v-if="contract.status === 'ACTIVE'" 
-                @click="isEditMode = true" 
-                class="btn btn-outline" 
-                style="padding: 0.35rem 0.75rem; font-size: 0.8rem; cursor: pointer;"
-              >
+            <div v-if="!isEditMode" class="flex justify-between items-center py-1">
+              <span class="font-bold text-text-main text-sm">{{ contract.numberOfTenants }} người</span>
+              <button v-if="contract.status === 'ACTIVE'" @click="isEditMode = true" class="px-2 py-1 text-[11px] font-semibold border border-border-main bg-card hover:bg-slate-100 rounded text-primary cursor-pointer transition">
                 Chỉnh sửa
               </button>
             </div>
 
-            <form v-else @submit.prevent="submitEdit" style="display: flex; flex-direction: column; gap: 0.75rem;">
-              <div style="display: flex; gap: 0.5rem; align-items: center;">
-                <input 
-                  type="number" 
-                  class="form-input" 
-                  v-model.number="numberOfTenants" 
-                  min="1" 
-                  :max="contract.room.maxPeople" 
-                  required 
-                  style="width: 100px; text-align: center;"
-                />
-                <span style="font-size: 0.9rem; color: var(--text-secondary);">/ Tối đa {{ contract.room.maxPeople }}</span>
+            <form v-else @submit.prevent="submitEdit" class="flex flex-col gap-2">
+              <div class="flex gap-2 items-center">
+                <input type="number" class="w-16 text-center border border-border-main rounded px-1.5 py-0.5 bg-card text-text-main font-bold outline-none" v-model.number="numberOfTenants" min="1" :max="contract.room.maxPeople" required />
+                <span class="text-text-sub font-semibold">/ Tối đa {{ contract.room.maxPeople }}</span>
               </div>
-              
-              <div style="display: flex; gap: 0.5rem;">
-                <button type="submit" :disabled="saving" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; flex: 1; cursor: pointer;">
-                  {{ saving ? 'Đang lưu...' : 'Lưu lại' }}
+              <div class="flex gap-1">
+                <button type="submit" :disabled="saving" class="px-2 py-1 bg-primary text-white hover:bg-primary-hover rounded text-[11px] font-bold flex-1 cursor-pointer transition">
+                  Lưu
                 </button>
-                <button type="button" @click="toggleEditMode" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; flex: 1; cursor: pointer;">
+                <button type="button" @click="toggleEditMode" class="px-2 py-1 border border-border-main bg-card hover:bg-slate-100 rounded text-[11px] font-bold flex-1 cursor-pointer transition">
                   Hủy
                 </button>
               </div>
             </form>
           </div>
 
-          <!-- Applied Extra Fees List -->
-          <div>
-            <div style="font-weight: 600; font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Dịch vụ phụ phí áp dụng</div>
-            
-            <div v-if="extraFees.length === 0" style="color: var(--text-secondary); font-size: 0.85rem; text-align: center; padding: 1rem; border: 1px dashed var(--border-color); border-radius: 6px;">
-              Hợp đồng này không sử dụng dịch vụ phụ phí nào.
+          <!-- Right Side: Services applied -->
+          <div class="text-xs">
+            <span class="text-text-sub font-semibold block mb-2.5">Dịch vụ đi kèm:</span>
+            <div v-if="extraFees.length === 0" class="text-center py-4 text-text-sub italic">
+              Không có dịch vụ đi kèm
             </div>
-            
-            <div v-else style="display: flex; flex-direction: column; gap: 0.75rem;">
-              <div 
-                v-for="cef in extraFees" 
-                :key="cef.id" 
-                style="display: flex; justify-content: space-between; align-items: center; padding: 0.625rem 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background: #fff;"
-              >
+            <div v-else class="flex flex-col gap-2">
+              <div v-for="cef in extraFees" :key="cef.id" class="border border-border-main/40 rounded p-2.5 bg-slate-50/50 dark:bg-slate-900/10 flex justify-between items-center">
                 <div>
-                  <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-primary);">{{ cef.extraFee.name }}</div>
-                  <div style="font-size: 0.75rem; color: var(--text-secondary);">
+                  <span class="font-semibold text-text-main block">{{ cef.extraFee.name }}</span>
+                  <span class="text-[10px] text-text-sub">
                     {{ formatMoney(cef.customPrice) }} đ/{{ cef.extraFee.unitType === 'FIXED_PER_PERSON' ? 'người' : 'phòng' }}
-                  </div>
-                </div>
-                
-                <div style="font-size: 0.9rem; font-weight: 700; color: var(--primary-color);">
-                  <span v-if="cef.extraFee.unitType === 'FIXED_PER_PERSON'">
-                    {{ formatMoney(cef.customPrice * contract.numberOfTenants) }} đ
-                  </span>
-                  <span v-else>
-                    {{ formatMoney(cef.customPrice) }} đ
                   </span>
                 </div>
+                <span class="font-bold text-primary shrink-0 ml-2">
+                  {{ formatMoney(cef.extraFee.unitType === 'FIXED_PER_PERSON' ? cef.customPrice * contract.numberOfTenants : cef.customPrice) }} đ
+                </span>
               </div>
             </div>
           </div>
         </div>
-
       </div>
 
     </div>
@@ -259,11 +189,11 @@
 <script src="./ContractDetail.js"></script>
 
 <style scoped>
-.contract-detail-page {
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100vh - 60px); /* Adjust based on top header height */
-  background-color: var(--card-bg);
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
 }
 </style>

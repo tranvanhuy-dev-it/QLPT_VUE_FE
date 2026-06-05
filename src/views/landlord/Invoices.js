@@ -172,6 +172,25 @@ export default {
       }
     };
 
+    const quickPayInvoice = async () => {
+      if (invoiceDetails.value) {
+        const inv = invoiceDetails.value;
+        const remaining = inv.totalAmount - inv.paidAmount;
+        if (confirm(`Xác nhận ghi nhận đã thu đủ số tiền còn lại: ${formatMoney(remaining)} đ?`)) {
+          try {
+            await api.post(`/api/invoices/${inv.id}/pay`, {
+              paidAmount: remaining,
+            });
+            alert('Ghi nhận thanh toán thành công!');
+            closeModal();
+            fetchInvoices();
+          } catch (err) {
+            alert(err.response?.data?.error || 'Ghi nhận thanh toán thất bại');
+          }
+        }
+      }
+    };
+
     const printReceipt = () => {
       const printContent = document.getElementById('receipt-print-area').innerHTML;
       const printWindow = window.open('', '_blank');
@@ -265,6 +284,7 @@ export default {
       submitPayment,
       viewDetails,
       payInvoiceFromDetails,
+      quickPayInvoice,
       printReceipt,
       changePage,
       closeModal,

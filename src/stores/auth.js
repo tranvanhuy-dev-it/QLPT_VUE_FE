@@ -5,6 +5,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('token') || null,
     user: JSON.parse(localStorage.getItem('user')) || null,
+    isSidebarOpen: false,
   }),
   getters: {
     isAuthenticated: (state) => !!state.token,
@@ -34,6 +35,12 @@ export const useAuthStore = defineStore('auth', {
       this.user = null;
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+    },
+    toggleSidebar() {
+      this.isSidebarOpen = !this.isSidebarOpen;
+    },
+    closeSidebar() {
+      this.isSidebarOpen = false;
     },
     async register(username, password, email, phone, fullName, role) {
       try {

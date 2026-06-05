@@ -7,10 +7,11 @@ export default {
   setup() {
     const authStore = useAuthStore();
     const router = useRouter();
-    const searchQuery = ref('');
 
     const username = computed(() => authStore.username);
     const role = computed(() => authStore.role);
+    const isSidebarOpen = computed(() => authStore.isSidebarOpen);
+    const closeSidebar = () => authStore.closeSidebar();
 
     const userInitial = computed(() => {
       const name = username.value || 'User';
@@ -69,30 +70,21 @@ export default {
       }
     ];
 
-    const filterMenu = (menuList) => {
-      if (!searchQuery.value) return menuList;
-      const q = searchQuery.value.toLowerCase().trim();
-      return menuList.filter(item => item.label.toLowerCase().includes(q));
-    };
-
-    const filteredLandlordGeneral = computed(() => filterMenu(landlordGeneral));
-    const filteredLandlordManage = computed(() => filterMenu(landlordManage));
-    const filteredTenantGeneral = computed(() => filterMenu(tenantGeneral));
-
     const handleLogout = () => {
       authStore.logout();
       router.push('/login');
     };
 
     return {
-      searchQuery,
       username,
       role,
+      isSidebarOpen,
+      closeSidebar,
       userInitial,
       roleLabel,
-      filteredLandlordGeneral,
-      filteredLandlordManage,
-      filteredTenantGeneral,
+      landlordGeneral,
+      landlordManage,
+      tenantGeneral,
       handleLogout,
     };
   },

@@ -1,12 +1,12 @@
 <template>
-  <div v-if="isGuest" class="auth-wrapper-guest">
+  <div v-if="isGuest" class="min-h-screen w-screen">
     <router-view />
   </div>
-  <div v-else class="app-container">
+  <div v-else class="flex min-h-screen bg-bg-main">
     <Sidebar />
-    <div class="app-wrapper">
+    <div class="flex flex-col flex-1 min-w-0">
       <Header />
-      <main class="main-content">
+      <main class="flex-1 p-0 overflow-y-auto">
         <router-view />
       </main>
     </div>
@@ -38,9 +38,3 @@ export default {
 };
 </script>
 
-<style>
-.auth-wrapper-guest {
-  min-height: 100vh;
-  width: 100vw;
-}
-</style>

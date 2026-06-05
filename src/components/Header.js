@@ -50,13 +50,18 @@ export default {
       router.push('/login');
     };
 
+    const toggleSidebar = () => {
+      authStore.toggleSidebar();
+    };
+
     return {
       username,
       userInitial,
       roleLabel,
       parentRoute,
       currentRoute,
-      handleLogout
+      handleLogout,
+      toggleSidebar,
     };
   }
 };
