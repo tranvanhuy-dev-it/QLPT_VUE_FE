@@ -1,0 +1,113 @@
+import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '../stores/auth.js';
+
+// Định nghĩa danh sách routes
+const routes = [
+  {
+    path: '/',
+    redirect: '/login',
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('../views/auth/Login.vue'),
+    meta: { guestOnly: true },
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: () => import('../views/auth/Register.vue'),
+    meta: { guestOnly: true },
+  },
+  {
+    path: '/admin',
+    name: 'AdminDashboard',
+    component: () => import('../views/admin/AdminDashboard.vue'),
+    meta: { requiresAuth: true, requiresRole: 'ADMIN' },
+  },
+  // LANDLORD ROUTES
+  {
+    path: '/landlord',
+    name: 'LandlordDashboard',
+    component: () => import('../views/landlord/LandlordDashboard.vue'),
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+  },
+  {
+    path: '/landlord/boarding-houses',
+    name: 'BoardingHouses',
+    component: () => import('../views/landlord/BoardingHouses.vue'),
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+  },
+  {
+    path: '/landlord/rooms',
+    name: 'Rooms',
+    component: () => import('../views/landlord/Rooms.vue'),
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+  },
+  {
+    path: '/landlord/contracts',
+    name: 'Contracts',
+    component: () => import('../views/landlord/Contracts.vue'),
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+  },
+  {
+    path: '/landlord/invoices',
+    name: 'Invoices',
+    component: () => import('../views/landlord/Invoices.vue'),
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+  },
+  {
+    path: '/landlord/tenants',
+    name: 'Tenants',
+    component: () => import('../views/landlord/Tenants.vue'),
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+  },
+  // TENANT ROUTES
+  {
+    path: '/tenant',
+    name: 'TenantDashboard',
+    component: () => import('../views/tenant/TenantDashboard.vue'),
+    meta: { requiresAuth: true, requiresRole: 'TENANT' },
+  },
+];
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
+
+// Navigation Guards: Bảo mật trang theo vai trò (Role-based Authorization)
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
+
+  // Route yêu cầu xác thực
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!authStore.isAuthenticated) {
+      next({ name: 'Login' });
+    } else if (to.meta.requiresRole && authStore.role !== to.meta.requiresRole) {
+      // Role không khớp -> chuyển về trang chính tương ứng của role
+      if (authStore.role === 'ADMIN') next({ name: 'AdminDashboard' });
+      else if (authStore.role === 'LANDLORD') next({ name: 'LandlordDashboard' });
+      else if (authStore.role === 'TENANT') next({ name: 'TenantDashboard' });
+      else next({ name: 'Login' });
+    } else {
+      next();
+    }
+  } 
+  // Khách chưa login mới vào được (guestOnly - e.g. Login, Register)
+  else if (to.matched.some((record) => record.meta.guestOnly)) {
+    if (authStore.isAuthenticated) {
+      // Nếu đã login, tự động chuyển về trang Dashboard tương ứng
+      if (authStore.role === 'ADMIN') next({ name: 'AdminDashboard' });
+      else if (authStore.role === 'LANDLORD') next({ name: 'LandlordDashboard' });
+      else if (authStore.role === 'TENANT') next({ name: 'TenantDashboard' });
+      else next();
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
+
+export default router;
