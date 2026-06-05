@@ -1,7 +1,7 @@
 <template>
   <div class="p-4 bg-bg-main min-h-screen">
     <PageHeader title="Quản Lý Phòng Trọ" subtitle="Thêm mới, sửa thông tin phòng trọ và theo dõi trạng thái phòng"
-      :icon="roomIcon" :showAdd="true" addText="Thêm Phòng Trọ Mới" :disableAdd="boardingHouses.length === 0"
+      :icon="roomIcon" :showAdd="true" addText="Thêm" :disableAdd="boardingHouses.length === 0"
       searchPlaceholder="Tìm theo số phòng..." v-model="searchQuery" @add-click="openAddModal">
       <template #filter-addons>
         <div class="flex items-center gap-2 ml-auto">

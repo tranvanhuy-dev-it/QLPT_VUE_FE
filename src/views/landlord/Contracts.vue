@@ -1,16 +1,10 @@
 <template>
   <div class="p-4 bg-bg-main min-h-screen">
-    <PageHeader 
-      title="Hợp Đồng Thuê" 
-      subtitle="Quản lý hợp đồng cho thuê phòng, cấu hình phụ phí dịch vụ riêng biệt cho từng người ở" 
-      :icon="contractIcon"
-      :showAdd="true"
-      addText="Tạo Hợp Đồng Mới"
+    <PageHeader title="Hợp Đồng Thuê"
+      subtitle="Quản lý hợp đồng cho thuê phòng, cấu hình phụ phí dịch vụ riêng biệt cho từng người ở"
+      :icon="contractIcon" :showAdd="true" addText="Thêm"
       :disableAdd="vacantRooms.length === 0 || tenantsList.length === 0"
-      searchPlaceholder="Tìm theo phòng, dãy trọ, khách thuê..."
-      v-model="searchQuery"
-      @add-click="openAddModal"
-    />
+      searchPlaceholder="Tìm theo phòng, dãy trọ, khách thuê..." v-model="searchQuery" @add-click="openAddModal" />
 
     <!-- Contracts List -->
     <div class="bg-card border border-border-main rounded-2xl p-4 shadow-xs">
@@ -34,12 +28,9 @@
               </tr>
             </thead>
             <tbody>
-              <tr 
-                v-for="contract in filteredContracts" 
-                :key="contract.id" 
+              <tr v-for="contract in filteredContracts" :key="contract.id"
                 class="border-b border-border-main/30 last:border-0 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 cursor-pointer transition-colors duration-150"
-                @click="viewContractDetail(contract.id)"
-              >
+                @click="viewContractDetail(contract.id)">
                 <td class="py-2.5 px-4 font-semibold text-primary">
                   Phòng {{ contract.room.roomNumber }}
                 </td>
@@ -56,8 +47,10 @@
                   </span>
                 </td>
                 <td class="py-2.5 px-4">
-                  <span :class="['inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold', contract.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/35 dark:text-emerald-400' : 'bg-rose-50 text-rose-600 dark:bg-rose-950/35 dark:text-rose-400']">
-                    {{ contract.status === 'ACTIVE' ? 'Hoạt Động' : (contract.status === 'TERMINATED' ? 'Đã Thanh Lý' : 'Hết Hạn') }}
+                  <span
+                    :class="['inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold', contract.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/35 dark:text-emerald-400' : 'bg-rose-50 text-rose-600 dark:bg-rose-950/35 dark:text-rose-400']">
+                    {{ contract.status === 'ACTIVE' ? 'Hoạt Động' : (contract.status === 'TERMINATED' ? 'Đã Thanh Lý' :
+                    'Hết Hạn') }}
                   </span>
                 </td>
               </tr>
@@ -71,15 +64,20 @@
         </div>
 
         <!-- Pagination Controls -->
-        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 pt-4 border-t border-border-main/50">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6 pt-4 border-t border-border-main/50">
           <span class="text-xs text-text-sub">
             Trang {{ page + 1 }} / {{ totalPages }} (Tổng số: {{ totalElements }} hợp đồng)
           </span>
           <div class="flex gap-2">
-            <button class="inline-flex items-center px-3 py-1.5 text-xs font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-50 disabled:bg-slate-100 disabled:text-text-sub/50 disabled:cursor-not-allowed cursor-pointer transition-all duration-150" :disabled="page === 0" @click="changePage(page - 1)">
+            <button
+              class="inline-flex items-center px-3 py-1.5 text-xs font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-50 disabled:bg-slate-100 disabled:text-text-sub/50 disabled:cursor-not-allowed cursor-pointer transition-all duration-150"
+              :disabled="page === 0" @click="changePage(page - 1)">
               Trước
             </button>
-            <button class="inline-flex items-center px-3 py-1.5 text-xs font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-50 disabled:bg-slate-100 disabled:text-text-sub/50 disabled:cursor-not-allowed cursor-pointer transition-all duration-150" :disabled="page >= totalPages - 1" @click="changePage(page + 1)">
+            <button
+              class="inline-flex items-center px-3 py-1.5 text-xs font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-50 disabled:bg-slate-100 disabled:text-text-sub/50 disabled:cursor-not-allowed cursor-pointer transition-all duration-150"
+              :disabled="page >= totalPages - 1" @click="changePage(page + 1)">
               Sau
             </button>
           </div>
@@ -88,16 +86,20 @@
     </div>
 
     <!-- Add Contract Modal -->
-    <div v-if="showAddModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div class="bg-card border border-border-main rounded-2xl shadow-lg w-full max-w-[650px] p-6 md:p-8 m-auto relative">
-        <h3 class="text-xl font-bold text-text-main mb-6">Tạo Hợp Đồng Thuê Mới</h3>
-        
+    <div v-if="showAddModal"
+      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div
+        class="bg-card border border-border-main rounded-2xl shadow-lg w-full max-w-[650px] p-6 md:p-8 m-auto relative">
+        <h3 class="text-xl font-bold text-text-main mb-6">Thêm</h3>
+
         <form @submit.prevent="saveContract">
           <!-- Chọn phòng và người ở -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-text-sub uppercase">Chọn phòng trống *</label>
-              <select class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary" v-model="form.roomId" @change="onRoomChange" required>
+              <select
+                class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary"
+                v-model="form.roomId" @change="onRoomChange" required>
                 <option v-for="room in vacantRooms" :key="room.id" :value="room.id">
                   Phòng {{ room.roomNumber }} - {{ room.boardingHouse.name }}
                 </option>
@@ -106,7 +108,9 @@
 
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-text-sub uppercase">Người thuê trọ (Tenant) *</label>
-              <select class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary" v-model="form.tenantId" required>
+              <select
+                class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary"
+                v-model="form.tenantId" required>
                 <option v-for="tenant in tenantsList" :key="tenant.id" :value="tenant.id">
                   {{ tenant.fullName }} ({{ tenant.username }})
                 </option>
@@ -118,24 +122,33 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4" v-if="selectedRoom">
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-text-sub uppercase">Đơn giá điện (đ/kWh)</label>
-              <input type="number" class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-100 dark:bg-slate-800 text-text-sub text-sm outline-none cursor-not-allowed" :value="selectedRoom.boardingHouse.defaultElectricityRate" readonly />
+              <input type="number"
+                class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-100 dark:bg-slate-800 text-text-sub text-sm outline-none cursor-not-allowed"
+                :value="selectedRoom.boardingHouse.defaultElectricityRate" readonly />
             </div>
 
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-text-sub uppercase">Đơn giá nước (đ)</label>
-              <input type="text" class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-100 dark:bg-slate-800 text-text-sub text-sm outline-none cursor-not-allowed" :value="formatMoney(selectedRoom.boardingHouse.defaultWaterRate) + (selectedRoom.boardingHouse.waterBillingType === 'BY_INDEX' ? ' đ/m³' : (selectedRoom.boardingHouse.waterBillingType === 'FIXED_PER_PERSON' ? ' đ/người' : ' đ/phòng'))" readonly />
+              <input type="text"
+                class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-100 dark:bg-slate-800 text-text-sub text-sm outline-none cursor-not-allowed"
+                :value="formatMoney(selectedRoom.boardingHouse.defaultWaterRate) + (selectedRoom.boardingHouse.waterBillingType === 'BY_INDEX' ? ' đ/m³' : (selectedRoom.boardingHouse.waterBillingType === 'FIXED_PER_PERSON' ? ' đ/người' : ' đ/phòng'))"
+                readonly />
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4" v-if="selectedRoom">
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-text-sub uppercase">Chỉ số điện đầu kỳ (kWh)</label>
-              <input type="number" class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-100 dark:bg-slate-800 text-text-sub text-sm outline-none cursor-not-allowed" :value="selectedRoom.currentElectricityIndex" readonly />
+              <input type="number"
+                class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-100 dark:bg-slate-800 text-text-sub text-sm outline-none cursor-not-allowed"
+                :value="selectedRoom.currentElectricityIndex" readonly />
             </div>
 
             <div class="flex flex-col gap-1.5" v-if="selectedRoom.boardingHouse.waterBillingType === 'BY_INDEX'">
               <label class="text-xs font-semibold text-text-sub uppercase">Chỉ số nước đầu kỳ (m³)</label>
-              <input type="number" class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-100 dark:bg-slate-800 text-text-sub text-sm outline-none cursor-not-allowed" :value="selectedRoom.currentWaterIndex" readonly />
+              <input type="number"
+                class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-100 dark:bg-slate-800 text-text-sub text-sm outline-none cursor-not-allowed"
+                :value="selectedRoom.currentWaterIndex" readonly />
             </div>
           </div>
 
@@ -143,17 +156,23 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-text-sub uppercase">Giá thuê / tháng *</label>
-              <input type="number" class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-100 dark:bg-slate-800 text-text-sub text-sm outline-none cursor-not-allowed" v-model.number="form.contractedRoomPrice" readonly required />
+              <input type="number"
+                class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-100 dark:bg-slate-800 text-text-sub text-sm outline-none cursor-not-allowed"
+                v-model.number="form.contractedRoomPrice" readonly required />
             </div>
 
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-text-sub uppercase">Tiền đặt cọc *</label>
-              <input type="number" class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary" v-model.number="form.deposit" required />
+              <input type="number"
+                class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary"
+                v-model.number="form.deposit" required />
             </div>
 
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-text-sub uppercase">Số người ở *</label>
-              <input type="number" class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary" v-model.number="form.numberOfTenants" min="1" required />
+              <input type="number"
+                class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary"
+                v-model.number="form.numberOfTenants" min="1" required />
             </div>
           </div>
 
@@ -161,19 +180,25 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-text-sub uppercase">Ngày bắt đầu thuê *</label>
-              <input type="date" class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary" v-model="form.startDate" required />
+              <input type="date"
+                class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary"
+                v-model="form.startDate" required />
             </div>
 
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-text-sub uppercase">Ngày hết hạn (Nếu có)</label>
-              <input type="date" class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary" v-model="form.endDate" />
+              <input type="date"
+                class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary"
+                v-model="form.endDate" />
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-semibold text-text-sub uppercase">Chế độ tính tiền *</label>
-              <select class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary" v-model="form.billingMode" required>
+              <select
+                class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary"
+                v-model="form.billingMode" required>
                 <option value="BY_RENTAL_DAYS">Tính theo ngày dọn vào (anniversary)</option>
                 <option value="FIXED_DATE_OF_MONTH">Đóng tiền vào ngày cố định hàng tháng</option>
               </select>
@@ -181,7 +206,9 @@
 
             <div class="flex flex-col gap-1.5" v-if="form.billingMode === 'FIXED_DATE_OF_MONTH'">
               <label class="text-xs font-semibold text-text-sub uppercase">Ngày đóng tiền cố định *</label>
-              <input type="number" class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary" v-model.number="form.fixedBillingDay" min="1" max="31" placeholder="Ví dụ: 5" required />
+              <input type="number"
+                class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary"
+                v-model.number="form.fixedBillingDay" min="1" max="31" placeholder="Ví dụ: 5" required />
             </div>
           </div>
 
@@ -192,12 +219,13 @@
               Dãy trọ này chưa được cấu hình dịch vụ phụ phí nào.
             </div>
             <div v-else class="flex flex-col gap-2.5">
-              <div v-for="(ef, index) in availableExtraFees" :key="ef.id" class="flex items-center justify-between bg-slate-50 dark:bg-slate-900/50 border border-border-main rounded-xl px-4 py-3">
+              <div v-for="(ef, index) in availableExtraFees" :key="ef.id"
+                class="flex items-center justify-between bg-slate-50 dark:bg-slate-900/50 border border-border-main rounded-xl px-4 py-3">
                 <label class="flex items-center gap-3 text-sm font-semibold text-text-main cursor-pointer select-none">
                   <input type="checkbox" v-model="ef.selected" class="w-4.5 h-4.5 text-primary accent-primary" />
                   {{ ef.name }}
                 </label>
-                
+
                 <div class="text-sm font-bold text-primary">
                   {{ formatMoney(ef.defaultPrice) }} đ/{{ ef.unitType === 'FIXED_PER_PERSON' ? 'người' : 'phòng' }}
                 </div>
@@ -206,8 +234,10 @@
           </div>
 
           <div class="flex gap-3 justify-end mt-4">
-            <button type="button" @click="closeModal" class="px-4 py-2 text-sm font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-100 cursor-pointer transition-all">Hủy</button>
-            <button type="submit" class="px-4 py-2 text-sm font-bold rounded-lg bg-primary text-white hover:bg-primary-hover cursor-pointer transition-all">Tạo</button>
+            <button type="button" @click="closeModal"
+              class="px-4 py-2 text-sm font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-100 cursor-pointer transition-all">Hủy</button>
+            <button type="submit"
+              class="px-4 py-2 text-sm font-bold rounded-lg bg-primary text-white hover:bg-primary-hover cursor-pointer transition-all">Tạo</button>
           </div>
         </form>
       </div>

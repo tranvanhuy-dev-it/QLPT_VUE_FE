@@ -1,7 +1,7 @@
 <template>
   <div class="p-4 bg-bg-main min-h-screen">
     <PageHeader title="Quản Lý Dãy Trọ" subtitle="Thêm mới và thiết lập đơn giá dịch vụ của từng khu nhà trọ"
-      :icon="houseIcon" :showAdd="true" addText="Thêm Dãy Trọ Mới" :showSearch="false"
+      :icon="houseIcon" :showAdd="true" addText="Thêm" :showSearch="false"
       @add-click="showAddModal = true" />
 
     <!-- Grid of Boarding Houses -->
