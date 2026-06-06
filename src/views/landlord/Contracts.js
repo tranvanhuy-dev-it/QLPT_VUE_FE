@@ -1,6 +1,12 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import PageHeader from '../../components/PageHeader.vue';
+import DataTable from '../../components/DataTable.vue';
+import Modal from '../../components/Modal.vue';
+import Checkbox from '../../components/Checkbox.vue';
+import FormInput from '../../components/FormInput.vue';
+import FormSelect from '../../components/FormSelect.vue';
+import FormButton from '../../components/FormButton.vue';
 import { useContractStore } from '../../stores/contract.js';
 import { useRoomStore } from '../../stores/room.js';
 import { useTenantStore } from '../../stores/tenant.js';
@@ -10,10 +16,44 @@ export default {
   name: 'Contracts',
   components: {
     PageHeader,
+    DataTable,
+    Modal,
+    Checkbox,
+    FormInput,
+    FormSelect,
+    FormButton,
   },
   setup() {
     const router = useRouter();
     const contractIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`;
+    
+    const tableHeaders = [
+      { label: 'Phòng', key: 'room.roomNumber', prefix: 'Phòng ', cellClass: 'font-semibold text-primary' },
+      { label: 'Dãy trọ', key: 'room.boardingHouse.name', cellClass: 'text-text-sub' },
+      {
+        label: 'Người thuê',
+        key: 'tenant.fullName',
+        formatter: (item) => `${item.tenant.fullName} (${item.tenant.username})`,
+        cellClass: 'font-medium text-text-main',
+      },
+      { label: 'Ngày bắt đầu', key: 'startDate', type: 'date', cellClass: 'text-text-sub' },
+      { label: 'Tiền cọc', key: 'deposit', type: 'money', cellClass: 'font-semibold text-text-main' },
+      {
+        label: 'Trạng thái',
+        key: 'status',
+        type: 'badge',
+        badgeColors: {
+          ACTIVE: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/35 dark:text-emerald-400',
+          TERMINATED: 'bg-rose-50 text-rose-600 dark:bg-rose-950/35 dark:text-rose-400',
+          EXPIRED: 'bg-rose-50 text-rose-600 dark:bg-rose-950/35 dark:text-rose-400',
+        },
+        badgeLabels: {
+          ACTIVE: 'Hoạt Động',
+          TERMINATED: 'Đã Thanh Lý',
+          EXPIRED: 'Hết Hạn',
+        },
+      },
+    ];
     
     const contractStore = useContractStore();
     const roomStore = useRoomStore();
@@ -218,6 +258,7 @@ export default {
       formatMoney,
       formatDate,
       viewContractDetail,
+      tableHeaders,
     };
   },
 };

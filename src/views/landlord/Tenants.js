@@ -1,14 +1,42 @@
 import { ref, onMounted, computed } from 'vue';
 import PageHeader from '../../components/PageHeader.vue';
+import DataTable from '../../components/DataTable.vue';
+import Modal from '../../components/Modal.vue';
+import FormInput from '../../components/FormInput.vue';
+import FormButton from '../../components/FormButton.vue';
 import { useTenantStore } from '../../stores/tenant.js';
 
 export default {
   name: 'Tenants',
   components: {
     PageHeader,
+    DataTable,
+    Modal,
+    FormInput,
+    FormButton,
   },
   setup() {
     const tenantIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
+    
+    const tableHeaders = [
+      { label: 'Tên tài khoản (username)', key: 'username', cellClass: 'font-semibold text-primary' },
+      { label: 'Họ và tên', key: 'fullName', cellClass: 'font-medium text-text-main' },
+      { label: 'Số điện thoại', key: 'phone', formatter: (item) => item.phone || '-', cellClass: 'text-text-sub' },
+      { label: 'Email', key: 'email', formatter: (item) => item.email || '-', cellClass: 'text-text-sub' },
+      {
+        label: 'Trạng thái',
+        key: 'status',
+        type: 'badge',
+        badgeColors: {
+          ACTIVE: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/35 dark:text-emerald-400',
+          INACTIVE: 'bg-rose-50 text-rose-600 dark:bg-rose-950/35 dark:text-rose-400',
+        },
+        badgeLabels: {
+          ACTIVE: 'Hoạt động',
+          INACTIVE: 'Tạm khóa',
+        },
+      },
+    ];
     const tenantStore = useTenantStore();
 
     const tenants = computed(() => tenantStore.tenants);
@@ -99,6 +127,7 @@ export default {
       createTenantAccount,
       changePage,
       closeModal,
+      tableHeaders,
     };
   },
 };

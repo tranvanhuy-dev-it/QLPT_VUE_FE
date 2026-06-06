@@ -1,5 +1,10 @@
 import { ref, onMounted, computed } from 'vue';
 import PageHeader from '../../components/PageHeader.vue';
+import DataTable from '../../components/DataTable.vue';
+import Modal from '../../components/Modal.vue';
+import FormInput from '../../components/FormInput.vue';
+import FormSelect from '../../components/FormSelect.vue';
+import FormButton from '../../components/FormButton.vue';
 import { useRoomStore } from '../../stores/room.js';
 import { useBoardingHouseStore } from '../../stores/boardingHouse.js';
 
@@ -7,9 +12,36 @@ export default {
   name: 'Rooms',
   components: {
     PageHeader,
+    DataTable,
+    Modal,
+    FormInput,
+    FormSelect,
+    FormButton,
   },
   setup() {
     const roomIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>`;
+    
+    const tableHeaders = [
+      { label: 'Số phòng', key: 'roomNumber', prefix: 'Phòng ', cellClass: 'font-semibold text-primary' },
+      { label: 'Dãy trọ', key: 'boardingHouse.name', cellClass: 'text-text-sub' },
+      { label: 'Giá thuê cơ bản', key: 'basePrice', type: 'money', cellClass: 'font-semibold text-text-main' },
+      { label: 'Chỉ số điện', key: 'currentElectricityIndex', suffix: ' kWh', cellClass: 'text-text-sub' },
+      { label: 'Chỉ số nước', key: 'currentWaterIndex', suffix: ' m³', cellClass: 'text-text-sub' },
+      { label: 'Sức chứa', key: 'maxPeople', prefix: 'Tối đa ', suffix: ' người', cellClass: 'text-text-sub' },
+      {
+        label: 'Trạng thái',
+        key: 'status',
+        type: 'badge',
+        badgeColors: {
+          VACANT: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/35 dark:text-emerald-400',
+          OCCUPIED: 'bg-rose-50 text-rose-600 dark:bg-rose-950/35 dark:text-rose-400',
+        },
+        badgeLabels: {
+          VACANT: 'Còn trống',
+          OCCUPIED: 'Đang thuê',
+        },
+      },
+    ];
 
     const roomStore = useRoomStore();
     const boardingHouseStore = useBoardingHouseStore();
@@ -31,6 +63,7 @@ export default {
     const showAddModal = ref(false);
     const showEditModal = ref(false);
     const editId = ref(null);
+    const selectedRoom = ref(null);
 
     const form = ref({
       boardingHouseId: '',
@@ -98,6 +131,7 @@ export default {
 
     const editRoom = (room) => {
       editId.value = room.id;
+      selectedRoom.value = room;
       form.value = {
         boardingHouseId: room.boardingHouse.id,
         roomNumber: room.roomNumber,
@@ -113,6 +147,7 @@ export default {
       if (confirm('Bạn có chắc chắn muốn xóa phòng trọ này?')) {
         try {
           await roomStore.deleteRoom(id);
+          closeModal();
           fetchRooms();
         } catch (err) {
           alert(err.response?.data?.error || 'Xóa phòng trọ thất bại');
@@ -136,6 +171,7 @@ export default {
       showAddModal.value = false;
       showEditModal.value = false;
       editId.value = null;
+      selectedRoom.value = null;
       form.value = {
         boardingHouseId: boardingHouses.value[0]?.id || '',
         roomNumber: '',
@@ -164,6 +200,8 @@ export default {
       totalElements,
       showAddModal,
       showEditModal,
+      editId,
+      selectedRoom,
       form,
       openAddModal,
       saveRoom,
@@ -173,6 +211,7 @@ export default {
       onHouseFilterChange,
       closeModal,
       formatMoney,
+      tableHeaders,
     };
   },
 };

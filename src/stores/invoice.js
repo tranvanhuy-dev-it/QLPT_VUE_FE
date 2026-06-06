@@ -25,6 +25,23 @@ export const useInvoiceStore = defineStore('invoice', {
         this.loading = false;
       }
     },
+    async fetchInvoiceDetail(id) {
+      this.loading = true;
+      try {
+        const response = await invoiceService.getById(id);
+        const itemsResponse = await invoiceService.getItems(id);
+        this.currentInvoiceItems = itemsResponse.data || [];
+        return {
+          invoice: response.data,
+          items: this.currentInvoiceItems
+        };
+      } catch (error) {
+        console.error('Error fetching invoice detail:', error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
     async fetchInvoiceItems(id) {
       try {
         const response = await invoiceService.getItems(id);
