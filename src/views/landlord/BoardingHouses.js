@@ -1,7 +1,7 @@
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import PageHeader from '../../components/PageHeader.vue';
 import EmptyState from '../../components/EmptyState.vue';
-import api from '../../services/api.js';
+import { useBoardingHouseStore } from '../../stores/boardingHouse.js';
 
 export default {
   name: 'BoardingHouses',
@@ -12,8 +12,10 @@ export default {
   setup() {
     const houseIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>`;
 
-    const boardingHouses = ref([]);
-    const loading = ref(true);
+    const store = useBoardingHouseStore();
+    const boardingHouses = computed(() => store.boardingHouses);
+    const loading = computed(() => store.loading);
+
     const showAddModal = ref(false);
     const showEditModal = ref(false);
     const editId = ref(null);
@@ -56,28 +58,21 @@ export default {
     };
 
     const fetchBoardingHouses = async () => {
-      loading.value = true;
       try {
-        const response = await api.get('/api/rooms/boarding-houses', {
-          params: { page: 0, size: 100 },
-        });
-        boardingHouses.value = response.data.content || [];
+        await store.fetchBoardingHouses();
       } catch (err) {
         alert(err.response?.data?.error || 'Không thể tải danh sách dãy trọ');
-      } finally {
-        loading.value = false;
       }
     };
 
     const saveHouse = async () => {
       try {
         if (showEditModal.value) {
-          await api.put(`/api/rooms/boarding-houses/${editId.value}`, form.value);
+          await store.updateBoardingHouse(editId.value, form.value);
         } else {
-          await api.post('/api/rooms/boarding-houses', form.value);
+          await store.createBoardingHouse(form.value);
         }
         closeModal();
-        fetchBoardingHouses();
       } catch (err) {
         alert(err.response?.data?.error || 'Không thể lưu thông tin dãy trọ');
       }
@@ -105,8 +100,7 @@ export default {
     const deleteHouse = async (id) => {
       if (confirm('Bạn có chắc chắn muốn xóa dãy trọ này? Hành động này sẽ xóa toàn bộ các phòng trọ và dữ liệu liên quan!')) {
         try {
-          await api.delete(`/api/rooms/boarding-houses/${id}`);
-          fetchBoardingHouses();
+          await store.deleteBoardingHouse(id);
         } catch (err) {
           alert(err.response?.data?.error || 'Xóa dãy trọ thất bại');
         }

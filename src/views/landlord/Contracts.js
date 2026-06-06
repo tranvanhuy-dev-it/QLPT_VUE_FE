@@ -1,7 +1,10 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import PageHeader from '../../components/PageHeader.vue';
-import api from '../../services/api.js';
+import { useContractStore } from '../../stores/contract.js';
+import { useRoomStore } from '../../stores/room.js';
+import { useTenantStore } from '../../stores/tenant.js';
+import contractService from '../../services/contractService.js';
 
 export default {
   name: 'Contracts',
@@ -11,11 +14,19 @@ export default {
   setup() {
     const router = useRouter();
     const contractIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`;
-    const contracts = ref([]);
+    
+    const contractStore = useContractStore();
+    const roomStore = useRoomStore();
+    const tenantStore = useTenantStore();
+
+    const contracts = computed(() => contractStore.contracts);
+    const loading = computed(() => contractStore.loading || roomStore.loading || tenantStore.loading);
+    const totalPages = computed(() => contractStore.totalPages);
+    const totalElements = computed(() => contractStore.totalElements);
+
     const vacantRooms = ref([]);
     const tenantsList = ref([]);
     const availableExtraFees = ref([]);
-    const loading = ref(true);
 
     // Search
     const searchQuery = ref('');
@@ -23,8 +34,6 @@ export default {
     // Pagination
     const page = ref(0);
     const size = ref(10);
-    const totalPages = ref(1);
-    const totalElements = ref(0);
 
     const showAddModal = ref(false);
 
@@ -52,18 +61,10 @@ export default {
     };
 
     const fetchContracts = async () => {
-      loading.value = true;
       try {
-        const response = await api.get('/api/contracts', {
-          params: { page: page.value, size: size.value },
-        });
-        contracts.value = response.data.content || [];
-        totalPages.value = response.data.totalPages || 1;
-        totalElements.value = response.data.totalElements || 0;
+        await contractStore.fetchContracts({ page: page.value, size: size.value });
       } catch (err) {
         alert(err.response?.data?.error || 'Không thể tải danh sách hợp đồng');
-      } finally {
-        loading.value = false;
       }
     };
 
@@ -84,9 +85,8 @@ export default {
 
     const fetchVacantRooms = async () => {
       try {
-        const response = await api.get('/api/rooms', { params: { size: 200 } });
-        const rooms = response.data.content || [];
-        vacantRooms.value = rooms.filter(r => r.status === 'VACANT');
+        const list = await roomStore.fetchRooms({ size: 200 });
+        vacantRooms.value = list.filter(r => r.status === 'VACANT');
       } catch (err) {
         console.error('Không tải được danh sách phòng trống:', err);
       }
@@ -94,8 +94,8 @@ export default {
 
     const fetchTenants = async () => {
       try {
-        const response = await api.get('/api/users/tenants', { params: { size: 200 } });
-        tenantsList.value = response.data.content || [];
+        const list = await tenantStore.fetchTenants({ size: 200 });
+        tenantsList.value = list || [];
       } catch (err) {
         console.error('Không tải được danh sách người thuê:', err);
       }
@@ -108,7 +108,7 @@ export default {
         form.value.deposit = selectedRoom.basePrice;
         
         try {
-          const response = await api.get(`/api/rooms/boarding-houses/${selectedRoom.boardingHouse.id}/extra-fees`);
+          const response = await contractService.getBoardingHouseExtraFees(selectedRoom.boardingHouse.id);
           availableExtraFees.value = (response.data || []).map(ef => ({
             ...ef,
             selected: true,
@@ -150,7 +150,7 @@ export default {
           delete payload.endDate;
         }
 
-        await api.post('/api/contracts', payload);
+        await contractStore.createContract(payload);
         alert('Tạo hợp đồng thuê phòng thành công!');
         closeModal();
         fetchContracts();

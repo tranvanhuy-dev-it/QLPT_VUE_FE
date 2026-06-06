@@ -1,6 +1,7 @@
 import { ref, onMounted, computed } from 'vue';
 import PageHeader from '../../components/PageHeader.vue';
-import api from '../../services/api.js';
+import { useRoomStore } from '../../stores/room.js';
+import { useBoardingHouseStore } from '../../stores/boardingHouse.js';
 
 export default {
   name: 'Rooms',
@@ -9,20 +10,23 @@ export default {
   },
   setup() {
     const roomIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>`;
-    
-    const rooms = ref([]);
-    const boardingHouses = ref([]);
-    const loading = ref(true);
-    
+
+    const roomStore = useRoomStore();
+    const boardingHouseStore = useBoardingHouseStore();
+
+    const rooms = computed(() => roomStore.rooms);
+    const boardingHouses = computed(() => boardingHouseStore.boardingHouses);
+    const loading = computed(() => roomStore.loading || boardingHouseStore.loading);
+
     // Dropdown filters
     const selectedHouseId = ref(null);
     const searchQuery = ref('');
-    
+
     // Pagination states
     const page = ref(0);
     const size = ref(10);
-    const totalPages = ref(0);
-    const totalElements = ref(0);
+    const totalPages = computed(() => roomStore.totalPages);
+    const totalElements = computed(() => roomStore.totalElements);
 
     const showAddModal = ref(false);
     const showEditModal = ref(false);
@@ -44,10 +48,7 @@ export default {
 
     const fetchBoardingHouses = async () => {
       try {
-        const response = await api.get('/api/rooms/boarding-houses', {
-          params: { page: 0, size: 100 },
-        });
-        boardingHouses.value = response.data.content || [];
+        await boardingHouseStore.fetchBoardingHouses();
         if (boardingHouses.value.length > 0) {
           form.value.boardingHouseId = boardingHouses.value[0].id;
         }
@@ -57,25 +58,14 @@ export default {
     };
 
     const fetchRooms = async () => {
-      loading.value = true;
       try {
-        let response;
         if (selectedHouseId.value) {
-          response = await api.get(`/api/rooms/boarding-houses/${selectedHouseId.value}/rooms`, {
-            params: { page: page.value, size: size.value },
-          });
+          await roomStore.fetchRoomsByBoardingHouse(selectedHouseId.value, { page: page.value, size: size.value });
         } else {
-          response = await api.get('/api/rooms', {
-            params: { page: page.value, size: size.value },
-          });
+          await roomStore.fetchRooms({ page: page.value, size: size.value });
         }
-        rooms.value = response.data.content || [];
-        totalPages.value = response.data.totalPages || 1;
-        totalElements.value = response.data.totalElements || 0;
       } catch (err) {
         alert(err.response?.data?.error || 'Không thể tải danh sách phòng trọ');
-      } finally {
-        loading.value = false;
       }
     };
 
@@ -95,9 +85,9 @@ export default {
     const saveRoom = async () => {
       try {
         if (showEditModal.value) {
-          await api.put(`/api/rooms/${editId.value}`, form.value);
+          await roomStore.updateRoom(editId.value, form.value);
         } else {
-          await api.post(`/api/rooms/boarding-houses/${form.value.boardingHouseId}/rooms`, form.value);
+          await roomStore.createRoom(form.value.boardingHouseId, form.value);
         }
         closeModal();
         fetchRooms();
@@ -122,7 +112,7 @@ export default {
     const deleteRoom = async (id) => {
       if (confirm('Bạn có chắc chắn muốn xóa phòng trọ này?')) {
         try {
-          await api.delete(`/api/rooms/${id}`);
+          await roomStore.deleteRoom(id);
           fetchRooms();
         } catch (err) {
           alert(err.response?.data?.error || 'Xóa phòng trọ thất bại');

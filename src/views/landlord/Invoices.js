@@ -1,6 +1,7 @@
 import { ref, onMounted, computed } from 'vue';
 import PageHeader from '../../components/PageHeader.vue';
-import api from '../../services/api.js';
+import { useInvoiceStore } from '../../stores/invoice.js';
+import { useContractStore } from '../../stores/contract.js';
 import html2canvas from 'html2canvas-pro';
 
 export default {
@@ -11,10 +12,17 @@ export default {
   setup() {
     const invoiceIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>`;
     
-    const invoices = ref([]);
+    const invoiceStore = useInvoiceStore();
+    const contractStore = useContractStore();
+
+    const invoices = computed(() => invoiceStore.invoices);
+    const loading = computed(() => invoiceStore.loading || contractStore.loading);
+    const totalPages = computed(() => invoiceStore.totalPages);
+    const totalElements = computed(() => invoiceStore.totalElements);
+    const invoiceItems = computed(() => invoiceStore.currentInvoiceItems);
+    const activeContracts = computed(() => contractStore.activeContracts);
+
     const allInvoices = ref([]);
-    const activeContracts = ref([]);
-    const loading = ref(true);
 
     // Search
     const searchQuery = ref('');
@@ -22,8 +30,6 @@ export default {
     // Pagination
     const page = ref(0);
     const size = ref(10);
-    const totalPages = ref(1);
-    const totalElements = ref(0);
 
     // Modals
     const showCreateModal = ref(false);
@@ -32,7 +38,6 @@ export default {
     const isLoadingDetails = ref(false);
 
     const invoiceDetails = ref(null);
-    const invoiceItems = ref([]);
     const selectedContract = ref(null);
 
     const form = ref({
@@ -65,18 +70,10 @@ export default {
     };
 
     const fetchInvoices = async () => {
-      loading.value = true;
       try {
-        const response = await api.get('/api/invoices', {
-          params: { page: page.value, size: size.value },
-        });
-        invoices.value = response.data.content || [];
-        totalPages.value = response.data.totalPages || 1;
-        totalElements.value = response.data.totalElements || 0;
+        await invoiceStore.fetchInvoices({ page: page.value, size: size.value });
       } catch (err) {
         alert(err.response?.data?.error || 'Không thể tải danh sách hóa đơn');
-      } finally {
-        loading.value = false;
       }
     };
 
@@ -92,9 +89,7 @@ export default {
 
     const fetchActiveContracts = async () => {
       try {
-        const response = await api.get('/api/contracts', { params: { size: 100 } });
-        const list = response.data.content || [];
-        activeContracts.value = list.filter(c => c.status === 'ACTIVE');
+        await contractStore.fetchActiveContracts();
       } catch (err) {
         console.error('Không tải được danh sách hợp đồng:', err);
       }
@@ -160,8 +155,9 @@ export default {
     const openCreateModal = async () => {
       await fetchActiveContracts();
       try {
-        const response = await api.get('/api/invoices', { params: { page: 0, size: 1000 } });
-        allInvoices.value = response.data.content || [];
+        // We can just query all invoices for period start calculation
+        const all = await invoiceStore.fetchInvoices({ page: 0, size: 1000 });
+        allInvoices.value = all || [];
       } catch (err) {
         console.error('Không tải được danh sách hóa đơn:', err);
       }
@@ -174,7 +170,7 @@ export default {
 
     const saveInvoice = async () => {
       try {
-        await api.post('/api/invoices', form.value);
+        await invoiceStore.createInvoice(form.value);
         alert('Lập hóa đơn và tính tiền thành công!');
         closeModal();
         fetchInvoices();
@@ -195,9 +191,7 @@ export default {
 
     const submitPayment = async () => {
       try {
-        await api.post(`/api/invoices/${payForm.value.invoiceId}/pay`, {
-          paidAmount: payForm.value.paidAmount,
-        });
+        await invoiceStore.payInvoice(payForm.value.invoiceId, payForm.value.paidAmount);
         alert('Ghi nhận thanh toán thành công!');
         closeModal();
         fetchInvoices();
@@ -208,12 +202,10 @@ export default {
 
     const viewDetails = async (invoice) => {
       invoiceDetails.value = invoice;
-      invoiceItems.value = [];
       isLoadingDetails.value = true;
       showDetailModal.value = true;
       try {
-        const response = await api.get(`/api/invoices/${invoice.id}/items`);
-        invoiceItems.value = response.data || [];
+        await invoiceStore.fetchInvoiceItems(invoice.id);
       } catch (err) {
         alert('Không thể tải chi tiết phụ phí hóa đơn');
       } finally {
@@ -235,9 +227,7 @@ export default {
         const remaining = inv.totalAmount - inv.paidAmount;
         if (confirm(`Xác nhận ghi nhận đã thu đủ số tiền còn lại: ${formatMoney(remaining)} đ?`)) {
           try {
-            await api.post(`/api/invoices/${inv.id}/pay`, {
-              paidAmount: remaining,
-            });
+            await invoiceStore.payInvoice(inv.id, remaining);
             alert('Ghi nhận thanh toán thành công!');
             closeModal();
             fetchInvoices();
