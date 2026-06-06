@@ -393,9 +393,29 @@ export default {
           windowHeight: 1200
         });
         const image = canvas.toDataURL('image/png');
-        const link = document.createElement('a');
         const startDayStr = formatDate(invoiceDetails.value.billingPeriodStart).replace(/\//g, '-');
-        link.download = `PhieuThanhToan_Phong_${invoiceDetails.value.contract.room.roomNumber}_Ky_${startDayStr}.png`;
+        const fileName = `PhieuThanhToan_Phong_${invoiceDetails.value.contract.room.roomNumber}_Ky_${startDayStr}.png`;
+
+        // Try to share via Web Share API first (essential for iOS to save directly to Photo Gallery)
+        try {
+          const response = await fetch(image);
+          const blob = await response.blob();
+          const file = new File([blob], fileName, { type: 'image/png' });
+          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: 'Hóa đơn tiền phòng',
+              text: `Hóa đơn tiền phòng phòng ${invoiceDetails.value.contract.room.roomNumber}`
+            });
+            return;
+          }
+        } catch (shareErr) {
+          console.warn('Web Share API not supported or cancelled:', shareErr);
+        }
+
+        // Fallback for desktop or unsupported browsers
+        const link = document.createElement('a');
+        link.download = fileName;
         link.href = image;
         document.body.appendChild(link);
         link.click();
