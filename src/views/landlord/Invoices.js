@@ -389,7 +389,8 @@ export default {
       if (!invoiceDetails.value) return;
       const element = document.getElementById('receipt-print-area');
       try {
-        const canvas = await html2canvas(element, {
+        const html2canvasFn = html2canvas.default || html2canvas;
+        const canvas = await html2canvasFn(element, {
           scale: 2,
           useCORS: true,
           backgroundColor: '#ffffff'
@@ -399,10 +400,12 @@ export default {
         const startDayStr = formatDate(invoiceDetails.value.billingPeriodStart).replace(/\//g, '-');
         link.download = `PhieuThanhToan_Phong_${invoiceDetails.value.contract.room.roomNumber}_Ky_${startDayStr}.png`;
         link.href = image;
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
       } catch (err) {
         console.error('Không thể lưu ảnh biên lai:', err);
-        alert('Không thể xuất ảnh biên lai');
+        alert('Không thể xuất ảnh biên lai: ' + err.message);
       }
     };
 
