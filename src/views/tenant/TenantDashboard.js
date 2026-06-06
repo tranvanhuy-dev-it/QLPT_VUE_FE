@@ -80,17 +80,121 @@ export default {
       printWindow.document.write(`
         <html>
           <head>
-            <title>Hóa đơn tiền trọ - Phòng ${invoiceDetails.value.contract.room.roomNumber}</title>
+            <title>Phiếu thanh toán tiền phòng & dịch vụ - Phòng ${invoiceDetails.value.contract.room.roomNumber}</title>
             <style>
-              body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 30px; color: #333; }
-              h2 { text-align: center; color: #0066cc; margin-bottom: 5px; }
-              table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px; }
-              th, td { padding: 10px; border-bottom: 1px dashed #cbd5e1; font-size: 14px; }
-              th { text-align: left; font-weight: bold; background-color: #f8fafc; }
-              .total-section { margin-top: 20px; border-top: 2px dashed #333; padding-top: 15px; }
-              .flex-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
-              .bold { font-weight: bold; }
-              .text-right { text-align: right; }
+              body {
+                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                color: #1e293b;
+                padding: 30px;
+                background-color: #fff;
+                line-height: 1.5;
+              }
+              .print-hidden, .screen-only-mobile {
+                display: none !important;
+              }
+              .print-only-table {
+                display: table !important;
+                width: 100% !important;
+                border-collapse: collapse !important;
+                margin-top: 20px !important;
+                margin-bottom: 20px !important;
+              }
+              .print-only-table th {
+                background-color: #f8fafc !important;
+                border-bottom: 2px solid #cbd5e1 !important;
+                color: #475569 !important;
+                font-weight: bold !important;
+                padding: 8px 10px !important;
+                text-transform: uppercase !important;
+                font-size: 11px !important;
+                text-align: right;
+              }
+              .print-only-table th:first-child {
+                text-align: left;
+              }
+              .print-only-table th.text-center {
+                text-align: center;
+              }
+              .print-only-table td {
+                padding: 10px !important;
+                border-bottom: 1px dashed #cbd5e1 !important;
+                color: #334155 !important;
+                font-size: 12px !important;
+              }
+              .print-only-table tr {
+                display: table-row !important;
+              }
+              .print-only-table th, .print-only-table td {
+                display: table-cell !important;
+              }
+              /* Layout Utilities */
+              .flex { display: flex !important; }
+              .items-center { align-items: center !important; }
+              .justify-between { justify-content: space-between !important; }
+              .border-b-2 { border-bottom: 2px solid #cbd5e1 !important; }
+              .pb-5 { padding-bottom: 1.25rem !important; }
+              .mb-6 { margin-bottom: 1.5rem !important; }
+              .font-extrabold { font-weight: 800 !important; }
+              .text-lg { font-size: 1.125rem !important; }
+              .sm\\:text-xl { font-size: 1.25rem !important; }
+              .text-slate-800 { color: #1e293b !important; }
+              .tracking-tight { letter-spacing: -0.025em !important; }
+              .text-right { text-align: right !important; }
+              .flex-col { flex-direction: column !important; }
+              .items-end { align-items: flex-end !important; }
+              .text-\\[10px\\] { font-size: 10px !important; }
+              .text-slate-500 { color: #64748b !important; }
+              .mt-1 { margin-top: 0.25rem !important; }
+              .px-2\\.5 { padding-left: 0.625rem !important; padding-right: 0.625rem !important; }
+              .py-0\\.5 { padding-top: 0.125rem !important; padding-bottom: 0.125rem !important; }
+              .rounded-full { border-radius: 9999px !important; }
+              .font-bold { font-weight: bold !important; }
+              .border { border: 1px solid !important; }
+              .text-emerald-600 { color: #059669 !important; }
+              .bg-emerald-50\\/50 { background-color: #ecfdf5 !important; }
+              .border-emerald-500 { border-color: #10b981 !important; }
+              .text-amber-600 { color: #d97706 !important; }
+              .bg-amber-50\\/50 { background-color: #fffbeb !important; }
+              .border-amber-500 { border-color: #f59e0b !important; }
+              .text-rose-600 { color: #dc2626 !important; }
+              .bg-rose-50\\/50 { background-color: #fef2f2 !important; }
+              .border-rose-500 { border-color: #f87171 !important; }
+              .uppercase { text-transform: uppercase !important; }
+              .tracking-wider { letter-spacing: 0.05em !important; }
+              .text-\\[9px\\] { font-size: 9px !important; }
+              .text-slate-400 { color: #94a3b8 !important; }
+              .mt-1\\.5 { margin-top: 0.375rem !important; }
+              .font-medium { font-weight: 500 !important; }
+              .grid { display: grid !important; }
+              .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+              .gap-4 { gap: 1rem !important; }
+              .text-\\[11px\\] { font-size: 11px !important; }
+              .text-slate-700 { color: #334155 !important; }
+              .mb-5 { margin-bottom: 1.25rem !important; }
+              .border-b { border-bottom: 1px solid #e2e8f0 !important; }
+              .space-y-1\\.5 > * + * { margin-top: 0.375rem !important; }
+              .text-slate-600 { color: #475569 !important; }
+              .font-normal { font-weight: normal !important; }
+              .text-center { text-align: center !important; }
+              .w-\\[40\\%\\] { width: 40% !important; }
+              .w-\\[24\\%\\] { width: 24% !important; }
+              .w-\\[12\\%\\] { width: 12% !important; }
+              .border-t-2 { border-top: 2px solid #cbd5e1 !important; }
+              .pt-4 { padding-top: 1rem !important; }
+              .w-full { width: 100% !important; }
+              .sm\\:w-\\[50\\%\\] { width: 50% !important; }
+              .space-y-2 > * + * { margin-top: 0.5rem !important; }
+              .font-semibold { font-weight: 600 !important; }
+              .text-success { color: #16a34a !important; }
+              .border-t { border-top: 1px solid #e2e8f0 !important; }
+              .pt-2 { padding-top: 0.5rem !important; }
+              .text-xs { font-size: 0.75rem !important; }
+              .sm\\:text-sm { font-size: 0.875rem !important; }
+              .text-slate-900 { color: #0f172a !important; }
+              .mt-8 { margin-top: 2rem !important; }
+              .pt-6 { padding-top: 1.5rem !important; }
+              .border-slate-100\\/50 { border-color: rgba(241, 245, 249, 0.5) !important; }
+              .mt-12 { margin-top: 3rem !important; }
             </style>
           </head>
           <body>
