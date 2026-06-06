@@ -219,13 +219,39 @@ export default {
 
     const downloadReceiptImage = async () => {
       if (!invoiceDetails.value) return;
-      const element = document.getElementById('receipt-print-area-tenant');
+      const originalElement = document.getElementById('receipt-print-area-tenant');
+      
+      // Clone element to force print layout on mobile
+      const clone = originalElement.cloneNode(true);
+      const container = document.createElement('div');
+      container.style.position = 'absolute';
+      container.style.left = '-9999px';
+      container.style.top = '-9999px';
+      container.style.width = '600px'; // standard invoice width
+      container.style.background = '#ffffff';
+      
+      const tableWrapper = clone.querySelector('.overflow-x-auto');
+      if (tableWrapper) {
+        tableWrapper.style.overflow = 'visible';
+        tableWrapper.style.border = 'none';
+      }
+      const table = clone.querySelector('.print-only-table');
+      if (table) {
+        table.style.minWidth = '0';
+        table.style.width = '100%';
+        table.style.display = 'table';
+      }
+      
+      container.appendChild(clone);
+      document.body.appendChild(container);
+
       try {
         const html2canvasFn = html2canvas.default || html2canvas;
-        const canvas = await html2canvasFn(element, {
+        const canvas = await html2canvasFn(clone, {
           scale: 2,
           useCORS: true,
-          backgroundColor: '#ffffff'
+          backgroundColor: '#ffffff',
+          width: 600
         });
         const image = canvas.toDataURL('image/png');
         const link = document.createElement('a');
@@ -238,6 +264,8 @@ export default {
       } catch (err) {
         console.error('Không thể lưu ảnh biên lai:', err);
         alert('Không thể xuất ảnh biên lai: ' + err.message);
+      } finally {
+        document.body.removeChild(container);
       }
     };
 
