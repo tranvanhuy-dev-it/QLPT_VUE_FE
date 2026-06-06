@@ -149,9 +149,6 @@
               <p class="text-[10px] sm:text-xs text-slate-500 mt-1">Kỳ hóa đơn: {{ formatDate(invoiceDetails.billingPeriodStart) }} - {{ formatDate(invoiceDetails.billingPeriodEnd) }}</p>
             </div>
             <div class="text-right flex flex-col items-end">
-              <span v-if="invoiceDetails.status === 'PAID'" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border border-emerald-500 text-emerald-600 bg-emerald-50/50 uppercase tracking-wider">Đã thanh toán</span>
-              <span v-else-if="invoiceDetails.status === 'PARTIALLY_PAID'" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border border-amber-500 text-amber-600 bg-amber-50/50 uppercase tracking-wider">Mới trả một phần</span>
-              <span v-else class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border border-rose-500 text-rose-600 bg-rose-50/50 uppercase tracking-wider">Chưa thanh toán</span>
               <span class="text-[9px] text-slate-400 mt-1.5 font-medium">Mã HĐ: #{{ invoiceDetails.id.substring(0, 8).toUpperCase() }}</span>
             </div>
           </div>
