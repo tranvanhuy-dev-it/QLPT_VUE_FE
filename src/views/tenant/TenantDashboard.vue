@@ -62,7 +62,7 @@
                 </div>
                 <div class="pt-3 text-[11px] text-text-sub flex flex-col gap-0.5">
                   <div class="font-semibold text-text-main/80">Chủ nhà liên hệ:</div>
-                  <div>{{ activeContract.room.boardingHouse.landlord.fullName }} - 📞 {{ activeContract.room.boardingHouse.landlord.phone || 'Chưa cập nhật' }}</div>
+                  <div>{{ activeContract.room.boardingHouse.landlord?.fullName || 'Chưa cập nhật' }} - 📞 {{ activeContract.room.boardingHouse.landlord?.phone || 'Chưa cập nhật' }}</div>
                 </div>
               </div>
             </div>

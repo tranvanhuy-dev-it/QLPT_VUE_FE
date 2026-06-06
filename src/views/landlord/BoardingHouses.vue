@@ -145,6 +145,16 @@
             </select>
           </div>
 
+          <div class="flex flex-col gap-1.5 mb-4">
+            <label class="text-xs font-semibold text-text-sub uppercase">Thời điểm thu tiền phòng *</label>
+            <select
+              class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary"
+              v-model="form.billingTiming" required>
+              <option value="PREPAID">Thu đầu tháng (Tiền phòng trả trước, điện nước trả sau)</option>
+              <option value="POSTPAID">Thu cuối tháng (Thu cả tiền phòng và điện nước vào cuối tháng)</option>
+            </select>
+          </div>
+
           <!-- Cấu hình các dịch vụ / phụ phí của dãy trọ -->
           <div class="mt-6 pt-4 border-t border-border-main">
             <div class="flex justify-between items-center mb-4">

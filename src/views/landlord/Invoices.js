@@ -11,6 +11,7 @@ export default {
     const invoiceIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>`;
     
     const invoices = ref([]);
+    const allInvoices = ref([]);
     const activeContracts = ref([]);
     const loading = ref(true);
 
@@ -79,9 +80,9 @@ export default {
       if (!searchQuery.value) return invoices.value;
       const q = searchQuery.value.toLowerCase().trim();
       return invoices.value.filter(inv => 
-        inv.contract.tenant.fullName.toLowerCase().includes(q) ||
-        inv.contract.room.roomNumber.toLowerCase().includes(q) ||
-        inv.contract.room.boardingHouse.name.toLowerCase().includes(q)
+          inv.contract.tenant.fullName.toLowerCase().includes(q) ||
+          inv.contract.room.roomNumber.toLowerCase().includes(q) ||
+          inv.contract.room.boardingHouse.name.toLowerCase().includes(q)
       );
     });
 
@@ -99,19 +100,63 @@ export default {
       selectedContract.value = activeContracts.value.find(c => c.id === form.value.contractId);
       if (selectedContract.value) {
         const room = selectedContract.value.room;
-        form.value.newElectricityIndex = room.currentElectricityIndex;
-        form.value.newWaterIndex = room.currentWaterIndex;
+        const bh = room.boardingHouse;
+        const timing = bh.billingTiming || 'PREPAID';
 
-        form.value.billingPeriodStart = selectedContract.value.startDate;
-        
-        const start = new Date(selectedContract.value.startDate);
-        start.setMonth(start.getMonth() + 1);
-        form.value.billingPeriodEnd = start.toISOString().substring(0, 10);
+        // Filter and sort invoices for this contract by billingPeriodEnd descending
+        const contractInvoices = allInvoices.value
+          .filter(inv => inv.contract.id === form.value.contractId)
+          .sort((a, b) => new Date(b.billingPeriodEnd) - new Date(a.billingPeriodEnd));
+
+        if (contractInvoices.length > 0) {
+          const lastInvoice = contractInvoices[0];
+          form.value.billingPeriodStart = lastInvoice.billingPeriodEnd;
+          
+          const start = new Date(lastInvoice.billingPeriodEnd);
+          start.setMonth(start.getMonth() + 1);
+          const endStr = start.toISOString().substring(0, 10);
+          form.value.billingPeriodEnd = endStr;
+
+          // Default invoiceDate based on timing
+          if (timing === 'PREPAID') {
+            form.value.invoiceDate = lastInvoice.billingPeriodEnd; // Start of the next billing period
+            form.value.newElectricityIndex = room.currentElectricityIndex;
+            form.value.newWaterIndex = room.currentWaterIndex;
+          } else {
+            form.value.invoiceDate = endStr; // End of the next billing period
+            form.value.newElectricityIndex = room.currentElectricityIndex;
+            form.value.newWaterIndex = room.currentWaterIndex;
+          }
+        } else {
+          // First invoice ever
+          form.value.billingPeriodStart = selectedContract.value.startDate;
+          
+          const start = new Date(selectedContract.value.startDate);
+          start.setMonth(start.getMonth() + 1);
+          const endStr = start.toISOString().substring(0, 10);
+          form.value.billingPeriodEnd = endStr;
+
+          if (timing === 'PREPAID') {
+            form.value.invoiceDate = selectedContract.value.startDate; // Check-in start date
+            form.value.newElectricityIndex = room.currentElectricityIndex;
+            form.value.newWaterIndex = room.currentWaterIndex;
+          } else {
+            form.value.invoiceDate = endStr; // End of month 1
+            form.value.newElectricityIndex = room.currentElectricityIndex;
+            form.value.newWaterIndex = room.currentWaterIndex;
+          }
+        }
       }
     };
 
     const openCreateModal = async () => {
       await fetchActiveContracts();
+      try {
+        const response = await api.get('/api/invoices', { params: { page: 0, size: 1000 } });
+        allInvoices.value = response.data.content || [];
+      } catch (err) {
+        console.error('Không tải được danh sách hóa đơn:', err);
+      }
       if (activeContracts.value.length > 0) {
         form.value.contractId = activeContracts.value[0].id;
         onContractChange();

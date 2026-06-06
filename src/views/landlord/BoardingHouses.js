@@ -24,6 +24,7 @@ export default {
       defaultElectricityRate: 3500,
       defaultWaterRate: 15000,
       waterBillingType: 'BY_INDEX',
+      billingTiming: 'PREPAID',
       extraFees: [],
     });
 
@@ -90,6 +91,7 @@ export default {
         defaultElectricityRate: house.defaultElectricityRate,
         defaultWaterRate: house.defaultWaterRate,
         waterBillingType: house.waterBillingType,
+        billingTiming: house.billingTiming || 'PREPAID',
         extraFees: (house.extraFees || []).map(ef => ({
           id: ef.id,
           name: ef.name,
@@ -121,6 +123,7 @@ export default {
         defaultElectricityRate: 3500,
         defaultWaterRate: 15000,
         waterBillingType: 'BY_INDEX',
+        billingTiming: 'PREPAID',
         extraFees: [],
       };
     };
