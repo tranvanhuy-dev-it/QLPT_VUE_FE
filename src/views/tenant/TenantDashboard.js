@@ -1,7 +1,7 @@
 import { ref, onMounted } from 'vue';
 import PageHeader from '../../components/PageHeader.vue';
 import api from '../../services/api.js';
-import html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas-pro';
 
 export default {
   name: 'TenantDashboard',
