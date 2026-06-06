@@ -136,20 +136,20 @@ export default {
               .uppercase { text-transform: uppercase !important; }
               .tracking-widest { letter-spacing: 0.1em !important; }
               .tracking-wide { letter-spacing: 0.05em !important; }
-              .my-8 { margin-top: 5px !important; margin-bottom: 5px !important; }
-              .mb-8 { margin-bottom: 5px !important; }
+              .my-4, .my-8 { margin-top: 5px !important; margin-bottom: 5px !important; }
+              .mb-4, .mb-8 { margin-bottom: 5px !important; }
               .mb-6 { margin-bottom: 0.3rem !important; }
               .mb-1 { margin-bottom: 0.1rem !important; }
               .mt-1 { margin-top: 0.1rem !important; }
               .mt-2 { margin-top: 0.2rem !important; }
-              .mt-8 { margin-top: 0.6rem !important; }
-              .mt-12 { margin-top: 1rem !important; }
-              .pb-8 { padding-bottom: 0.4rem !important; }
-              .pt-4 { padding-top: 0.25rem !important; }
-              .pt-2 { padding-top: 0.12rem !important; }
-              .space-y-4 > * + * { margin-top: 0.35rem !important; }
-              .space-y-2 > * + * { margin-top: 0.15rem !important; }
-              .space-y-1 > * + * { margin-top: 0.1rem !important; }
+              .mt-6, .mt-8 { margin-top: 0.4rem !important; }
+              .mt-12 { margin-top: 0.8rem !important; }
+              .pb-4, .pb-8 { padding-bottom: 0.2rem !important; }
+              .pt-2.5, .pt-4 { padding-top: 0.2rem !important; }
+              .pt-1.5, .pt-2 { padding-top: 0.1rem !important; }
+              .space-y-3 > * + *, .space-y-4 > * + * { margin-top: 0.25rem !important; }
+              .space-y-1.5 > * + *, .space-y-2 > * + * { margin-top: 0.12rem !important; }
+              .space-y-1 > * + * { margin-top: 0.08rem !important; }
               .grid { display: grid !important; }
               .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
               .gap-2 { gap: 0.15rem !important; }
@@ -157,12 +157,12 @@ export default {
               .border-t { border-top: 1px solid #cbd5e1 !important; }
               .border-b { border-bottom: 1px solid #cbd5e1 !important; }
               .border-dashed { border-style: dashed !important; }
-              .text-xs { font-size: 12px !important; }
-              .text-[10px] { font-size: 9.5px !important; }
+              .text-xs { font-size: 11.5px !important; }
+              .text-[10px] { font-size: 9px !important; }
               .italic { font-style: italic !important; }
               .block { display: block !important; }
               .mt-0\\.5 { margin-top: 0.08rem !important; }
-              .mb-16 { margin-bottom: 1.25rem !important; }
+              .mb-10, .mb-16 { margin-bottom: 1rem !important; }
               .overflow-x-auto { overflow: visible !important; }
               .w-full { width: 100% !important; }
               .w-32 { width: 8rem !important; }

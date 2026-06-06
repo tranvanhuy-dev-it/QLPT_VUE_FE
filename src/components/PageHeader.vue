@@ -23,30 +23,30 @@
       <slot name="filter-addons"></slot>
 
       <!-- Export Button -->
-      <button v-if="showExport" @click="$emit('export-click')" class="inline-flex items-center px-3 py-1.5 text-xs font-bold bg-white dark:bg-slate-900 border border-border-main rounded-lg text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer gap-1.5 transition-all">
+      <button v-if="showExport" @click="$emit('export-click')" class="inline-flex items-center px-2.5 py-1.5 sm:px-3 sm:py-1.5 text-xs font-bold bg-white dark:bg-slate-900 border border-border-main rounded-lg text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer gap-1.5 transition-all">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-sub" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
         </svg>
-        Xuất
+        <span>Xuất</span>
       </button>
 
       <!-- Import Button -->
-      <button v-if="showImport" @click="$emit('import-click')" class="inline-flex items-center px-3 py-1.5 text-xs font-bold bg-white dark:bg-slate-900 border border-border-main rounded-lg text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer gap-1.5 transition-all">
+      <button v-if="showImport" @click="$emit('import-click')" class="inline-flex items-center px-2.5 py-1.5 sm:px-3 sm:py-1.5 text-xs font-bold bg-white dark:bg-slate-900 border border-border-main rounded-lg text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer gap-1.5 transition-all">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-sub" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
         </svg>
-        Import
+        <span>Import</span>
       </button>
 
       <!-- Slot for custom actions -->
       <slot name="custom-actions"></slot>
 
       <!-- Add Button -->
-      <button v-if="showAdd" @click="$emit('add-click')" :disabled="disableAdd" class="inline-flex items-center px-2.5 sm:px-3.5 py-1 sm:py-1.5 text-[11px] sm:text-xs font-extrabold rounded-lg bg-primary text-white hover:bg-primary-hover disabled:bg-slate-300 disabled:cursor-not-allowed cursor-pointer gap-1 sm:gap-1.5 transition-all shadow-xs shrink-0">
+      <button v-if="showAdd" @click="$emit('add-click')" :disabled="disableAdd" class="inline-flex items-center px-2.5 py-1.5 sm:px-3.5 sm:py-1.5 text-[11px] sm:text-xs font-extrabold rounded-lg bg-primary text-white hover:bg-primary-hover disabled:bg-slate-300 disabled:cursor-not-allowed cursor-pointer gap-1 sm:gap-1.5 transition-all shadow-xs shrink-0">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
         </svg>
-        {{ addText || 'Thêm Mới' }}
+        <span>{{ addText || 'Thêm Mới' }}</span>
       </button>
     </div>
   </div>

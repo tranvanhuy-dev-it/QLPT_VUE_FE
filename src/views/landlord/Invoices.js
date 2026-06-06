@@ -1,5 +1,5 @@
 import { ref, onMounted, computed } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import PageHeader from "../../components/PageHeader.vue";
 import DataTable from "../../components/DataTable.vue";
 import Modal from "../../components/Modal.vue";
@@ -24,6 +24,7 @@ export default {
     FormButton,
   },
   setup() {
+    const route = useRoute();
     const router = useRouter();
     const invoiceIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>`;
 
@@ -314,6 +315,24 @@ export default {
     onMounted(async () => {
       fetchInvoices();
       await fetchActiveContracts();
+
+      // Check if redirected from dashboard to create invoice for a contract
+      const contractIdQuery = route.query.createForContractId;
+      if (contractIdQuery) {
+        const contractExists = activeContracts.value.some(c => c.id === contractIdQuery);
+        if (contractExists) {
+          try {
+            // Fetch all invoices to populate allInvoices list (used for billing period calculations)
+            const all = await invoiceStore.fetchInvoices({ page: 0, size: 1000 });
+            allInvoices.value = all || [];
+          } catch (err) {
+            console.error("Không tải được danh sách hóa đơn:", err);
+          }
+          form.value.contractId = contractIdQuery;
+          onContractChange();
+          showCreateModal.value = true;
+        }
+      }
     });
 
     return {

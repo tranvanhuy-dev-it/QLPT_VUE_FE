@@ -37,6 +37,7 @@ export default {
 
     const vacantRoomList = ref([]);
     const unpaidInvoiceList = ref([]);
+    const upcomingBillingContracts = ref([]);
 
     const occupancyRate = computed(() => {
       return stats.value.roomsCount > 0 
@@ -53,6 +54,32 @@ export default {
       if (!dateString) return '';
       const d = new Date(dateString);
       return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+    };
+
+    const formatFullDate = (dateString) => {
+      if (!dateString) return '';
+      const d = new Date(dateString);
+      return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+    };
+
+    const formatDueStatus = (diffDays) => {
+      if (diffDays < 0) {
+        return `Quá hạn ${Math.abs(diffDays)} ngày`;
+      } else if (diffDays === 0) {
+        return 'Hôm nay';
+      } else {
+        return `Còn ${diffDays} ngày`;
+      }
+    };
+
+    const getDueStatusClass = (diffDays) => {
+      if (diffDays < 0) {
+        return 'text-rose-600 bg-rose-50 dark:bg-rose-950/30 border-rose-100 dark:border-rose-900/50';
+      } else if (diffDays === 0) {
+        return 'text-amber-600 bg-amber-50 dark:bg-amber-950/30 border-amber-100 dark:border-amber-900/50';
+      } else {
+        return 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 border-emerald-100 dark:border-emerald-900/50';
+      }
     };
 
     const navigateTo = (path) => {
@@ -91,6 +118,63 @@ export default {
         stats.value.unpaidAmount = unpaid.reduce((sum, inv) => sum + (inv.totalAmount - inv.paidAmount), 0);
         unpaidInvoiceList.value = unpaid.slice(0, 5);
 
+        // Tính toán danh sách hợp đồng đến hạn tạo hóa đơn
+        const activeContractsList = contracts.filter(c => c.status === 'ACTIVE');
+        const upcoming = [];
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        for (const contract of activeContractsList) {
+          const contractInvoices = invoices.filter(i => i.contract?.id === contract.id);
+          const timing = contract.room?.boardingHouse?.billingTiming || 'PREPAID';
+          
+          let dueDate;
+
+          if (contractInvoices.length > 0) {
+            // Sắp xếp hóa đơn theo ngày kết thúc kỳ thanh toán giảm dần
+            const sortedInvoices = [...contractInvoices].sort((a, b) => new Date(b.billingPeriodEnd) - new Date(a.billingPeriodEnd));
+            const lastEnd = new Date(sortedInvoices[0].billingPeriodEnd);
+            
+            if (timing === 'PREPAID') {
+              dueDate = new Date(lastEnd);
+            } else {
+              const end = new Date(lastEnd);
+              end.setMonth(end.getMonth() + 1);
+              dueDate = end;
+            }
+          } else {
+            // Chưa từng lập hóa đơn nào
+            const start = new Date(contract.startDate);
+            if (timing === 'PREPAID') {
+              dueDate = start;
+            } else {
+              const end = new Date(start);
+              end.setMonth(end.getMonth() + 1);
+              dueDate = end;
+            }
+          }
+
+          dueDate.setHours(0, 0, 0, 0);
+          
+          const diffTime = dueDate - today;
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+          // Hợp đồng đến hạn nếu ngày đến hạn đã qua (quá hạn) hoặc trong vòng 7 ngày tới
+          if (diffDays <= 7) {
+            upcoming.push({
+              id: contract.id,
+              roomNumber: contract.room?.roomNumber,
+              boardingHouseName: contract.room?.boardingHouse?.name,
+              tenantName: contract.tenant?.fullName,
+              dueDate: dueDate.toISOString(),
+              diffDays: diffDays
+            });
+          }
+        }
+
+        // Sắp xếp các hợp đồng đến hạn: quá hạn nhiều nhất lên trước, rồi đến hạn gần nhất
+        upcomingBillingContracts.value = upcoming.sort((a, b) => a.diffDays - b.diffDays);
+
       } catch (err) {
         console.error('Không thể tải dữ liệu thống kê tổng quan:', err);
       } finally {
@@ -109,9 +193,13 @@ export default {
       stats,
       vacantRoomList,
       unpaidInvoiceList,
+      upcomingBillingContracts,
       occupancyRate,
       formatMoney,
       formatDate,
+      formatFullDate,
+      formatDueStatus,
+      getDueStatusClass,
       navigateTo,
     };
   },

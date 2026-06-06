@@ -1,8 +1,8 @@
 <template>
   <div class="p-4 bg-bg-main min-h-screen print:bg-white print:p-0">
     <!-- Header Block (hidden during print) -->
-    <div
-      class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 pb-4 border-b border-border-main no-print">
+    <div class="mb-6 pb-4 border-b border-border-main no-print flex flex-col gap-4">
+      <!-- Top Row: Back button + Title + Status -->
       <div class="flex items-center gap-2">
         <button @click="goBack"
           class="inline-flex items-center justify-center p-1.5 rounded-lg border border-border-main bg-card hover:bg-slate-50 transition cursor-pointer">
@@ -24,39 +24,51 @@
         </h2>
       </div>
 
-      <!-- Tab Switcher (hidden during print) -->
-      <div v-if="contract"
-        class="flex border border-border-main rounded-lg p-0.5 bg-slate-50 dark:bg-slate-900/60 max-w-xs w-full sm:w-auto">
-        <button @click="activeTab = 'summary'"
-          :class="['flex-1 px-4 py-1.5 text-xs font-semibold rounded-md transition cursor-pointer', activeTab === 'summary' ? 'bg-white dark:bg-slate-800 text-primary shadow-xs' : 'text-text-sub hover:text-text-main']">
-          Xem tóm tắt
-        </button>
-        <button @click="activeTab = 'contract'"
-          :class="['flex-1 px-4 py-1.5 text-xs font-semibold rounded-md transition cursor-pointer', activeTab === 'contract' ? 'bg-white dark:bg-slate-800 text-primary shadow-xs' : 'text-text-sub hover:text-text-main']">
-          Văn bản hợp đồng
-        </button>
-      </div>
+      <!-- Bottom Row: 4 buttons in a horizontal flex row -->
+      <div v-if="contract" class="flex flex-row items-center justify-between gap-3 w-full flex-wrap sm:flex-nowrap">
+        <!-- Tab Switcher -->
+        <div class="flex border border-border-main rounded-lg p-0.5 bg-slate-50 dark:bg-slate-900/60 shrink-0">
+          <button @click="activeTab = 'summary'"
+            :class="['px-3.5 py-1.5 text-xs font-semibold rounded-md transition cursor-pointer', activeTab === 'summary' ? 'bg-white dark:bg-slate-800 text-primary shadow-xs' : 'text-text-sub hover:text-text-main']">
+            Tóm tắt
+          </button>
+          <button @click="activeTab = 'contract'"
+            :class="['px-3.5 py-1.5 text-xs font-semibold rounded-md transition cursor-pointer', activeTab === 'contract' ? 'bg-white dark:bg-slate-800 text-primary shadow-xs' : 'text-text-sub hover:text-text-main']">
+            Bản in
+          </button>
+        </div>
 
-      <div v-if="contract" class="flex gap-2">
-        <!-- Print Button (visible on contract tab) -->
-        <FormButton v-if="activeTab === 'contract'" variant="primary" size="sm" @click="printContract">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-            class="w-4 h-4">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M6.72 13.816V8.16m10.56 5.656V8.16m-10.56 5.656h10.56m-10.56 0h10.56m-10.56 0v5.656m0-5.656v-5.656m10.56 5.656v5.656m0-5.656v-5.656m-10.56 0V3.75h10.56v4.41" />
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M18.75 19.5h-13.5A2.25 2.25 0 0 1 3 17.25V13.816a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v3.434a2.25 2.25 0 0 1-2.25 2.25Z" />
-          </svg>
-          In hợp đồng
-        </FormButton>
-        <FormButton v-if="activeTab === 'summary' && contract.status === 'ACTIVE'" variant="secondary" size="sm"
-          @click="toggleEditMode">
-          {{ isEditMode ? 'Hủy' : 'Sửa số người' }}
-        </FormButton>
-        <FormButton v-if="activeTab === 'summary' && contract.status === 'ACTIVE'" variant="danger" size="sm"
-          @click="terminateContract">
-          Thanh lý
-        </FormButton>
+        <!-- Action buttons -->
+        <div class="flex items-center gap-2 shrink-0">
+          <!-- Print Button (visible on contract tab) -->
+          <FormButton v-if="activeTab === 'contract'" variant="primary" size="sm" @click="printContract" class="!px-2.5 !py-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+              class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M6.72 13.816V8.16m10.56 5.656V8.16m-10.56 5.656h10.56m-10.56 0h10.56m-10.56 0v5.656m0-5.656v-5.656m10.56 5.656v5.656m0-5.656v-5.656m-10.56 0V3.75h10.56v4.41" />
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M18.75 19.5h-13.5A2.25 2.25 0 0 1 3 17.25V13.816a2.25 2.25 0 0 1 2.25-2.25h13.5a2.25 2.25 0 0 1 2.25 2.25v3.434a2.25 2.25 0 0 1-2.25 2.25Z" />
+            </svg>
+            <span>In hợp đồng</span>
+          </FormButton>
+          <FormButton v-if="activeTab === 'summary' && contract.status === 'ACTIVE'" variant="secondary" size="sm"
+            @click="toggleEditMode" class="!px-2.5 !py-1.5">
+            <svg v-if="!isEditMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+            </svg>
+            <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span>{{ isEditMode ? 'Hủy' : 'Sửa số người' }}</span>
+          </FormButton>
+          <FormButton v-if="activeTab === 'summary' && contract.status === 'ACTIVE'" variant="danger" size="sm"
+            @click="terminateContract" class="!px-2.5 !py-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            <span>Thanh lý</span>
+          </FormButton>
+        </div>
       </div>
     </div>
 
