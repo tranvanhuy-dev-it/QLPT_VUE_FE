@@ -2,7 +2,7 @@
   <div v-if="isGuest" class="min-h-screen w-screen">
     <router-view />
   </div>
-  <div v-else class="flex min-h-screen bg-bg-main">
+  <div v-else class="flex h-screen h-[100dvh] overflow-hidden bg-bg-main">
     <Sidebar />
     <div class="flex flex-col flex-1 min-w-0">
       <Header />

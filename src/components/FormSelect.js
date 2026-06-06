@@ -23,7 +23,7 @@ export default {
       default: "md", // "sm" or "md"
     },
   },
-  emits: ["update:modelValue"],
+  emits: ["update:modelValue", "change"],
   setup(props, { emit }) {
     const onChange = (event) => {
       let val = event.target.value;
@@ -39,6 +39,7 @@ export default {
         val = val === "" ? null : Number(val);
       }
       emit("update:modelValue", val);
+      emit("change", val);
     };
 
     return {

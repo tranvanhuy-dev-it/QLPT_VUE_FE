@@ -15,8 +15,11 @@ export const useContractStore = defineStore('contract', {
     async fetchContracts(params) {
       this.loading = true;
       try {
-        const response = await contractService.getAll(params);
-        this.contracts = response.data.content || [];
+        const fetchParams = { sort: 'startDate,desc', ...params };
+        const response = await contractService.getAll(fetchParams);
+        const list = response.data.content || [];
+        list.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+        this.contracts = list;
         this.totalPages = response.data.totalPages || 1;
         this.totalElements = response.data.totalElements || 0;
         return this.contracts;
@@ -29,8 +32,9 @@ export const useContractStore = defineStore('contract', {
     },
     async fetchActiveContracts() {
       try {
-        const response = await contractService.getAll({ size: 100 });
+        const response = await contractService.getAll({ size: 100, sort: 'startDate,desc' });
         const list = response.data.content || [];
+        list.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
         this.activeContracts = list.filter(c => c.status === 'ACTIVE');
         return this.activeContracts;
       } catch (error) {

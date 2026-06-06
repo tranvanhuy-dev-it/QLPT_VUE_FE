@@ -13,8 +13,11 @@ export const useInvoiceStore = defineStore('invoice', {
     async fetchInvoices(params) {
       this.loading = true;
       try {
-        const response = await invoiceService.getAll(params);
-        this.invoices = response.data.content || [];
+        const fetchParams = { sort: 'invoiceDate,desc', ...params };
+        const response = await invoiceService.getAll(fetchParams);
+        const list = response.data.content || [];
+        list.sort((a, b) => new Date(b.invoiceDate) - new Date(a.invoiceDate));
+        this.invoices = list;
         this.totalPages = response.data.totalPages || 1;
         this.totalElements = response.data.totalElements || 0;
         return this.invoices;

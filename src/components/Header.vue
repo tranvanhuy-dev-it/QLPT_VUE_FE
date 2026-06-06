@@ -1,5 +1,5 @@
 <template>
-  <header class="h-16 bg-card border-b border-border-main flex items-center justify-between px-4 sm:px-6 md:px-8 z-30 shadow-xs shrink-0">
+  <header class="sticky top-0 h-16 bg-card border-b border-border-main flex items-center justify-between px-4 sm:px-6 md:px-8 z-30 shadow-xs shrink-0">
     <div class="flex items-center">
       <!-- Mobile Sidebar Toggle -->
       <button 
