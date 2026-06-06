@@ -170,124 +170,74 @@
           </div>
 
           <!-- Items Breakdown -->
-          <!-- Mobile view (Screen only) -->
-          <div class="screen-only-mobile block md:hidden space-y-3 mb-6 print-hidden">
-            <!-- Tiền phòng -->
-            <div class="bg-slate-50/70 p-3 rounded-xl border border-slate-100 space-y-1">
-              <div class="flex justify-between font-bold text-slate-800 text-xs">
-                <span>Tiền phòng</span>
-                <span class="text-slate-900">{{ formatMoney(invoiceDetails.roomPrice) }} đ</span>
-              </div>
-              <div class="text-[10px] text-slate-400">Đơn giá: {{ formatMoney(invoiceDetails.contract.contractedRoomPrice) }} đ/tháng x 1</div>
-            </div>
-            
-            <!-- Tiền điện -->
-            <div class="bg-slate-50/70 p-3 rounded-xl border border-slate-100 space-y-1">
-              <div class="flex justify-between font-bold text-slate-800 text-xs">
-                <span>Tiền điện</span>
-                <span class="text-slate-900">{{ formatMoney((invoiceDetails.newElectricityIndex - invoiceDetails.oldElectricityIndex) * invoiceDetails.electricityRate) }} đ</span>
-              </div>
-              <div class="text-[10px] text-slate-400">Số điện: {{ invoiceDetails.newElectricityIndex }} - {{ invoiceDetails.oldElectricityIndex }} ({{ invoiceDetails.newElectricityIndex - invoiceDetails.oldElectricityIndex }} kWh)</div>
-              <div class="text-[10px] text-slate-400">Đơn giá: {{ formatMoney(invoiceDetails.electricityRate) }} đ/kWh</div>
-            </div>
-
-            <!-- Tiền nước -->
-            <div class="bg-slate-50/70 p-3 rounded-xl border border-slate-100 space-y-1">
-              <div class="flex justify-between font-bold text-slate-800 text-xs">
-                <span>Tiền nước</span>
-                <span class="text-slate-900">
-                  <span v-if="invoiceDetails.contract.room.boardingHouse.waterBillingType === 'BY_INDEX'">
-                    {{ formatMoney((invoiceDetails.newWaterIndex - invoiceDetails.oldWaterIndex) * invoiceDetails.waterRate) }} đ
-                  </span>
-                  <span v-else-if="invoiceDetails.contract.room.boardingHouse.waterBillingType === 'FIXED_PER_PERSON'">
-                    {{ formatMoney(invoiceDetails.contract.numberOfTenants * invoiceDetails.waterRate) }} đ
-                  </span>
-                  <span v-else>{{ formatMoney(invoiceDetails.waterRate) }} đ</span>
-                </span>
-              </div>
-              <div v-if="invoiceDetails.contract.room.boardingHouse.waterBillingType === 'BY_INDEX'" class="text-[10px] text-slate-400">Số nước: {{ invoiceDetails.newWaterIndex }} - {{ invoiceDetails.oldWaterIndex }} ({{ invoiceDetails.newWaterIndex - invoiceDetails.oldWaterIndex }} m³)</div>
-              <div v-else-if="invoiceDetails.contract.room.boardingHouse.waterBillingType === 'FIXED_PER_PERSON'" class="text-[10px] text-slate-400">Nước cố định theo người: {{ invoiceDetails.contract.numberOfTenants }} người</div>
-              <div v-else class="text-[10px] text-slate-400">Nước cố định theo phòng</div>
-              <div class="text-[10px] text-slate-400">Đơn giá: {{ formatMoney(invoiceDetails.waterRate) }} đ</div>
-            </div>
-
-            <!-- Phụ phí dịch vụ riêng -->
-            <div v-for="item in invoiceItems" :key="item.id" class="bg-slate-50/70 p-3 rounded-xl border border-slate-100 space-y-1">
-              <div class="flex justify-between font-bold text-slate-800 text-xs">
-                <span>{{ item.name }}</span>
-                <span class="text-slate-900">{{ formatMoney(item.subtotal) }} đ</span>
-              </div>
-              <div class="text-[10px] text-slate-400">Số lượng: {{ item.quantity }} x Đơn giá: {{ formatMoney(item.price) }} đ</div>
-            </div>
+          <div class="overflow-x-auto border border-slate-100 rounded-xl mb-6">
+            <table class="print-only-table min-w-[460px] w-full text-[11px] sm:text-xs border-collapse table-fixed">
+              <thead>
+                <tr class="border-b border-slate-200 bg-slate-50">
+                  <th class="text-left py-2 px-2 w-[40%] font-bold text-slate-600">Khoản chi phí</th>
+                  <th class="text-right py-2 px-2 w-[24%] font-bold text-slate-600">Đơn giá</th>
+                  <th class="text-right py-2 px-2 w-[12%] font-bold text-slate-600 text-center">SL</th>
+                  <th class="text-right py-2 px-2 w-[24%] font-bold text-slate-600">Thành tiền</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-dashed divide-slate-100">
+                <!-- Tiền phòng -->
+                <tr class="hover:bg-slate-50/30">
+                  <td class="py-2.5 px-2 text-slate-800 font-medium break-words">Tiền phòng</td>
+                  <td class="text-right py-2.5 px-2 text-slate-600">{{ formatMoney(invoiceDetails.contract.contractedRoomPrice) }} đ</td>
+                  <td class="text-right py-2.5 px-2 text-slate-600 text-center">1</td>
+                  <td class="text-right py-2.5 px-2 font-bold text-slate-800">{{ formatMoney(invoiceDetails.roomPrice) }} đ</td>
+                </tr>
+                <!-- Tiền điện -->
+                <tr class="hover:bg-slate-50/30">
+                  <td class="py-2.5 px-2 text-slate-800 font-medium break-words">
+                    Tiền điện
+                    <div class="text-[9px] text-slate-400 font-normal mt-0.5">Chỉ số: {{ invoiceDetails.newElectricityIndex }} - {{ invoiceDetails.oldElectricityIndex }} ({{ invoiceDetails.newElectricityIndex - invoiceDetails.oldElectricityIndex }} kWh)</div>
+                  </td>
+                  <td class="text-right py-2.5 px-2 text-slate-600">{{ formatMoney(invoiceDetails.electricityRate) }} đ</td>
+                  <td class="text-right py-2.5 px-2 text-slate-600 text-center">{{ invoiceDetails.newElectricityIndex - invoiceDetails.oldElectricityIndex }}</td>
+                  <td class="text-right py-2.5 px-2 font-bold text-slate-800">
+                    {{ formatMoney((invoiceDetails.newElectricityIndex - invoiceDetails.oldElectricityIndex) * invoiceDetails.electricityRate) }} đ
+                  </td>
+                </tr>
+                <!-- Tiền nước -->
+                <tr class="hover:bg-slate-50/30">
+                  <td class="py-2.5 px-2 text-slate-800 font-medium break-words">
+                    Tiền nước
+                    <div v-if="invoiceDetails.contract.room.boardingHouse.waterBillingType === 'BY_INDEX'" class="text-[9px] text-slate-400 font-normal mt-0.5">Chỉ số: {{ invoiceDetails.newWaterIndex }} - {{ invoiceDetails.oldWaterIndex }} ({{ invoiceDetails.newWaterIndex - invoiceDetails.oldWaterIndex }} m³)</div>
+                    <div v-else-if="invoiceDetails.contract.room.boardingHouse.waterBillingType === 'FIXED_PER_PERSON'" class="text-[9px] text-slate-400 font-normal mt-0.5">Cố định theo đầu người</div>
+                    <div v-else class="text-[9px] text-slate-400 font-normal mt-0.5">Cố định theo phòng</div>
+                  </td>
+                  <td class="text-right py-2.5 px-2 text-slate-600">{{ formatMoney(invoiceDetails.waterRate) }} đ</td>
+                  <td class="text-right py-2.5 px-2 text-slate-600 text-center">
+                    <span v-if="invoiceDetails.contract.room.boardingHouse.waterBillingType === 'BY_INDEX'">
+                      {{ invoiceDetails.newWaterIndex - invoiceDetails.oldWaterIndex }}
+                    </span>
+                    <span v-else-if="invoiceDetails.contract.room.boardingHouse.waterBillingType === 'FIXED_PER_PERSON'">
+                      {{ invoiceDetails.contract.numberOfTenants }}
+                    </span>
+                    <span v-else>1</span>
+                  </td>
+                  <td class="text-right py-2.5 px-2 font-bold text-slate-800">
+                    <span v-if="invoiceDetails.contract.room.boardingHouse.waterBillingType === 'BY_INDEX'">
+                      {{ formatMoney((invoiceDetails.newWaterIndex - invoiceDetails.oldWaterIndex) * invoiceDetails.waterRate) }} đ
+                    </span>
+                    <span v-else-if="invoiceDetails.contract.room.boardingHouse.waterBillingType === 'FIXED_PER_PERSON'">
+                      {{ formatMoney(invoiceDetails.contract.numberOfTenants * invoiceDetails.waterRate) }} đ
+                    </span>
+                    <span v-else>{{ formatMoney(invoiceDetails.waterRate) }} đ</span>
+                  </td>
+                </tr>
+                <!-- Phụ phí dịch vụ riêng -->
+                <tr v-for="item in invoiceItems" :key="item.id" class="hover:bg-slate-50/30">
+                  <td class="py-2.5 px-2 text-slate-800 font-medium break-words">{{ item.name }}</td>
+                  <td class="text-right py-2.5 px-2 text-slate-600">{{ formatMoney(item.price) }} đ</td>
+                  <td class="text-right py-2.5 px-2 text-slate-600 text-center">{{ item.quantity }}</td>
+                  <td class="text-right py-2.5 px-2 font-bold text-slate-800">{{ formatMoney(item.subtotal) }} đ</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-
-          <!-- Table view (Desktop and Print) -->
-          <table class="print-only-table hidden md:table w-full text-[11px] sm:text-xs border-collapse mb-6 table-fixed">
-            <thead>
-              <tr class="border-b border-slate-200 bg-slate-50">
-                <th class="text-left py-2 px-2 w-[40%] font-bold text-slate-600">Khoản chi phí</th>
-                <th class="text-right py-2 px-2 w-[24%] font-bold text-slate-600">Đơn giá</th>
-                <th class="text-right py-2 px-2 w-[12%] font-bold text-slate-600 text-center">SL</th>
-                <th class="text-right py-2 px-2 w-[24%] font-bold text-slate-600">Thành tiền</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-dashed divide-slate-100">
-              <!-- Tiền phòng -->
-              <tr class="hover:bg-slate-50/30">
-                <td class="py-2.5 px-2 text-slate-800 font-medium break-words">Tiền phòng</td>
-                <td class="text-right py-2.5 px-2 text-slate-600">{{ formatMoney(invoiceDetails.contract.contractedRoomPrice) }} đ</td>
-                <td class="text-right py-2.5 px-2 text-slate-600 text-center">1</td>
-                <td class="text-right py-2.5 px-2 font-bold text-slate-800">{{ formatMoney(invoiceDetails.roomPrice) }} đ</td>
-              </tr>
-              <!-- Tiền điện -->
-              <tr class="hover:bg-slate-50/30">
-                <td class="py-2.5 px-2 text-slate-800 font-medium break-words">
-                  Tiền điện
-                  <div class="text-[9px] text-slate-400 font-normal mt-0.5">Chỉ số: {{ invoiceDetails.newElectricityIndex }} - {{ invoiceDetails.oldElectricityIndex }} ({{ invoiceDetails.newElectricityIndex - invoiceDetails.oldElectricityIndex }} kWh)</div>
-                </td>
-                <td class="text-right py-2.5 px-2 text-slate-600">{{ formatMoney(invoiceDetails.electricityRate) }} đ</td>
-                <td class="text-right py-2.5 px-2 text-slate-600 text-center">{{ invoiceDetails.newElectricityIndex - invoiceDetails.oldElectricityIndex }}</td>
-                <td class="text-right py-2.5 px-2 font-bold text-slate-800">
-                  {{ formatMoney((invoiceDetails.newElectricityIndex - invoiceDetails.oldElectricityIndex) * invoiceDetails.electricityRate) }} đ
-                </td>
-              </tr>
-              <!-- Tiền nước -->
-              <tr class="hover:bg-slate-50/30">
-                <td class="py-2.5 px-2 text-slate-800 font-medium break-words">
-                  Tiền nước
-                  <div v-if="invoiceDetails.contract.room.boardingHouse.waterBillingType === 'BY_INDEX'" class="text-[9px] text-slate-400 font-normal mt-0.5">Chỉ số: {{ invoiceDetails.newWaterIndex }} - {{ invoiceDetails.oldWaterIndex }} ({{ invoiceDetails.newWaterIndex - invoiceDetails.oldWaterIndex }} m³)</div>
-                  <div v-else-if="invoiceDetails.contract.room.boardingHouse.waterBillingType === 'FIXED_PER_PERSON'" class="text-[9px] text-slate-400 font-normal mt-0.5">Cố định theo đầu người</div>
-                  <div v-else class="text-[9px] text-slate-400 font-normal mt-0.5">Cố định theo phòng</div>
-                </td>
-                <td class="text-right py-2.5 px-2 text-slate-600">{{ formatMoney(invoiceDetails.waterRate) }} đ</td>
-                <td class="text-right py-2.5 px-2 text-slate-600 text-center">
-                  <span v-if="invoiceDetails.contract.room.boardingHouse.waterBillingType === 'BY_INDEX'">
-                    {{ invoiceDetails.newWaterIndex - invoiceDetails.oldWaterIndex }}
-                  </span>
-                  <span v-else-if="invoiceDetails.contract.room.boardingHouse.waterBillingType === 'FIXED_PER_PERSON'">
-                    {{ invoiceDetails.contract.numberOfTenants }}
-                  </span>
-                  <span v-else>1</span>
-                </td>
-                <td class="text-right py-2.5 px-2 font-bold text-slate-800">
-                  <span v-if="invoiceDetails.contract.room.boardingHouse.waterBillingType === 'BY_INDEX'">
-                    {{ formatMoney((invoiceDetails.newWaterIndex - invoiceDetails.oldWaterIndex) * invoiceDetails.waterRate) }} đ
-                  </span>
-                  <span v-else-if="invoiceDetails.contract.room.boardingHouse.waterBillingType === 'FIXED_PER_PERSON'">
-                    {{ formatMoney(invoiceDetails.contract.numberOfTenants * invoiceDetails.waterRate) }} đ
-                  </span>
-                  <span v-else>{{ formatMoney(invoiceDetails.waterRate) }} đ</span>
-                </td>
-              </tr>
-              <!-- Phụ phí dịch vụ riêng -->
-              <tr v-for="item in invoiceItems" :key="item.id" class="hover:bg-slate-50/30">
-                <td class="py-2.5 px-2 text-slate-800 font-medium break-words">{{ item.name }}</td>
-                <td class="text-right py-2.5 px-2 text-slate-600">{{ formatMoney(item.price) }} đ</td>
-                <td class="text-right py-2.5 px-2 text-slate-600 text-center">{{ item.quantity }}</td>
-                <td class="text-right py-2.5 px-2 font-bold text-slate-800">{{ formatMoney(item.subtotal) }} đ</td>
-              </tr>
-            </tbody>
-          </table>
 
           <div class="border-t-2 border-slate-200 pt-4 text-[11px] sm:text-xs flex justify-end">
             <div class="w-full sm:w-[50%] space-y-2">
@@ -319,12 +269,24 @@
           </div>
         </div>
 
-        <div class="flex gap-3 justify-end mt-6">
+        <!-- Modal control buttons -->
+        <div class="flex flex-wrap gap-2 justify-end mt-6">
           <button @click="closeModal"
-            class="px-4 py-2 text-sm font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-100 cursor-pointer transition-all">Đóng</button>
+            class="px-3 py-1.5 text-xs font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-100 cursor-pointer transition-all">Đóng</button>
+          <button @click="downloadReceiptImage"
+            class="px-3 py-1.5 text-xs font-semibold border border-primary text-primary rounded-lg hover:bg-primary/5 cursor-pointer transition-all flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            Lưu ảnh
+          </button>
           <button @click="printReceipt"
-            class="px-4 py-2 text-sm font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-100 cursor-pointer transition-all">
-            In</button>
+            class="px-3 py-1.5 text-xs font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-100 cursor-pointer transition-all flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.617 0-1.11-.497-1.12-1.115L6.34 18m11.32 0h-11.32m0 0L7.04 8.757A1.125 1.125 0 0 1 8.16 7.5h7.68a1.125 1.125 0 0 1 1.119 1.007L17.66 18M11.5 5.25v-1.5A1.5 1.5 0 0 1 13 2.25h2.25m-6.75 0H11.5" />
+            </svg>
+            In
+          </button>
         </div>
       </div>
     </div>

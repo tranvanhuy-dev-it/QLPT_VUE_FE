@@ -1,6 +1,7 @@
 import { ref, onMounted } from 'vue';
 import PageHeader from '../../components/PageHeader.vue';
 import api from '../../services/api.js';
+import html2canvas from 'html2canvas';
 
 export default {
   name: 'TenantDashboard',
@@ -92,9 +93,14 @@ export default {
               .print-hidden, .screen-only-mobile {
                 display: none !important;
               }
+              .overflow-x-auto {
+                overflow: visible !important;
+                border: none !important;
+              }
               .print-only-table {
                 display: table !important;
                 width: 100% !important;
+                min-width: 0 !important;
                 border-collapse: collapse !important;
                 margin-top: 20px !important;
                 margin-bottom: 20px !important;
@@ -211,6 +217,27 @@ export default {
       printWindow.document.close();
     };
 
+    const downloadReceiptImage = async () => {
+      if (!invoiceDetails.value) return;
+      const element = document.getElementById('receipt-print-area-tenant');
+      try {
+        const canvas = await html2canvas(element, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff'
+        });
+        const image = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        const startDayStr = formatDate(invoiceDetails.value.billingPeriodStart).replace(/\//g, '-');
+        link.download = `PhieuThanhToan_Phong_${invoiceDetails.value.contract.room.roomNumber}_Ky_${startDayStr}.png`;
+        link.href = image;
+        link.click();
+      } catch (err) {
+        console.error('Không thể lưu ảnh biên lai:', err);
+        alert('Không thể xuất ảnh biên lai');
+      }
+    };
+
     const changePage = (newPage) => {
       if (newPage >= 0 && newPage < totalPages.value) {
         page.value = newPage;
@@ -241,6 +268,7 @@ export default {
       invoiceItems,
       viewDetails,
       printReceipt,
+      downloadReceiptImage,
       changePage,
       closeModal,
       formatMoney,
