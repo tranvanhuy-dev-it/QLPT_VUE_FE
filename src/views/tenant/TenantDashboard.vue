@@ -141,6 +141,18 @@
       <div
         class="bg-card border border-border-main rounded-2xl shadow-xl w-full max-w-[500px] p-4 sm:p-6 md:p-8 my-4 sm:my-8 relative">
 
+        <!-- Loading Overlay -->
+        <div v-if="isLoadingDetails"
+          class="absolute inset-0 bg-card/85 backdrop-blur-[2px] rounded-2xl flex flex-col items-center justify-center z-20 transition-all duration-300">
+          <div class="flex flex-col items-center space-y-3">
+            <div class="relative w-10 h-10">
+              <div class="absolute inset-0 border-4 border-slate-100 dark:border-slate-800 rounded-full"></div>
+              <div class="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            </div>
+            <p class="text-xs font-semibold text-text-sub animate-pulse">Đang tải chi tiết hóa đơn...</p>
+          </div>
+        </div>
+
         <!-- Printable Element -->
         <div id="receipt-print-area-tenant" class="font-sans text-black bg-white p-4 sm:p-6 border border-slate-100 rounded-xl">
           <div class="flex items-center justify-between border-b-2 border-slate-200 pb-5 mb-6">
@@ -268,17 +280,17 @@
 
         <!-- Modal control buttons -->
         <div class="flex flex-wrap gap-2 justify-end mt-6">
-          <button @click="closeModal"
-            class="px-3 py-1.5 text-xs font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-100 cursor-pointer transition-all">Đóng</button>
-          <button @click="downloadReceiptImage"
-            class="px-3 py-1.5 text-xs font-semibold border border-primary text-primary rounded-lg hover:bg-primary/5 cursor-pointer transition-all flex items-center gap-1">
+          <button :disabled="isLoadingDetails" @click="closeModal"
+            class="px-3 py-1.5 text-xs font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-100 cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed">Đóng</button>
+          <button :disabled="isLoadingDetails" @click="downloadReceiptImage"
+            class="px-3 py-1.5 text-xs font-semibold border border-primary text-primary rounded-lg hover:bg-primary/5 cursor-pointer transition-all flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
             </svg>
             Lưu ảnh
           </button>
-          <button @click="printReceipt"
-            class="px-3 py-1.5 text-xs font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-100 cursor-pointer transition-all flex items-center gap-1">
+          <button :disabled="isLoadingDetails" @click="printReceipt"
+            class="px-3 py-1.5 text-xs font-semibold border border-border-main rounded-lg text-text-main hover:bg-slate-100 cursor-pointer transition-all flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.617 0-1.11-.497-1.12-1.115L6.34 18m11.32 0h-11.32m0 0L7.04 8.757A1.125 1.125 0 0 1 8.16 7.5h7.68a1.125 1.125 0 0 1 1.119 1.007L17.66 18M11.5 5.25v-1.5A1.5 1.5 0 0 1 13 2.25h2.25m-6.75 0H11.5" />
             </svg>

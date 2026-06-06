@@ -22,6 +22,7 @@ export default {
     const totalElements = ref(0);
 
     const showDetailModal = ref(false);
+    const isLoadingDetails = ref(false);
     const invoiceDetails = ref(null);
     const invoiceItems = ref([]);
 
@@ -66,12 +67,16 @@ export default {
 
     const viewDetails = async (invoice) => {
       invoiceDetails.value = invoice;
+      invoiceItems.value = [];
+      isLoadingDetails.value = true;
+      showDetailModal.value = true;
       try {
         const response = await api.get(`/api/invoices/${invoice.id}/items`);
         invoiceItems.value = response.data || [];
-        showDetailModal.value = true;
       } catch (err) {
         alert('Không thể tải chi tiết phụ phí hóa đơn');
+      } finally {
+        isLoadingDetails.value = false;
       }
     };
 
@@ -454,6 +459,7 @@ export default {
       totalPages,
       totalElements,
       showDetailModal,
+      isLoadingDetails,
       invoiceDetails,
       invoiceItems,
       viewDetails,
