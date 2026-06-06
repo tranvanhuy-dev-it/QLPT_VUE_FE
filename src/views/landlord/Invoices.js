@@ -576,7 +576,9 @@ export default {
           scale: 2,
           useCORS: true,
           backgroundColor: '#ffffff',
-          width: 600
+          width: 600,
+          windowWidth: 1200,
+          windowHeight: 1200
         });
         const image = canvas.toDataURL('image/png');
         const link = document.createElement('a');
