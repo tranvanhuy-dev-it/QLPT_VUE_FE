@@ -29,8 +29,9 @@ export const useContractStore = defineStore('contract', {
     },
     async fetchActiveContracts() {
       try {
-        const response = await contractService.getActive();
-        this.activeContracts = response.data.content || [];
+        const response = await contractService.getAll({ size: 100 });
+        const list = response.data.content || [];
+        this.activeContracts = list.filter(c => c.status === 'ACTIVE');
         return this.activeContracts;
       } catch (error) {
         console.error('Error fetching active contracts:', error);

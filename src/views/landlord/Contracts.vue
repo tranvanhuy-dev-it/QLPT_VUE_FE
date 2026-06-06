@@ -23,7 +23,6 @@
                 <th class="py-2 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Người thuê</th>
                 <th class="py-2 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Ngày bắt đầu</th>
                 <th class="py-2 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Tiền cọc</th>
-                <th class="py-2 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Chu kỳ đóng tiền</th>
                 <th class="py-2 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Trạng thái</th>
               </tr>
             </thead>
@@ -38,19 +37,11 @@
                 <td class="py-2.5 px-4 font-medium">{{ contract.tenant.fullName }} ({{ contract.tenant.username }})</td>
                 <td class="py-2.5 px-4 text-text-sub">{{ formatDate(contract.startDate) }}</td>
                 <td class="py-2.5 px-4 font-semibold text-text-main">{{ formatMoney(contract.deposit) }} đ</td>
-                <td class="py-2.5 px-4 text-text-sub">
-                  <span v-if="contract.billingMode === 'BY_RENTAL_DAYS'">
-                    Ngày thuê hàng tháng
-                  </span>
-                  <span v-else>
-                    Ngày {{ contract.fixedBillingDay }} cố định
-                  </span>
-                </td>
                 <td class="py-2.5 px-4">
                   <span
                     :class="['inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold', contract.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/35 dark:text-emerald-400' : 'bg-rose-50 text-rose-600 dark:bg-rose-950/35 dark:text-rose-400']">
                     {{ contract.status === 'ACTIVE' ? 'Hoạt Động' : (contract.status === 'TERMINATED' ? 'Đã Thanh Lý' :
-                    'Hết Hạn') }}
+                      'Hết Hạn') }}
                   </span>
                 </td>
               </tr>
@@ -90,7 +81,7 @@
       class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
       <div
         class="bg-card border border-border-main rounded-2xl shadow-lg w-full max-w-[650px] p-6 md:p-8 m-auto relative">
-        <h3 class="text-xl font-bold text-text-main mb-6">Thêm</h3>
+        <h3 class="text-xl font-bold text-text-main mb-6">Tạo Hợp Đồng Thuê Mới</h3>
 
         <form @submit.prevent="saveContract">
           <!-- Chọn phòng và người ở -->

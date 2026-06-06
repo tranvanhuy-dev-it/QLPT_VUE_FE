@@ -4,9 +4,6 @@ export default {
   getAll(params) {
     return api.get('/api/contracts', { params });
   },
-  getActive() {
-    return api.get('/api/contracts/active');
-  },
   getById(id) {
     return api.get(`/api/contracts/${id}`);
   },

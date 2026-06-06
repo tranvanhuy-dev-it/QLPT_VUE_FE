@@ -1,22 +1,24 @@
-import { ref, onMounted, computed } from 'vue';
-import PageHeader from '../../components/PageHeader.vue';
-import { useInvoiceStore } from '../../stores/invoice.js';
-import { useContractStore } from '../../stores/contract.js';
-import html2canvas from 'html2canvas-pro';
+import { ref, onMounted, computed } from "vue";
+import PageHeader from "../../components/PageHeader.vue";
+import { useInvoiceStore } from "../../stores/invoice.js";
+import { useContractStore } from "../../stores/contract.js";
+import html2canvas from "html2canvas-pro";
 
 export default {
-  name: 'Invoices',
+  name: "Invoices",
   components: {
     PageHeader,
   },
   setup() {
     const invoiceIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>`;
-    
+
     const invoiceStore = useInvoiceStore();
     const contractStore = useContractStore();
 
     const invoices = computed(() => invoiceStore.invoices);
-    const loading = computed(() => invoiceStore.loading || contractStore.loading);
+    const loading = computed(
+      () => invoiceStore.loading || contractStore.loading,
+    );
     const totalPages = computed(() => invoiceStore.totalPages);
     const totalElements = computed(() => invoiceStore.totalElements);
     const invoiceItems = computed(() => invoiceStore.currentInvoiceItems);
@@ -25,7 +27,7 @@ export default {
     const allInvoices = ref([]);
 
     // Search
-    const searchQuery = ref('');
+    const searchQuery = ref("");
 
     // Pagination
     const page = ref(0);
@@ -41,10 +43,10 @@ export default {
     const selectedContract = ref(null);
 
     const form = ref({
-      contractId: '',
+      contractId: "",
       invoiceDate: new Date().toISOString().substring(0, 10),
-      billingPeriodStart: '',
-      billingPeriodEnd: '',
+      billingPeriodStart: "",
+      billingPeriodEnd: "",
       newElectricityIndex: 0,
       newWaterIndex: 0,
       excludeRoomPrice: false,
@@ -53,37 +55,41 @@ export default {
 
     const payForm = ref({
       invoiceId: null,
-      roomNumber: '',
+      roomNumber: "",
       remainingAmount: 0,
       paidAmount: 0,
     });
 
     const formatMoney = (amount) => {
-      if (amount === undefined || amount === null) return '0';
-      return Math.round(amount).toLocaleString('vi-VN');
+      if (amount === undefined || amount === null) return "0";
+      return Math.round(amount).toLocaleString("vi-VN");
     };
 
     const formatDate = (dateString) => {
-      if (!dateString) return '';
+      if (!dateString) return "";
       const d = new Date(dateString);
-      return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+      return `${d.getDate().toString().padStart(2, "0")}/${(d.getMonth() + 1).toString().padStart(2, "0")}/${d.getFullYear()}`;
     };
 
     const fetchInvoices = async () => {
       try {
-        await invoiceStore.fetchInvoices({ page: page.value, size: size.value });
+        await invoiceStore.fetchInvoices({
+          page: page.value,
+          size: size.value,
+        });
       } catch (err) {
-        alert(err.response?.data?.error || 'Không thể tải danh sách hóa đơn');
+        alert(err.response?.data?.error || "Không thể tải danh sách hóa đơn");
       }
     };
 
     const filteredInvoices = computed(() => {
       if (!searchQuery.value) return invoices.value;
       const q = searchQuery.value.toLowerCase().trim();
-      return invoices.value.filter(inv => 
+      return invoices.value.filter(
+        (inv) =>
           inv.contract.tenant.fullName.toLowerCase().includes(q) ||
           inv.contract.room.roomNumber.toLowerCase().includes(q) ||
-          inv.contract.room.boardingHouse.name.toLowerCase().includes(q)
+          inv.contract.room.boardingHouse.name.toLowerCase().includes(q),
       );
     });
 
@@ -91,12 +97,14 @@ export default {
       try {
         await contractStore.fetchActiveContracts();
       } catch (err) {
-        console.error('Không tải được danh sách hợp đồng:', err);
+        console.error("Không tải được danh sách hợp đồng:", err);
       }
     };
 
     const onContractChange = () => {
-      selectedContract.value = activeContracts.value.find(c => c.id === form.value.contractId);
+      selectedContract.value = activeContracts.value.find(
+        (c) => c.id === form.value.contractId,
+      );
       // Reset advanced configurations when changing contract
       form.value.excludeRoomPrice = false;
       form.value.excludeExtraFees = false;
@@ -104,24 +112,27 @@ export default {
       if (selectedContract.value) {
         const room = selectedContract.value.room;
         const bh = room.boardingHouse;
-        const timing = bh.billingTiming || 'PREPAID';
+        const timing = bh.billingTiming || "PREPAID";
 
         // Filter and sort invoices for this contract by billingPeriodEnd descending
         const contractInvoices = allInvoices.value
-          .filter(inv => inv.contract.id === form.value.contractId)
-          .sort((a, b) => new Date(b.billingPeriodEnd) - new Date(a.billingPeriodEnd));
+          .filter((inv) => inv.contract.id === form.value.contractId)
+          .sort(
+            (a, b) =>
+              new Date(b.billingPeriodEnd) - new Date(a.billingPeriodEnd),
+          );
 
         if (contractInvoices.length > 0) {
           const lastInvoice = contractInvoices[0];
           form.value.billingPeriodStart = lastInvoice.billingPeriodEnd;
-          
+
           const start = new Date(lastInvoice.billingPeriodEnd);
           start.setMonth(start.getMonth() + 1);
           const endStr = start.toISOString().substring(0, 10);
           form.value.billingPeriodEnd = endStr;
 
           // Default invoiceDate based on timing
-          if (timing === 'PREPAID') {
+          if (timing === "PREPAID") {
             form.value.invoiceDate = lastInvoice.billingPeriodEnd; // Start of the next billing period
             form.value.newElectricityIndex = room.currentElectricityIndex;
             form.value.newWaterIndex = room.currentWaterIndex;
@@ -133,13 +144,13 @@ export default {
         } else {
           // First invoice ever
           form.value.billingPeriodStart = selectedContract.value.startDate;
-          
+
           const start = new Date(selectedContract.value.startDate);
           start.setMonth(start.getMonth() + 1);
           const endStr = start.toISOString().substring(0, 10);
           form.value.billingPeriodEnd = endStr;
 
-          if (timing === 'PREPAID') {
+          if (timing === "PREPAID") {
             form.value.invoiceDate = selectedContract.value.startDate; // Check-in start date
             form.value.newElectricityIndex = room.currentElectricityIndex;
             form.value.newWaterIndex = room.currentWaterIndex;
@@ -159,7 +170,7 @@ export default {
         const all = await invoiceStore.fetchInvoices({ page: 0, size: 1000 });
         allInvoices.value = all || [];
       } catch (err) {
-        console.error('Không tải được danh sách hóa đơn:', err);
+        console.error("Không tải được danh sách hóa đơn:", err);
       }
       if (activeContracts.value.length > 0) {
         form.value.contractId = activeContracts.value[0].id;
@@ -171,11 +182,11 @@ export default {
     const saveInvoice = async () => {
       try {
         await invoiceStore.createInvoice(form.value);
-        alert('Lập hóa đơn và tính tiền thành công!');
+        alert("Lập hóa đơn và tính tiền thành công!");
         closeModal();
         fetchInvoices();
       } catch (err) {
-        alert(err.response?.data?.error || 'Lập hóa đơn thất bại');
+        alert(err.response?.data?.error || "Lập hóa đơn thất bại");
       }
     };
 
@@ -191,12 +202,15 @@ export default {
 
     const submitPayment = async () => {
       try {
-        await invoiceStore.payInvoice(payForm.value.invoiceId, payForm.value.paidAmount);
-        alert('Ghi nhận thanh toán thành công!');
+        await invoiceStore.payInvoice(
+          payForm.value.invoiceId,
+          payForm.value.paidAmount,
+        );
+        alert("Ghi nhận thanh toán thành công!");
         closeModal();
         fetchInvoices();
       } catch (err) {
-        alert(err.response?.data?.error || 'Ghi nhận thanh toán thất bại');
+        alert(err.response?.data?.error || "Ghi nhận thanh toán thất bại");
       }
     };
 
@@ -207,7 +221,7 @@ export default {
       try {
         await invoiceStore.fetchInvoiceItems(invoice.id);
       } catch (err) {
-        alert('Không thể tải chi tiết phụ phí hóa đơn');
+        alert("Không thể tải chi tiết phụ phí hóa đơn");
       } finally {
         isLoadingDetails.value = false;
       }
@@ -225,22 +239,27 @@ export default {
       if (invoiceDetails.value) {
         const inv = invoiceDetails.value;
         const remaining = inv.totalAmount - inv.paidAmount;
-        if (confirm(`Xác nhận ghi nhận đã thu đủ số tiền còn lại: ${formatMoney(remaining)} đ?`)) {
+        if (
+          confirm(
+            `Xác nhận ghi nhận đã thu đủ số tiền còn lại: ${formatMoney(remaining)} đ?`,
+          )
+        ) {
           try {
             await invoiceStore.payInvoice(inv.id, remaining);
-            alert('Ghi nhận thanh toán thành công!');
+            alert("Ghi nhận thanh toán thành công!");
             closeModal();
             fetchInvoices();
           } catch (err) {
-            alert(err.response?.data?.error || 'Ghi nhận thanh toán thất bại');
+            alert(err.response?.data?.error || "Ghi nhận thanh toán thất bại");
           }
         }
       }
     };
 
     const printReceipt = () => {
-      const printContent = document.getElementById('receipt-print-area').innerHTML;
-      const printWindow = window.open('', '_blank');
+      const printContent =
+        document.getElementById("receipt-print-area").innerHTML;
+      const printWindow = window.open("", "_blank");
       printWindow.document.write(`
         <html>
           <head>
@@ -382,19 +401,19 @@ export default {
 
     const downloadReceiptImage = async () => {
       if (!invoiceDetails.value) return;
-      const originalElement = document.getElementById('receipt-print-area');
-      
+      const originalElement = document.getElementById("receipt-print-area");
+
       // Clone element to force print layout on mobile
       const clone = originalElement.cloneNode(true);
-      const container = document.createElement('div');
-      container.style.position = 'absolute';
-      container.style.left = '-9999px';
-      container.style.top = '-9999px';
-      container.style.width = '600px'; // standard invoice width
-      container.style.background = '#ffffff';
-      
+      const container = document.createElement("div");
+      container.style.position = "absolute";
+      container.style.left = "-9999px";
+      container.style.top = "-9999px";
+      container.style.width = "600px"; // standard invoice width
+      container.style.background = "#ffffff";
+
       // Inject exact print styles for clone rendering
-      const style = document.createElement('style');
+      const style = document.createElement("style");
       style.innerHTML = `
         #receipt-print-area {
           font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -540,10 +559,10 @@ export default {
       container.appendChild(style);
 
       // Create fake browser print header
-      const headerDiv = document.createElement('div');
-      headerDiv.className = 'print-browser-header';
+      const headerDiv = document.createElement("div");
+      headerDiv.className = "print-browser-header";
       const now = new Date();
-      const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+      const timeStr = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
       const dateStr = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear().toString().slice(-2)}`;
       headerDiv.innerHTML = `
         <div style="flex: 1; text-align: left;">${timeStr} ${dateStr}</div>
@@ -553,8 +572,8 @@ export default {
       clone.insertBefore(headerDiv, clone.firstChild);
 
       // Create fake browser print footer
-      const footerDiv = document.createElement('div');
-      footerDiv.className = 'print-browser-footer';
+      const footerDiv = document.createElement("div");
+      footerDiv.className = "print-browser-footer";
       const pageUrl = window.location.href;
       footerDiv.innerHTML = `
         <div style="flex: 2; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${pageUrl}</div>
@@ -570,42 +589,48 @@ export default {
         const canvas = await html2canvasFn(clone, {
           scale: 2,
           useCORS: true,
-          backgroundColor: '#ffffff',
+          backgroundColor: "#ffffff",
           width: 600,
           windowWidth: 1200,
-          windowHeight: 1200
+          windowHeight: 1200,
         });
-        const image = canvas.toDataURL('image/png');
-        const startDayStr = formatDate(invoiceDetails.value.billingPeriodStart).replace(/\//g, '-');
+        const image = canvas.toDataURL("image/png");
+        const startDayStr = formatDate(
+          invoiceDetails.value.billingPeriodStart,
+        ).replace(/\//g, "-");
         const fileName = `PhieuThanhToan_Phong_${invoiceDetails.value.contract.room.roomNumber}_Ky_${startDayStr}.png`;
 
         // Try to share via Web Share API first (essential for iOS to save directly to Photo Gallery)
         try {
           const response = await fetch(image);
           const blob = await response.blob();
-          const file = new File([blob], fileName, { type: 'image/png' });
-          if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          const file = new File([blob], fileName, { type: "image/png" });
+          if (
+            navigator.share &&
+            navigator.canShare &&
+            navigator.canShare({ files: [file] })
+          ) {
             await navigator.share({
               files: [file],
-              title: 'Hóa đơn tiền phòng',
-              text: `Hóa đơn tiền phòng phòng ${invoiceDetails.value.contract.room.roomNumber}`
+              title: "Hóa đơn tiền phòng",
+              text: `Hóa đơn tiền phòng phòng ${invoiceDetails.value.contract.room.roomNumber}`,
             });
             return;
           }
         } catch (shareErr) {
-          console.warn('Web Share API not supported or cancelled:', shareErr);
+          console.warn("Web Share API not supported or cancelled:", shareErr);
         }
 
         // Fallback for desktop or unsupported browsers
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.download = fileName;
         link.href = image;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
       } catch (err) {
-        console.error('Không thể lưu ảnh biên lai:', err);
-        alert('Không thể xuất ảnh biên lai: ' + err.message);
+        console.error("Không thể lưu ảnh biên lai:", err);
+        alert("Không thể xuất ảnh biên lai: " + err.message);
       } finally {
         document.body.removeChild(container);
       }
@@ -626,10 +651,10 @@ export default {
       invoiceDetails.value = null;
       invoiceItems.value = [];
       form.value = {
-        contractId: '',
+        contractId: "",
         invoiceDate: new Date().toISOString().substring(0, 10),
-        billingPeriodStart: '',
-        billingPeriodEnd: '',
+        billingPeriodStart: "",
+        billingPeriodEnd: "",
         newElectricityIndex: 0,
         newWaterIndex: 0,
         excludeRoomPrice: false,
@@ -637,7 +662,7 @@ export default {
       };
       payForm.value = {
         invoiceId: null,
-        roomNumber: '',
+        roomNumber: "",
         remainingAmount: 0,
         paidAmount: 0,
       };
