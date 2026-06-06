@@ -40,6 +40,8 @@ export default {
       billingPeriodEnd: '',
       newElectricityIndex: 0,
       newWaterIndex: 0,
+      excludeRoomPrice: false,
+      excludeExtraFees: false,
     });
 
     const payForm = ref({
@@ -290,6 +292,8 @@ export default {
         billingPeriodEnd: '',
         newElectricityIndex: 0,
         newWaterIndex: 0,
+        excludeRoomPrice: false,
+        excludeExtraFees: false,
       };
       payForm.value = {
         invoiceId: null,

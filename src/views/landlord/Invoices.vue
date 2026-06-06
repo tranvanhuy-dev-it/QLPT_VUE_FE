@@ -136,11 +136,32 @@
             </div>
           </div>
 
-          <div class="flex flex-col gap-1.5 mb-6">
+          <div class="flex flex-col gap-1.5 mb-5">
             <label class="text-xs font-semibold text-text-sub uppercase">Ngày lập hóa đơn *</label>
             <input type="date"
               class="w-full px-3 py-2 border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main text-sm outline-none focus:bg-white focus:border-primary"
               v-model="form.invoiceDate" required />
+          </div>
+
+          <!-- Advanced options (e.g., checkout/final billing) -->
+          <div class="mb-6 p-4 rounded-xl border border-border-main/50 bg-slate-50/50 dark:bg-slate-900/10 space-y-3">
+            <div class="text-[10px] font-bold text-text-sub uppercase tracking-wider mb-1">Cấu hình nâng cao (Kỳ cuối / Trả phòng)</div>
+            
+            <label class="flex items-start gap-2.5 cursor-pointer text-xs font-medium text-text-main">
+              <input type="checkbox" v-model="form.excludeRoomPrice" class="mt-0.5 rounded border-border-main text-primary focus:ring-primary cursor-pointer" />
+              <div class="flex flex-col">
+                <span>Không thu tiền phòng (Chỉ tính điện nước)</span>
+                <span class="text-[10px] text-text-sub font-normal">Sử dụng cho kỳ hóa đơn cuối cùng trước khi trả phòng (do tiền phòng đã đóng trước đó).</span>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-2.5 cursor-pointer text-xs font-medium text-text-main">
+              <input type="checkbox" v-model="form.excludeExtraFees" class="mt-0.5 rounded border-border-main text-primary focus:ring-primary cursor-pointer" />
+              <div class="flex flex-col">
+                <span>Không thu các phụ phí dịch vụ</span>
+                <span class="text-[10px] text-text-sub font-normal">Sử dụng để bỏ qua các phí dịch vụ định kỳ (Wifi, vệ sinh...) khi thanh lý hợp đồng.</span>
+              </div>
+            </label>
           </div>
 
           <div class="flex gap-3 justify-end mt-4">
