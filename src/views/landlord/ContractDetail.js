@@ -1,15 +1,17 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import api from '../../services/api.js';
+import { useContractStore } from '../../stores/contract.js';
 
 export default {
   name: 'ContractDetail',
   setup() {
     const route = useRoute();
     const router = useRouter();
-    const contract = ref(null);
-    const extraFees = ref([]);
-    const loading = ref(true);
+    const contractStore = useContractStore();
+
+    const contract = computed(() => contractStore.currentContract);
+    const extraFees = computed(() => contractStore.currentExtraFees);
+    const loading = computed(() => contractStore.loading);
     const isEditMode = ref(false);
     const numberOfTenants = ref(1);
     const saving = ref(false);
@@ -26,17 +28,10 @@ export default {
     };
 
     const fetchContractDetail = async () => {
-      loading.value = true;
       try {
         const contractId = route.params.id;
-        const [contractRes, feesRes] = await Promise.all([
-          api.get(`/api/contracts/${contractId}`),
-          api.get(`/api/contracts/${contractId}/extra-fees`)
-        ]);
-
-        contract.value = contractRes.data;
-        extraFees.value = feesRes.data || [];
-        numberOfTenants.value = contractRes.data.numberOfTenants;
+        const res = await contractStore.fetchContractDetail(contractId);
+        numberOfTenants.value = res.contract.numberOfTenants;
 
         // Automatically toggle edit mode if queried
         if (route.query.edit === 'true') {
@@ -45,8 +40,6 @@ export default {
       } catch (err) {
         alert(err.response?.data?.error || 'Không thể tải thông tin chi tiết hợp đồng');
         router.push({ name: 'Contracts' });
-      } finally {
-        loading.value = false;
       }
     };
 
@@ -73,10 +66,9 @@ export default {
 
       saving.value = true;
       try {
-        const response = await api.put(`/api/contracts/${contract.value.id}`, {
+        await contractStore.updateContract(contract.value.id, {
           numberOfTenants: numberOfTenants.value
         });
-        contract.value.numberOfTenants = response.data.numberOfTenants;
         alert('Cập nhật số người ở thành công!');
         isEditMode.value = false;
       } catch (err) {
@@ -93,7 +85,7 @@ export default {
     const terminateContract = async () => {
       if (confirm('Bạn có chắc chắn muốn thanh lý hợp đồng này ngay bây giờ? Phòng trọ sẽ chuyển sang trạng thái trống.')) {
         try {
-          await api.post(`/api/contracts/${contract.value.id}/terminate`);
+          await contractStore.terminateContract(contract.value.id);
           alert('Đã thanh lý hợp đồng thành công!');
           await fetchContractDetail();
         } catch (err) {

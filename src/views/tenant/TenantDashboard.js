@@ -1,6 +1,7 @@
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import PageHeader from '../../components/PageHeader.vue';
-import api from '../../services/api.js';
+import { useContractStore } from '../../stores/contract.js';
+import { useInvoiceStore } from '../../stores/invoice.js';
 import html2canvas from 'html2canvas-pro';
 
 export default {
@@ -11,15 +12,18 @@ export default {
   setup() {
     const tenantDashboardIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>`;
     
+    const contractStore = useContractStore();
+    const invoiceStore = useInvoiceStore();
+
     const activeContract = ref(null);
-    const invoices = ref([]);
+    const invoices = computed(() => invoiceStore.invoices);
     const loading = ref(true);
 
     // Pagination
     const page = ref(0);
     const size = ref(10);
-    const totalPages = ref(1);
-    const totalElements = ref(0);
+    const totalPages = computed(() => invoiceStore.totalPages);
+    const totalElements = computed(() => invoiceStore.totalElements);
 
     const showDetailModal = ref(false);
     const isLoadingDetails = ref(false);
@@ -40,8 +44,7 @@ export default {
     const loadTenantData = async () => {
       loading.value = true;
       try {
-        const contractsRes = await api.get('/api/contracts');
-        const contractsList = contractsRes.data.content || [];
+        const contractsList = await contractStore.fetchContracts();
         activeContract.value = contractsList.find(c => c.status === 'ACTIVE') || null;
 
         await fetchInvoices();
@@ -54,12 +57,7 @@ export default {
 
     const fetchInvoices = async () => {
       try {
-        const response = await api.get('/api/invoices', {
-          params: { page: page.value, size: size.value },
-        });
-        invoices.value = response.data.content || [];
-        totalPages.value = response.data.totalPages || 1;
-        totalElements.value = response.data.totalElements || 0;
+        await invoiceStore.fetchInvoices({ page: page.value, size: size.value });
       } catch (err) {
         console.error('Không thể tải hóa đơn của người dùng:', err);
       }
@@ -71,8 +69,7 @@ export default {
       isLoadingDetails.value = true;
       showDetailModal.value = true;
       try {
-        const response = await api.get(`/api/invoices/${invoice.id}/items`);
-        invoiceItems.value = response.data || [];
+        invoiceItems.value = await invoiceStore.fetchInvoiceItems(invoice.id);
       } catch (err) {
         alert('Không thể tải chi tiết phụ phí hóa đơn');
       } finally {

@@ -56,14 +56,6 @@ export const useAuthStore = defineStore('auth', {
       } catch (error) {
         throw error.response?.data?.error || 'Đăng ký tài khoản thất bại!';
       }
-    },
-    async createTenant(tenantData) {
-      try {
-        const response = await api.post('/api/auth/create-tenant', tenantData);
-        return response.data;
-      } catch (error) {
-        throw error.response?.data?.error || 'Không thể tạo tài khoản cho người thuê!';
-      }
     }
   },
 });

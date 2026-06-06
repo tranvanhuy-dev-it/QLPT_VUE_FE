@@ -1,7 +1,7 @@
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '../../stores/auth.js';
 import { useRouter } from 'vue-router';
-import api from '../../services/api.js';
+import adminService from '../../services/adminService.js';
 
 export default {
   name: 'AdminDashboard',
@@ -21,11 +21,9 @@ export default {
     const fetchLandlords = async () => {
       loading.value = true;
       try {
-        const response = await api.get(`/api/admin/landlords`, {
-          params: {
-            page: page.value,
-            size: size.value,
-          },
+        const response = await adminService.getLandlords({
+          page: page.value,
+          size: size.value,
         });
         landlords.value = response.data.content;
         totalPages.value = response.data.totalPages;
@@ -39,7 +37,7 @@ export default {
 
     const toggleStatus = async (id) => {
       try {
-        await api.post(`/api/admin/landlords/${id}/toggle`);
+        await adminService.toggleLandlordStatus(id);
         // Refresh the active page
         fetchLandlords();
       } catch (err) {

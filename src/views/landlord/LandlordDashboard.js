@@ -1,6 +1,9 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import api from '../../services/api.js';
+import boardingHouseService from '../../services/boardingHouseService.js';
+import roomService from '../../services/roomService.js';
+import contractService from '../../services/contractService.js';
+import invoiceService from '../../services/invoiceService.js';
 
 export default {
   name: 'LandlordDashboard',
@@ -60,10 +63,10 @@ export default {
       loading.value = true;
       try {
         const [bhRes, roomsRes, contractsRes, invoicesRes] = await Promise.all([
-          api.get('/api/rooms/boarding-houses', { params: { size: 100 } }),
-          api.get('/api/rooms', { params: { size: 200 } }),
-          api.get('/api/contracts', { params: { size: 200 } }),
-          api.get('/api/invoices', { params: { size: 200 } })
+          boardingHouseService.getAll({ size: 100 }),
+          roomService.getAll({ size: 200 }),
+          contractService.getAll({ size: 200 }),
+          invoiceService.getAll({ size: 200 })
         ]);
 
         // Tải danh sách Dãy trọ
