@@ -1,4 +1,4 @@
-import { computed } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth.js';
 
@@ -45,6 +45,19 @@ export default {
       }
     });
 
+    const theme = ref(localStorage.getItem('theme') || 'light');
+
+    const toggleTheme = () => {
+      const newTheme = theme.value === 'dark' ? 'light' : 'dark';
+      theme.value = newTheme;
+      localStorage.setItem('theme', newTheme);
+      document.documentElement.setAttribute('data-theme', newTheme);
+    };
+
+    onMounted(() => {
+      document.documentElement.setAttribute('data-theme', theme.value);
+    });
+
     const handleLogout = () => {
       authStore.logout();
       router.push('/login');
@@ -60,6 +73,8 @@ export default {
       roleLabel,
       parentRoute,
       currentRoute,
+      theme,
+      toggleTheme,
       handleLogout,
       toggleSidebar,
     };

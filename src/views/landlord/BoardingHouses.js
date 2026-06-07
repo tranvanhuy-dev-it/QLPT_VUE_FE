@@ -28,6 +28,21 @@ export default {
     const showEditModal = ref(false);
     const editId = ref(null);
 
+    const popularBanks = [
+      { code: 'MB', name: 'MBBank (Ngân hàng Quân đội)' },
+      { code: 'VCB', name: 'Vietcombank' },
+      { code: 'ICB', name: 'VietinBank' },
+      { code: 'BIDV', name: 'BIDV' },
+      { code: 'TCB', name: 'Techcombank' },
+      { code: 'ACB', name: 'ACB' },
+      { code: 'VPB', name: 'VPBank' },
+      { code: 'TPB', name: 'TPBank' },
+      { code: 'VIB', name: 'VIB' },
+      { code: 'STB', name: 'Sacombank' },
+      { code: 'HDB', name: 'HDBank' },
+      { code: 'SHB', name: 'SHB' }
+    ];
+
     const form = ref({
       name: '',
       address: '',
@@ -35,6 +50,9 @@ export default {
       defaultWaterRate: 15000,
       waterBillingType: 'BY_INDEX',
       billingTiming: 'PREPAID',
+      bankName: '',
+      bankAccountNumber: '',
+      bankAccountName: '',
       extraFees: [],
     });
 
@@ -95,6 +113,9 @@ export default {
         defaultWaterRate: house.defaultWaterRate,
         waterBillingType: house.waterBillingType,
         billingTiming: house.billingTiming || 'PREPAID',
+        bankName: house.bankName || '',
+        bankAccountNumber: house.bankAccountNumber || '',
+        bankAccountName: house.bankAccountName || '',
         extraFees: (house.extraFees || []).map(ef => ({
           id: ef.id,
           name: ef.name,
@@ -126,6 +147,9 @@ export default {
         defaultWaterRate: 15000,
         waterBillingType: 'BY_INDEX',
         billingTiming: 'PREPAID',
+        bankName: '',
+        bankAccountNumber: '',
+        bankAccountName: '',
         extraFees: [],
       };
     };
@@ -141,6 +165,7 @@ export default {
       showAddModal,
       showEditModal,
       form,
+      popularBanks,
       saveHouse,
       editHouse,
       deleteHouse,

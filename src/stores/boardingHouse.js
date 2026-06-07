@@ -26,7 +26,7 @@ export const useBoardingHouseStore = defineStore('boardingHouse', {
     async createBoardingHouse(data) {
       try {
         const response = await boardingHouseService.create(data);
-        await this.fetchBoardingHouses();
+        await this.fetchBoardingHouses(true);
         return response.data;
       } catch (error) {
         console.error('Error creating boarding house:', error);
@@ -36,7 +36,7 @@ export const useBoardingHouseStore = defineStore('boardingHouse', {
     async updateBoardingHouse(id, data) {
       try {
         const response = await boardingHouseService.update(id, data);
-        await this.fetchBoardingHouses();
+        await this.fetchBoardingHouses(true);
         return response.data;
       } catch (error) {
         console.error('Error updating boarding house:', error);
@@ -46,7 +46,7 @@ export const useBoardingHouseStore = defineStore('boardingHouse', {
     async deleteBoardingHouse(id) {
       try {
         await boardingHouseService.delete(id);
-        await this.fetchBoardingHouses();
+        await this.fetchBoardingHouses(true);
       } catch (error) {
         console.error('Error deleting boarding house:', error);
         throw error;

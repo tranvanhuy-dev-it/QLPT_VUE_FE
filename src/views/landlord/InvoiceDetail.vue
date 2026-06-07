@@ -279,6 +279,41 @@
             </div>
           </div>
         </div>
+
+        <!-- VietQR Payment Card (Only show if not paid and QR details configured) -->
+        <div v-if="invoice.status !== 'PAID' && vietQrUrl" class="bg-card border border-border-main rounded-xl p-4 shadow-xs flex flex-col md:flex-row items-center gap-6">
+          <div class="flex-1">
+            <h3 class="text-sm font-bold text-text-main mb-1">Thanh toán chuyển khoản nhanh</h3>
+            <p class="text-xs text-text-sub mb-4">Quét mã QR bằng ứng dụng ngân hàng của bạn để thanh toán tự động tiền thuê phòng & dịch vụ tháng này.</p>
+            <div class="space-y-2 text-xs">
+              <div class="flex justify-between border-b border-border-main/20 pb-1.5">
+                <span class="text-text-sub font-semibold">Ngân hàng:</span>
+                <span class="font-bold text-text-main">{{ invoice.contract?.room?.boardingHouse?.bankName }}</span>
+              </div>
+              <div class="flex justify-between border-b border-border-main/20 pb-1.5">
+                <span class="text-text-sub font-semibold">Số tài khoản:</span>
+                <span class="font-bold text-primary">{{ invoice.contract?.room?.boardingHouse?.bankAccountNumber }}</span>
+              </div>
+              <div class="flex justify-between border-b border-border-main/20 pb-1.5">
+                <span class="text-text-sub font-semibold">Tên chủ tài khoản:</span>
+                <span class="font-bold text-text-main">{{ invoice.contract?.room?.boardingHouse?.bankAccountName }}</span>
+              </div>
+              <div class="flex justify-between border-b border-border-main/20 pb-1.5">
+                <span class="text-text-sub font-semibold">Số tiền thanh toán:</span>
+                <span class="font-extrabold text-danger text-sm">{{ formatMoney(invoice.totalAmount - invoice.paidAmount) }} đ</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-text-sub font-semibold">Nội dung chuyển khoản:</span>
+                <span class="font-mono bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-text-main">
+                  PHONG {{ invoice.contract?.room?.roomNumber }} CK TIEN PHONG
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="w-48 h-48 bg-white border border-border-main p-2 rounded-xl flex items-center justify-center shrink-0 shadow-xs">
+            <img :src="vietQrUrl" class="w-full h-full object-contain" alt="Mã chuyển khoản VietQR" />
+          </div>
+        </div>
       </div>
 
       <!-- PRINTABLE INVOICE SHEET VIEW -->

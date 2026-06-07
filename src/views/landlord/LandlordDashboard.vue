@@ -57,47 +57,109 @@
           </div>
         </div>
 
-        <!-- Period Statistics Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <!-- Revenue Collected -->
-          <div class="flex items-center gap-3 bg-slate-50/50 dark:bg-slate-900/10 border border-border-main/80 rounded-xl p-3">
-            <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-green-50 dark:bg-green-950/30 text-green-600">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+        <!-- Period Statistics & Chart Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <!-- Left: Statistics list -->
+          <div class="flex flex-col gap-3 lg:col-span-1">
+            <!-- Revenue Collected -->
+            <div class="flex items-center gap-3 bg-slate-50/50 dark:bg-slate-900/10 border border-border-main/80 rounded-xl p-3 flex-1">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-green-50 dark:bg-green-950/30 text-green-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div class="flex flex-col min-w-0">
+                <span class="text-[0.65rem] text-text-sub font-bold uppercase tracking-wider">Doanh thu thực tế (Đã thu)</span>
+                <h3 class="text-base font-extrabold text-green-600 dark:text-green-400 leading-none mt-1">{{ formatMoney(revenueStats.actual) }} đ</h3>
+                <span class="text-[9px] text-text-sub mt-0.5 font-medium">Đã thanh toán từ {{ revenueStats.count }} hóa đơn</span>
+              </div>
             </div>
-            <div class="flex flex-col min-w-0">
-              <span class="text-[0.65rem] text-text-sub font-bold uppercase tracking-wider">Doanh thu thực tế (Đã thu)</span>
-              <h3 class="text-lg font-extrabold text-green-600 dark:text-green-400 leading-none mt-1">{{ formatMoney(revenueStats.actual) }} đ</h3>
-              <span class="text-[9px] text-text-sub mt-0.5 font-medium">Đã thanh toán từ {{ revenueStats.count }} hóa đơn</span>
+
+            <!-- Expected Revenue -->
+            <div class="flex items-center gap-3 bg-slate-50/50 dark:bg-slate-900/10 border border-border-main/80 rounded-xl p-3 flex-1">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-blue-50 dark:bg-blue-950/30 text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div class="flex flex-col min-w-0">
+                <span class="text-[0.65rem] text-text-sub font-bold uppercase tracking-wider">Tổng doanh thu dự kiến</span>
+                <h3 class="text-base font-extrabold text-primary leading-none mt-1">{{ formatMoney(revenueStats.expected) }} đ</h3>
+                <span class="text-[9px] text-text-sub mt-0.5 font-medium">Tổng số tiền cần thu</span>
+              </div>
+            </div>
+
+            <!-- Unpaid / Debt in Period -->
+            <div class="flex items-center gap-3 bg-slate-50/50 dark:bg-slate-900/10 border border-border-main/80 rounded-xl p-3 flex-1">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-rose-50 dark:bg-rose-950/30 text-rose-500">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-5 h-5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div class="flex flex-col min-w-0">
+                <span class="text-[0.65rem] text-text-sub font-bold uppercase tracking-wider">Nợ chưa thu (Công nợ kỳ này)</span>
+                <h3 class="text-base font-extrabold text-rose-500 leading-none mt-1">{{ formatMoney(revenueStats.debt) }} đ</h3>
+                <span class="text-[9px] text-rose-500/80 font-bold mt-0.5">Số tiền chưa thu được</span>
+              </div>
             </div>
           </div>
-
-          <!-- Expected Revenue -->
-          <div class="flex items-center gap-3 bg-slate-50/50 dark:bg-slate-900/10 border border-border-main/80 rounded-xl p-3">
-            <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-blue-50 dark:bg-blue-950/30 text-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          
+          <!-- Right: Revenue Bar Chart (SVG-based) -->
+          <div class="lg:col-span-2 border border-border-main bg-slate-50/30 dark:bg-slate-900/10 rounded-xl p-4 flex flex-col justify-between min-h-[220px]">
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-xs font-bold text-text-main">Doanh Thu 6 Tháng Gần Nhất</span>
+              <div class="flex items-center gap-3 text-[10px]">
+                <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-primary/80 rounded-xs"></span> Dự kiến</div>
+                <div class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-success/80 rounded-xs"></span> Thực thu</div>
+              </div>
+            </div>
+            
+            <div v-if="monthlyRevenueData.length === 0" class="flex-1 flex items-center justify-center text-xs text-text-sub italic">
+              Chưa có dữ liệu hóa đơn để lập biểu đồ
+            </div>
+            
+            <div v-else class="h-44 w-full flex items-end">
+              <svg viewBox="0 0 380 140" class="w-full h-full">
+                <!-- Grid lines -->
+                <line x1="30" y1="10" x2="370" y2="10" stroke="var(--border-color)" stroke-dasharray="3" />
+                <line x1="30" y1="45" x2="370" y2="45" stroke="var(--border-color)" stroke-dasharray="3" />
+                <line x1="30" y1="80" x2="370" y2="80" stroke="var(--border-color)" stroke-dasharray="3" />
+                <line x1="30" y1="115" x2="370" y2="115" stroke="var(--border-color)" stroke-width="1" />
+                
+                <g v-for="(m, idx) in monthlyRevenueData" :key="idx">
+                  <!-- Expected Bar -->
+                  <rect 
+                    :x="42 + idx * 56" 
+                    :y="115 - m.expectedHeightPct" 
+                    width="14" 
+                    :height="m.expectedHeightPct" 
+                    class="fill-primary/70 dark:fill-primary/80 hover:opacity-85 transition-all duration-300"
+                    rx="2"
+                  >
+                    <title>Tháng {{ m.label }} - Dự kiến: {{ formatMoney(m.expected) }} đ</title>
+                  </rect>
+                  <!-- Actual Bar -->
+                  <rect 
+                    :x="58 + idx * 56" 
+                    :y="115 - m.actualHeightPct" 
+                    width="14" 
+                    :height="m.actualHeightPct" 
+                    class="fill-success/70 dark:fill-success/85 hover:opacity-85 transition-all duration-300"
+                    rx="2"
+                  >
+                    <title>Tháng {{ m.label }} - Thực thu: {{ formatMoney(m.actual) }} đ</title>
+                  </rect>
+                  <!-- Label -->
+                  <text 
+                    :x="57 + idx * 56" 
+                    y="132" 
+                    text-anchor="middle" 
+                    class="text-[9px] font-semibold fill-text-sub"
+                  >
+                    {{ m.label }}
+                  </text>
+                </g>
               </svg>
-            </div>
-            <div class="flex flex-col min-w-0">
-              <span class="text-[0.65rem] text-text-sub font-bold uppercase tracking-wider">Tổng doanh thu dự kiến</span>
-              <h3 class="text-lg font-extrabold text-primary leading-none mt-1">{{ formatMoney(revenueStats.expected) }} đ</h3>
-              <span class="text-[9px] text-text-sub mt-0.5 font-medium">Tổng số tiền cần thu</span>
-            </div>
-          </div>
-
-          <!-- Unpaid / Debt in Period -->
-          <div class="flex items-center gap-3 bg-slate-50/50 dark:bg-slate-900/10 border border-border-main/80 rounded-xl p-3">
-            <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-rose-50 dark:bg-rose-950/30 text-rose-500">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-            </div>
-            <div class="flex flex-col min-w-0">
-              <span class="text-[0.65rem] text-text-sub font-bold uppercase tracking-wider">Nợ chưa thu (Công nợ kỳ này)</span>
-              <h3 class="text-lg font-extrabold text-rose-500 leading-none mt-1">{{ formatMoney(revenueStats.debt) }} đ</h3>
-              <span class="text-[9px] text-rose-500/80 font-bold mt-0.5">Số tiền chưa thu được</span>
             </div>
           </div>
         </div>
@@ -187,27 +249,70 @@
           class="bg-card border border-border-main rounded-2xl shadow-xs hover:shadow-md transition-all duration-200 p-4 flex flex-col justify-between">
           <div>
             <h3 class="text-[1.05rem] font-bold text-text-main mb-1">Hiệu Suất Cho Thuê</h3>
-            <p class="text-xs text-text-sub mb-6">Tỷ lệ phòng có người ở trong toàn bộ hệ thống</p>
+            <p class="text-xs text-text-sub mb-4">Tỷ lệ phòng có người ở trong toàn bộ hệ thống</p>
           </div>
-          <div class="text-center my-4">
-            <div
-              class="text-5xl font-extrabold text-transparent bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text leading-none drop-shadow-[0_4px_12px_rgba(59,130,246,0.15)]">
-              {{ occupancyRate }}%
-            </div>
-            <div class="text-[0.8rem] text-text-sub mt-2 font-medium">
-              Phòng đã được cho thuê
-            </div>
-          </div>
-          <div class="w-full mt-4">
-            <div class="h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mb-2.5">
-              <div :style="{ width: occupancyRate + '%' }"
-                class="h-full bg-gradient-to-r from-indigo-600 to-blue-500 rounded-full transition-all duration-750 ease-out shadow-xs shadow-blue-500/30">
+          <div class="flex items-center justify-around my-2 gap-4">
+            <!-- SVG Donut Chart -->
+            <div class="relative w-28 h-28 shrink-0 flex items-center justify-center">
+              <svg viewBox="0 0 80 80" class="w-full h-full transform -rotate-90">
+                <!-- Track -->
+                <circle cx="40" cy="40" r="36" stroke="var(--border-color)" stroke-width="6" fill="transparent" />
+                <!-- Fill -->
+                <circle 
+                  cx="40" 
+                  cy="40" 
+                  r="36" 
+                  stroke="url(#occupancy-gradient)" 
+                  stroke-width="7" 
+                  fill="transparent"
+                  stroke-dasharray="226.19"
+                  :stroke-dashoffset="occupancyCircleDashoffset"
+                  stroke-linecap="round"
+                  class="transition-all duration-1000 ease-out"
+                />
+                <!-- Gradients def -->
+                <defs>
+                  <linearGradient id="occupancy-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#3b82f6" />
+                    <stop offset="100%" stop-color="#4f46e5" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <!-- Center Text -->
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span class="text-xl font-black text-text-main leading-none">{{ occupancyRate }}%</span>
+                <span class="text-[8px] text-text-sub font-bold uppercase tracking-wider mt-1">Đã Thuê</span>
               </div>
             </div>
-            <div class="flex justify-between text-[0.75rem] text-text-sub font-medium">
-              <span>{{ stats.occupiedRooms }} phòng đang ở</span>
-              <span>{{ stats.roomsCount }} tổng phòng</span>
+            
+            <!-- Statistics Legends -->
+            <div class="flex flex-col gap-2.5 text-xs">
+              <div class="flex items-start gap-2">
+                <div class="w-2.5 h-2.5 rounded-full bg-primary mt-1 shrink-0"></div>
+                <div class="flex flex-col">
+                  <span class="font-bold text-text-main leading-tight">{{ stats.occupiedRooms }} phòng</span>
+                  <span class="text-[10px] text-text-sub">Đang thuê</span>
+                </div>
+              </div>
+              <div class="flex items-start gap-2">
+                <div class="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-700 mt-1 shrink-0"></div>
+                <div class="flex flex-col">
+                  <span class="font-bold text-text-main leading-tight">{{ stats.vacantRooms }} phòng</span>
+                  <span class="text-[10px] text-text-sub">Đang trống</span>
+                </div>
+              </div>
+              <div class="flex items-start gap-2 border-t border-border-main/40 pt-1.5">
+                <div class="w-2.5 h-2.5 rounded-full bg-indigo-500 mt-1 shrink-0"></div>
+                <div class="flex flex-col">
+                  <span class="font-bold text-text-main leading-tight">{{ stats.roomsCount }} phòng</span>
+                  <span class="text-[10px] text-text-sub">Tổng số phòng</span>
+                </div>
+              </div>
             </div>
+          </div>
+          <div class="w-full mt-3 border-t border-border-main/40 pt-3 flex items-center justify-between text-[11px] text-text-sub font-medium">
+            <span>Tỷ lệ phòng trống:</span>
+            <span class="font-bold text-text-main">{{ Math.max(0, 100 - occupancyRate) }}%</span>
           </div>
         </div>
 

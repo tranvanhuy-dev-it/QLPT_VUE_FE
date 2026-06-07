@@ -89,6 +89,52 @@ export default {
         : 0;
     });
 
+    const occupancyCircleDashoffset = computed(() => {
+      const circ = 2 * Math.PI * 36; // 226.19
+      return circ - (circ * occupancyRate.value) / 100;
+    });
+
+    const monthlyRevenueData = computed(() => {
+      if (allInvoicesList.value.length === 0) return [];
+      
+      const months = [];
+      const now = new Date();
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        months.push({
+          year: d.getFullYear(),
+          month: d.getMonth(),
+          label: `${d.getMonth() + 1}/${d.getFullYear().toString().slice(-2)}`,
+          expected: 0,
+          actual: 0
+        });
+      }
+      
+      allInvoicesList.value.forEach(inv => {
+        const invDate = new Date(inv.invoiceDate);
+        const invYear = invDate.getFullYear();
+        const invMonth = invDate.getMonth();
+        
+        const mData = months.find(m => m.year === invYear && m.month === invMonth);
+        if (mData) {
+          mData.expected += inv.totalAmount || 0;
+          mData.actual += inv.paidAmount || 0;
+        }
+      });
+      
+      const maxVal = Math.max(...months.map(m => m.expected), 100000);
+      
+      return months.map(m => {
+        const expectedHeightPct = Math.round((m.expected / maxVal) * 110); // max 110px in SVG
+        const actualHeightPct = Math.round((m.actual / maxVal) * 110);
+        return {
+          ...m,
+          expectedHeightPct,
+          actualHeightPct
+        };
+      });
+    });
+
     const formatMoney = (amount) => {
       if (amount === undefined || amount === null) return '0';
       return Math.round(amount).toLocaleString('vi-VN');
@@ -250,6 +296,8 @@ export default {
       filterEndDate,
       revenueStats,
       filteredUnpaidInvoices,
+      monthlyRevenueData,
+      occupancyCircleDashoffset,
     };
   },
 };

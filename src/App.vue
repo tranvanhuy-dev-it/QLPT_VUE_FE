@@ -65,6 +65,8 @@ export default {
     };
 
     onMounted(() => {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
       checkSession();
       // Kiểm tra định kỳ mỗi 10 giây xem phiên đăng nhập đã hết hạn chưa
       checkInterval = setInterval(checkSession, 10000);

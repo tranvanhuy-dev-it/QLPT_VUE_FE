@@ -66,6 +66,13 @@
                 </span>
               </div>
             </div>
+
+            <!-- Banking information preview -->
+            <div v-if="house.bankAccountNumber" class="pt-2 border-t border-border-main/40 flex flex-col gap-1 text-[11px]">
+              <div class="text-[10px] text-text-sub font-semibold uppercase tracking-wider">Tài khoản thanh toán</div>
+              <span class="text-text-main font-medium">Ngân hàng: {{ house.bankName }} - {{ house.bankAccountNumber }}</span>
+              <span class="text-text-sub font-medium">Chủ TK: {{ house.bankAccountName }}</span>
+            </div>
           </div>
 
           <!-- Card Actions -->
@@ -161,6 +168,40 @@
             <option value="PREPAID">Thu đầu tháng (Tiền phòng trả trước, điện nước trả sau)</option>
             <option value="POSTPAID">Thu cuối tháng (Thu cả tiền phòng và điện nước vào cuối tháng)</option>
           </FormSelect>
+        </div>
+
+        <!-- Cấu hình nhận thanh toán bằng QR Code -->
+        <div class="mt-6 pt-4 border-t border-border-main">
+          <h4 class="text-sm font-bold text-text-main mb-3">Tài Khoản Thanh Toán QR (VietQR)</h4>
+          <div class="mb-4">
+            <FormSelect
+              label="Ngân hàng nhận"
+              v-model="form.bankName"
+            >
+              <option value="">-- Chọn ngân hàng --</option>
+              <option v-for="bank in popularBanks" :key="bank.code" :value="bank.code">
+                {{ bank.name }}
+              </option>
+            </FormSelect>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <FormInput
+                type="text"
+                label="Số tài khoản"
+                v-model="form.bankAccountNumber"
+                placeholder="Nhập số tài khoản"
+              />
+            </div>
+            <div>
+              <FormInput
+                type="text"
+                label="Tên chủ tài khoản"
+                v-model="form.bankAccountName"
+                placeholder="Chữ in hoa không dấu"
+              />
+            </div>
+          </div>
         </div>
 
         <!-- Cấu hình các dịch vụ / phụ phí của dãy trọ -->

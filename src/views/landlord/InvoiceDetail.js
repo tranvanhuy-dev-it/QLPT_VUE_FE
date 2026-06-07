@@ -32,6 +32,21 @@ export default {
     const activeTab = ref('receipt'); // 'summary' or 'receipt'
     const showPreviewModal = ref(false);
 
+    const vietQrUrl = computed(() => {
+      if (!invoice.value) return '';
+      const bh = invoice.value.contract?.room?.boardingHouse;
+      if (!bh || !bh.bankName || !bh.bankAccountNumber) return '';
+      
+      const amount = invoice.value.totalAmount - invoice.value.paidAmount;
+      const roomNum = invoice.value.contract?.room?.roomNumber || '';
+      
+      const rawDesc = `PHONG ${roomNum} CK TIEN PHONG`.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D");
+      const addInfo = encodeURIComponent(rawDesc);
+      const accountName = encodeURIComponent((bh.bankAccountName || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase());
+      
+      return `https://img.vietqr.io/image/${bh.bankName}-${bh.bankAccountNumber}-compact2.png?amount=${amount}&addInfo=${addInfo}&accountName=${accountName}`;
+    });
+
     const formatMoney = (amount) => {
       if (amount === undefined || amount === null) return '0';
       return Math.round(amount).toLocaleString('vi-VN');
@@ -271,7 +286,8 @@ export default {
       quickPayInvoice,
       printInvoice,
       activeTab,
-      showPreviewModal
+      showPreviewModal,
+      vietQrUrl
     };
   }
 };
