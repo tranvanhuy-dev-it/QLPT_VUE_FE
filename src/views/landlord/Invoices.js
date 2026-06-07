@@ -86,6 +86,7 @@ export default {
       newWaterIndex: 0,
       excludeRoomPrice: false,
       excludeExtraFees: false,
+      discount: 0,
     });
 
     const payForm = ref({
@@ -141,6 +142,7 @@ export default {
       // Reset advanced configurations when changing contract
       form.value.excludeRoomPrice = false;
       form.value.excludeExtraFees = false;
+      form.value.discount = 0;
       contractExtraFees.value = [];
 
       if (selectedContract.value) {
@@ -295,10 +297,12 @@ export default {
     });
 
     const computedTotalAmount = computed(() => {
-      return computedRoomPrice.value + 
+      const discount = Number(form.value.discount) || 0;
+      const totalBeforeDiscount = computedRoomPrice.value + 
              computedElectricityCost.value + 
              computedWaterCost.value + 
              computedExtraFeesTotal.value;
+      return Math.max(0, totalBeforeDiscount - discount);
     });
 
     const openCreateModal = async () => {
@@ -413,6 +417,7 @@ export default {
         newWaterIndex: 0,
         excludeRoomPrice: false,
         excludeExtraFees: false,
+        discount: 0,
       };
       payForm.value = {
         invoiceId: null,

@@ -273,7 +273,12 @@
             <div
               class="bg-slate-50 dark:bg-slate-900/30 p-3.5 border border-border-main/40 rounded-lg flex flex-col justify-between">
               <span class="text-text-sub font-semibold block mb-1">Tổng tiền hóa đơn:</span>
-              <strong class="text-text-main text-base sm:text-lg">{{ formatMoney(invoice.totalAmount) }} đ</strong>
+              <div>
+                <strong class="text-text-main text-base sm:text-lg block">{{ formatMoney(invoice.totalAmount) }} đ</strong>
+                <span v-if="invoice.discount > 0" class="text-[10px] text-rose-500 dark:text-rose-400 font-semibold block mt-0.5">
+                  🎁 Đã giảm: {{ formatMoney(invoice.discount) }} đ
+                </span>
+              </div>
             </div>
             <div
               class="bg-green-50/30 dark:bg-green-950/10 p-3.5 border border-green-200/50 rounded-lg flex flex-col justify-between">
@@ -482,8 +487,16 @@
           <!-- Total amounts details -->
           <div class="border-t border-black dark:border-white pt-2.5 text-xs sm:text-sm flex justify-end">
             <div class="w-full sm:w-[50%] space-y-1.5">
+              <div v-if="invoice.discount > 0" class="flex justify-between text-black dark:text-white">
+                <span>Tạm tính:</span>
+                <span>{{ formatMoney(invoice.totalAmount + invoice.discount) }} đ</span>
+              </div>
+              <div v-if="invoice.discount > 0" class="flex justify-between text-rose-600 dark:text-rose-400 font-semibold">
+                <span>Giảm giá:</span>
+                <span>-{{ formatMoney(invoice.discount) }} đ</span>
+              </div>
               <div class="flex justify-between font-semibold text-black dark:text-white">
-                <span>Tổng chi phí:</span>
+                <span>Tổng chi phí cần đóng:</span>
                 <span>{{ formatMoney(invoice.totalAmount) }} đ</span>
               </div>
               <div class="flex justify-between text-black dark:text-white">
@@ -653,8 +666,16 @@
               <!-- Total amounts details -->
               <div class="border-t border-black pt-2.5 text-xs sm:text-sm flex justify-end">
                 <div class="w-full sm:w-[50%] space-y-1.5">
+                  <div v-if="invoice.discount > 0" class="flex justify-between text-black">
+                    <span>Tạm tính:</span>
+                    <span>{{ formatMoney(invoice.totalAmount + invoice.discount) }} đ</span>
+                  </div>
+                  <div v-if="invoice.discount > 0" class="flex justify-between text-rose-600 font-semibold">
+                    <span>Giảm giá:</span>
+                    <span>-{{ formatMoney(invoice.discount) }} đ</span>
+                  </div>
                   <div class="flex justify-between font-semibold text-black">
-                    <span>Tổng chi phí:</span>
+                    <span>Tổng chi phí cần đóng:</span>
                     <span>{{ formatMoney(invoice.totalAmount) }} đ</span>
                   </div>
                   <div class="flex justify-between text-black">

@@ -109,6 +109,15 @@
           />
         </div>
 
+        <div class="mb-5">
+          <FormInput
+            type="number"
+            label="Số tiền giảm giá (VNĐ) - Nếu có"
+            v-model="form.discount"
+            min="0"
+          />
+        </div>
+
         <!-- Advanced options (e.g., checkout/final billing) -->
         <div v-if="selectedContract"
           class="mb-6 p-4 rounded-xl border border-border-main/50 bg-slate-50/50 dark:bg-slate-900/10 space-y-3">
@@ -198,6 +207,12 @@
             <div v-else-if="contractExtraFees.length > 0 && form.excludeExtraFees" class="border-t border-border-main/50 my-1 pt-1.5 flex justify-between items-center">
               <span class="text-text-sub font-medium">🛠️ Dịch vụ đi kèm</span>
               <span class="text-[10px] text-rose-500 font-bold bg-rose-50 dark:bg-rose-950/20 px-1.5 py-0.5 rounded border border-rose-200/50">Bỏ qua</span>
+            </div>
+
+            <!-- Giảm giá -->
+            <div v-if="form.discount > 0" class="flex justify-between items-center text-rose-600 dark:text-rose-400 font-semibold border-t border-border-main/30 pt-2 mt-2">
+              <span>🎁 Giảm giá:</span>
+              <span>-{{ formatMoney(form.discount) }} đ</span>
             </div>
           </div>
 
