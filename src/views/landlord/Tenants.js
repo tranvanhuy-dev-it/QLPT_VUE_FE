@@ -36,6 +36,7 @@ export default {
           INACTIVE: 'Tạm khóa',
         },
       },
+      { label: 'Thao tác', key: 'actions', align: 'center', cellClass: 'w-[120px]' }
     ];
     const tenantStore = useTenantStore();
 
@@ -109,6 +110,17 @@ export default {
       };
     };
 
+    const toggleTenantStatus = async (tenant) => {
+      const action = tenant.status === 'ACTIVE' ? 'khóa' : 'mở khóa';
+      if (confirm(`Bạn có chắc chắn muốn ${action} tài khoản này?`)) {
+        try {
+          await tenantStore.toggleTenantStatus(tenant.id);
+        } catch (err) {
+          alert(err.response?.data?.error || `Thay đổi trạng thái tài khoản thất bại`);
+        }
+      }
+    };
+
     onMounted(() => {
       fetchTenants();
     });
@@ -128,6 +140,7 @@ export default {
       changePage,
       closeModal,
       tableHeaders,
+      toggleTenantStatus,
     };
   },
 };

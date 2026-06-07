@@ -31,6 +31,78 @@
         </div>
       </div>
 
+      <!-- Date Filter & Revenue Report -->
+      <div class="bg-card border border-border-main rounded-2xl p-4 mb-4 shadow-xs flex flex-col gap-4">
+        <!-- Date Selector Row -->
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-border-main/50 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+            <h3 class="text-sm font-bold text-text-main">
+              Thống Kê Doanh Thu & Công Nợ
+              <span v-if="filterStartDate || filterEndDate" class="text-xs font-semibold text-primary pl-1.5">(Theo kỳ lọc)</span>
+              <span v-else class="text-xs font-semibold text-text-sub pl-1.5">(Tất cả thời gian)</span>
+            </h3>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-2 text-xs">
+              <span class="text-text-sub font-semibold">Từ ngày:</span>
+              <input type="date" v-model="filterStartDate"
+                class="border border-border-main rounded-lg px-2.5 py-1.5 bg-card text-text-main outline-none focus:border-primary text-xs font-semibold cursor-pointer" />
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <span class="text-text-sub font-semibold">Đến ngày:</span>
+              <input type="date" v-model="filterEndDate"
+                class="border border-border-main rounded-lg px-2.5 py-1.5 bg-card text-text-main outline-none focus:border-primary text-xs font-semibold cursor-pointer" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Period Statistics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Revenue Collected -->
+          <div class="flex items-center gap-3 bg-slate-50/50 dark:bg-slate-900/10 border border-border-main/80 rounded-xl p-3">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-green-50 dark:bg-green-950/30 text-green-600">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div class="flex flex-col min-w-0">
+              <span class="text-[0.65rem] text-text-sub font-bold uppercase tracking-wider">Doanh thu thực tế (Đã thu)</span>
+              <h3 class="text-lg font-extrabold text-green-600 dark:text-green-400 leading-none mt-1">{{ formatMoney(revenueStats.actual) }} đ</h3>
+              <span class="text-[9px] text-text-sub mt-0.5 font-medium">Đã thanh toán từ {{ revenueStats.count }} hóa đơn</span>
+            </div>
+          </div>
+
+          <!-- Expected Revenue -->
+          <div class="flex items-center gap-3 bg-slate-50/50 dark:bg-slate-900/10 border border-border-main/80 rounded-xl p-3">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-blue-50 dark:bg-blue-950/30 text-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div class="flex flex-col min-w-0">
+              <span class="text-[0.65rem] text-text-sub font-bold uppercase tracking-wider">Tổng doanh thu dự kiến</span>
+              <h3 class="text-lg font-extrabold text-primary leading-none mt-1">{{ formatMoney(revenueStats.expected) }} đ</h3>
+              <span class="text-[9px] text-text-sub mt-0.5 font-medium">Tổng số tiền cần thu</span>
+            </div>
+          </div>
+
+          <!-- Unpaid / Debt in Period -->
+          <div class="flex items-center gap-3 bg-slate-50/50 dark:bg-slate-900/10 border border-border-main/80 rounded-xl p-3">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-rose-50 dark:bg-rose-950/30 text-rose-500">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <div class="flex flex-col min-w-0">
+              <span class="text-[0.65rem] text-text-sub font-bold uppercase tracking-wider">Nợ chưa thu (Công nợ kỳ này)</span>
+              <h3 class="text-lg font-extrabold text-rose-500 leading-none mt-1">{{ formatMoney(revenueStats.debt) }} đ</h3>
+              <span class="text-[9px] text-rose-500/80 font-bold mt-0.5">Số tiền chưa thu được</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Stats Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         <!-- Card 1: Boarding Houses -->
@@ -324,31 +396,32 @@
             </div>
             <span
               class="inline-flex items-center justify-center min-w-6 h-6 rounded-full text-xs font-bold bg-red-50 text-red-600 px-2">{{
-                unpaidInvoiceList.length }}</span>
+                filteredUnpaidInvoices.length }}</span>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-sm text-left text-text-main border-collapse">
               <thead>
                 <tr class="border-b border-border-main">
                   <th class="py-3 font-semibold text-text-sub text-xs uppercase">Phòng</th>
+                  <th class="py-3 font-semibold text-text-sub text-xs uppercase">Dãy trọ</th>
                   <th class="py-3 font-semibold text-text-sub text-xs uppercase">Kỳ hóa đơn</th>
-                  <th class="py-3 font-semibold text-text-sub text-xs uppercase text-right">Tổng cộng</th>
-                  <th class="py-3 font-semibold text-text-sub text-xs uppercase text-right">Đã đóng</th>
+                  <th class="py-3 font-semibold text-text-sub text-xs uppercase text-right">Số tiền nợ</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="invoice in unpaidInvoiceList" :key="invoice.id"
-                  class="border-b border-border-main/50 hover:bg-slate-50/50 dark:hover:bg-slate-900/20">
-                  <td class="py-3 font-semibold text-text-main">Phòng {{ invoice.contract.room.roomNumber }}</td>
+                <tr v-for="invoice in filteredUnpaidInvoices" :key="invoice.id"
+                  @click="navigateTo('/landlord/invoices/' + invoice.id)"
+                  class="border-b border-border-main/50 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 cursor-pointer">
+                  <td class="py-3 font-semibold text-primary">Phòng {{ invoice.contract.room.roomNumber }}</td>
+                  <td class="py-3 text-text-sub">{{ invoice.contract.room.boardingHouse.name }}</td>
                   <td class="py-3 text-xs text-text-sub">
                     {{ formatDate(invoice.billingPeriodStart) }} – {{ formatDate(invoice.billingPeriodEnd) }}
                   </td>
-                  <td class="py-3 text-right font-semibold text-danger">{{ formatMoney(invoice.totalAmount) }} đ</td>
-                  <td class="py-3 text-right font-semibold text-success">{{ formatMoney(invoice.paidAmount) }} đ</td>
+                  <td class="py-3 text-right font-semibold text-danger">{{ formatMoney(invoice.totalAmount - invoice.paidAmount) }} đ</td>
                 </tr>
-                <tr v-if="unpaidInvoiceList.length === 0">
+                <tr v-if="filteredUnpaidInvoices.length === 0">
                   <td colspan="4" class="text-center text-text-sub py-8">
-                    Không có hóa đơn nợ — Tuyệt vời!
+                    Không có hóa đơn nợ trong kỳ này — Tuyệt vời!
                   </td>
                 </tr>
               </tbody>

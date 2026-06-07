@@ -314,11 +314,11 @@ export default {
 
     onMounted(async () => {
       fetchInvoices();
-      await fetchActiveContracts();
 
       // Check if redirected from dashboard to create invoice for a contract
       const contractIdQuery = route.query.createForContractId;
       if (contractIdQuery) {
+        await fetchActiveContracts();
         const contractExists = activeContracts.value.some(c => c.id === contractIdQuery);
         if (contractExists) {
           try {

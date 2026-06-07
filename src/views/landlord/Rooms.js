@@ -182,8 +182,8 @@ export default {
       };
     };
 
-    onMounted(async () => {
-      await fetchBoardingHouses();
+    onMounted(() => {
+      fetchBoardingHouses();
       fetchRooms();
     });
 

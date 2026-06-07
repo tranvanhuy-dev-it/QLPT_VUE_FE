@@ -32,6 +32,19 @@ export const useTenantStore = defineStore('tenant', {
         console.error('Error creating tenant account:', error);
         throw error;
       }
+    },
+    async toggleTenantStatus(id) {
+      try {
+        const response = await tenantService.toggleStatus(id);
+        const index = this.tenants.findIndex(t => t.id === id);
+        if (index !== -1) {
+          this.tenants[index] = response.data;
+        }
+        return response.data;
+      } catch (error) {
+        console.error('Error toggling tenant status:', error);
+        throw error;
+      }
     }
   }
 });

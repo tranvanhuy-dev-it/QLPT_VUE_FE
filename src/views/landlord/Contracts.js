@@ -134,7 +134,7 @@ export default {
 
     const fetchTenants = async () => {
       try {
-        const list = await tenantStore.fetchTenants({ size: 200 });
+        const list = await tenantStore.fetchTenants({ size: 200, status: 'ACTIVE', availableOnly: true });
         tenantsList.value = list || [];
       } catch (err) {
         console.error('Không tải được danh sách người thuê:', err);
@@ -230,9 +230,8 @@ export default {
       });
     };
 
-    onMounted(async () => {
+    onMounted(() => {
       fetchContracts();
-      await Promise.all([fetchVacantRooms(), fetchTenants()]);
     });
 
     return {

@@ -29,7 +29,8 @@ export default {
     });
 
     const isLandlord = computed(() => authStore.role === 'LANDLORD');
-    const activeTab = ref('summary'); // 'summary' or 'receipt'
+    const activeTab = ref('receipt'); // 'summary' or 'receipt'
+    const showPreviewModal = ref(false);
 
     const formatMoney = (amount) => {
       if (amount === undefined || amount === null) return '0';
@@ -54,10 +55,14 @@ export default {
     };
 
     const goBack = () => {
-      if (isLandlord.value) {
-        router.push({ name: 'Invoices' });
+      if (window.history.state && window.history.state.back) {
+        router.back();
       } else {
-        router.push({ name: 'TenantDashboard' });
+        if (isLandlord.value) {
+          router.push({ name: 'Invoices' });
+        } else {
+          router.push({ name: 'TenantDashboard' });
+        }
       }
     };
 
@@ -265,7 +270,8 @@ export default {
       submitPayment,
       quickPayInvoice,
       printInvoice,
-      activeTab
+      activeTab,
+      showPreviewModal
     };
   }
 };

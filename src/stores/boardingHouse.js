@@ -7,7 +7,10 @@ export const useBoardingHouseStore = defineStore('boardingHouse', {
     loading: false,
   }),
   actions: {
-    async fetchBoardingHouses() {
+    async fetchBoardingHouses(force = false) {
+      if (this.boardingHouses.length > 0 && !force) {
+        return this.boardingHouses;
+      }
       this.loading = true;
       try {
         const response = await boardingHouseService.getAll();

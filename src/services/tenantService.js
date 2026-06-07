@@ -6,5 +6,8 @@ export default {
   },
   create(data) {
     return api.post('/api/auth/create-tenant', data);
+  },
+  toggleStatus(id) {
+    return api.post(`/api/users/${id}/toggle-status`);
   }
 };

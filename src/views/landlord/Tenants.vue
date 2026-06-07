@@ -19,7 +19,21 @@
         :totalElements="totalElements"
         unit="tài khoản"
         @change-page="changePage"
-      />
+      >
+        <template #cell(actions)="{ item }">
+          <div class="flex justify-center">
+            <button
+              @click.stop="toggleTenantStatus(item)"
+              :class="item.status === 'ACTIVE' 
+                ? 'text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20' 
+                : 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'"
+              class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all border border-current duration-150"
+            >
+              {{ item.status === 'ACTIVE' ? 'Khóa' : 'Mở khóa' }}
+            </button>
+          </div>
+        </template>
+      </DataTable>
     </div>
 
     <!-- Add Tenant Modal -->

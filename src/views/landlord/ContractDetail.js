@@ -2,11 +2,13 @@ import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useContractStore } from '../../stores/contract.js';
 import FormButton from '../../components/FormButton.vue';
+import Modal from '../../components/Modal.vue';
 
 export default {
   name: 'ContractDetail',
   components: {
     FormButton,
+    Modal,
   },
   setup() {
     const route = useRoute();
@@ -19,7 +21,8 @@ export default {
     const isEditMode = ref(false);
     const numberOfTenants = ref(1);
     const saving = ref(false);
-    const activeTab = ref('summary'); // 'summary' or 'contract'
+    const activeTab = ref('contract'); // 'summary' or 'contract'
+    const showPreviewModal = ref(false);
 
     const today = new Date();
     const currentDay = today.getDate();
@@ -160,6 +163,7 @@ export default {
         // Automatically toggle edit mode if queried
         if (route.query.edit === 'true') {
           isEditMode.value = true;
+          activeTab.value = 'summary';
         }
       } catch (err) {
         alert(err.response?.data?.error || 'Không thể tải thông tin chi tiết hợp đồng');
@@ -203,7 +207,11 @@ export default {
     };
 
     const goBack = () => {
-      router.push({ name: 'Contracts' });
+      if (window.history.state && window.history.state.back) {
+        router.back();
+      } else {
+        router.push({ name: 'Contracts' });
+      }
     };
 
     const terminateContract = async () => {
@@ -239,7 +247,8 @@ export default {
       activeTab,
       currentDay,
       currentMonth,
-      currentYear
+      currentYear,
+      showPreviewModal
     };
   }
 };

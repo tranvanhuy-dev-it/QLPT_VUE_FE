@@ -38,6 +38,50 @@ export default {
     const vacantRoomList = ref([]);
     const unpaidInvoiceList = ref([]);
     const upcomingBillingContracts = ref([]);
+    const allInvoicesList = ref([]);
+
+    const filterStartDate = ref('');
+    const filterEndDate = ref('');
+
+    const revenueStats = computed(() => {
+      const start = filterStartDate.value ? new Date(filterStartDate.value) : null;
+      if (start) start.setHours(0, 0, 0, 0);
+      const end = filterEndDate.value ? new Date(filterEndDate.value) : null;
+      if (end) end.setHours(23, 59, 59, 999);
+      return calculateStats(start, end);
+    });
+
+    const calculateStats = (start, end) => {
+      let expected = 0;
+      let actual = 0;
+      let debt = 0;
+      let count = 0;
+
+      allInvoicesList.value.forEach(inv => {
+        const invDate = new Date(inv.invoiceDate);
+        if ((!start || invDate >= start) && (!end || invDate <= end)) {
+          expected += inv.totalAmount || 0;
+          actual += inv.paidAmount || 0;
+          debt += (inv.totalAmount - inv.paidAmount) || 0;
+          count++;
+        }
+      });
+
+      return { expected, actual, debt, count };
+    };
+
+    const filteredUnpaidInvoices = computed(() => {
+      const start = filterStartDate.value ? new Date(filterStartDate.value) : null;
+      if (start) start.setHours(0, 0, 0, 0);
+      const end = filterEndDate.value ? new Date(filterEndDate.value) : null;
+      if (end) end.setHours(23, 59, 59, 999);
+
+      return allInvoicesList.value.filter(inv => {
+        if (inv.status === 'PAID') return false;
+        const invDate = new Date(inv.invoiceDate);
+        return (!start || invDate >= start) && (!end || invDate <= end);
+      }).slice(0, 5);
+    });
 
     const occupancyRate = computed(() => {
       return stats.value.roomsCount > 0 
@@ -112,6 +156,7 @@ export default {
 
         // Tải danh sách Hóa đơn
         const invoices = invoicesRes.data.content || [];
+        allInvoicesList.value = invoices;
         
         const unpaid = invoices.filter(i => i.status !== 'PAID');
         stats.value.unpaidInvoicesCount = unpaid.length;
@@ -201,6 +246,10 @@ export default {
       formatDueStatus,
       getDueStatusClass,
       navigateTo,
+      filterStartDate,
+      filterEndDate,
+      revenueStats,
+      filteredUnpaidInvoices,
     };
   },
 };

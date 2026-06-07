@@ -41,7 +41,7 @@
         <!-- Action buttons -->
         <div class="flex items-center gap-2 shrink-0">
           <!-- Print Button (visible on contract tab) -->
-          <FormButton v-if="activeTab === 'contract'" variant="primary" size="sm" @click="printContract" class="!px-2.5 !py-1.5">
+          <FormButton v-if="activeTab === 'contract'" variant="primary" size="sm" @click="showPreviewModal = true" class="!px-2.5 !py-1.5">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
               class="w-4 h-4">
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -233,7 +233,7 @@
 
       <!-- LEGAL CONTRACT TAB VIEW (A4 Preview & printable layout) -->
       <div v-else-if="activeTab === 'contract'" id="contract-print-area"
-        class="print-contract-container bg-white dark:bg-slate-950 p-8 sm:p-12 md:p-16 border border-border-main rounded-2xl shadow-xs max-w-4xl mx-auto text-text-main font-serif relative">
+        class="print-contract-container bg-white dark:bg-slate-950 p-4 sm:p-12 md:p-16 border border-border-main rounded-2xl shadow-xs max-w-4xl mx-auto text-text-main font-serif relative">
         <!-- National Emblem Header -->
         <div class="text-center mb-6">
           <h4 class="font-bold text-sm sm:text-base tracking-widest uppercase text-black dark:text-white">CỘNG HÒA XÃ
@@ -352,6 +352,125 @@
           </div>
         </div>
       </div>
+
+      <!-- Print Preview Modal -->
+      <Modal v-if="showPreviewModal" title="Xem trước bản in hợp đồng" maxWidth="xl" @close="showPreviewModal = false">
+        <div class="max-h-[70vh] overflow-y-auto pr-1">
+          <div class="print-contract-container bg-white text-black p-4 border border-slate-200 rounded-xl font-serif text-xs leading-relaxed text-justify">
+            <!-- National Emblem Header -->
+            <div class="text-center mb-6">
+              <h4 class="font-bold text-sm tracking-widest uppercase text-black">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</h4>
+              <h5 class="font-semibold text-xs tracking-wide mt-1 text-black">Độc lập – Tự do – Hạnh phúc</h5>
+              <div class="w-32 h-[1px] bg-black mx-auto mt-2"></div>
+            </div>
+
+            <h3 class="text-center font-bold text-lg uppercase tracking-widest my-8 text-black">
+              HỢP ĐỒNG THUÊ PHÒNG TRỌ</h3>
+
+            <!-- Contract Description intro -->
+            <div class="space-y-4 text-xs leading-relaxed text-justify text-black">
+              <p>Hôm nay, ngày {{ currentDay }} tháng {{ currentMonth }} năm {{ currentYear }}, tại địa chỉ dãy trọ chúng tôi gồm:</p>
+
+              <!-- Bên A -->
+              <div>
+                <h4 class="font-bold uppercase mb-1 text-black">BÊN A: BÊN CHO THUÊ (LANDLORD)</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-4">
+                  <div><strong>Họ và tên:</strong> {{ contract.room.boardingHouse.landlord?.fullName || '......................................................' }}</div>
+                  <div><strong>Số điện thoại:</strong> {{ contract.room.boardingHouse.landlord?.phone || '......................................................' }}</div>
+                  <div class="sm:col-span-2"><strong>Địa chỉ dãy trọ:</strong> {{ contract.room.boardingHouse.address || '......................................................' }}</div>
+                </div>
+              </div>
+
+              <!-- Bên B -->
+              <div class="pt-2">
+                <h4 class="font-bold uppercase mb-1 text-black">BÊN B: BÊN THUÊ PHÒNG (TENANT)</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-4">
+                  <div><strong>Họ và tên:</strong> {{ contract.tenant.fullName }}</div>
+                  <div><strong>Tài khoản hệ thống:</strong> {{ contract.tenant.username }}</div>
+                  <div><strong>Số điện thoại:</strong> {{ contract.tenant.phone || '......................................................' }}</div>
+                  <div><strong>Email:</strong> {{ contract.tenant.email || '......................................................' }}</div>
+                  <div class="sm:col-span-2"><strong>Số người cùng ở thực tế:</strong> {{ contract.numberOfTenants }} người.</div>
+                </div>
+              </div>
+
+              <p class="pt-2">Hai bên cùng thống nhất các điều khoản thuê phòng trọ dưới đây:</p>
+
+              <!-- Điều 1 -->
+              <div>
+                <h4 class="font-bold uppercase text-black">ĐIỀU 1: ĐỐI TƯỢNG HỢP ĐỒNG & BÀN GIAO</h4>
+                <ul class="list-none pl-4 space-y-1 mt-1">
+                  <li>- Bên A cho Bên B thuê phòng số: <strong>Phòng {{ contract.room.roomNumber }}</strong> thuộc dãy trọ: <strong>{{ contract.room.boardingHouse.name }}</strong>.</li>
+                  <li>- Chỉ số công tơ điện bàn giao đầu kỳ: <strong>{{ contract.room.currentElectricityIndex }} kWh</strong>.</li>
+                  <li v-if="contract.room.boardingHouse.waterBillingType === 'BY_INDEX'">- Chỉ số đồng hồ nước bàn giao đầu kỳ: <strong>{{ contract.room.currentWaterIndex }} m³</strong>.</li>
+                </ul>
+              </div>
+
+              <!-- Điều 2 -->
+              <div>
+                <h4 class="font-bold uppercase text-black">ĐIỀU 2: THỜI HẠN THUÊ VÀ ĐẶT CỌC</h4>
+                <ul class="list-none pl-4 space-y-1 mt-1">
+                  <li>- Hợp đồng bắt đầu có hiệu lực từ ngày: <strong>{{ formatDate(contract.startDate) }}</strong>.</li>
+                  <li>- Ngày kết thúc / hết hạn hợp đồng: <strong>{{ contract.endDate ? formatDate(contract.endDate) : 'Chưa thiết lập ngày kết thúc' }}</strong>.</li>
+                  <li>- Tiền đặt cọc Bên B gửi Bên A giữ là: <strong>{{ formatMoney(contract.deposit) }} đ</strong>. Tiền cọc sẽ được hoàn trả đầy đủ cho Bên B khi chấm dứt hợp đồng sau khi đã khấu trừ hết các nợ phí dịch vụ hoặc tiền phòng chưa đóng (nếu có).</li>
+                </ul>
+              </div>
+
+              <!-- Điều 3 -->
+              <div>
+                <h4 class="font-bold uppercase text-black">ĐIỀU 3: GIÁ THUÊ PHÒNG VÀ ĐƠN GIÁ DỊCH VỤ</h4>
+                <ul class="list-none pl-4 space-y-1 mt-1">
+                  <li>- Tiền thuê phòng cố định hàng tháng: <strong>{{ formatMoney(contract.contractedRoomPrice) }} đ/tháng</strong>.</li>
+                  <li>- Đơn giá điện nước tiêu thụ:
+                    <ul class="list-none pl-5 mt-1 space-y-0.5">
+                      <li>+ Giá điện: <strong>{{ formatMoney(contract.room.boardingHouse.defaultElectricityRate) }} đ/kWh</strong>.</li>
+                      <li>+ Giá nước: <strong>{{ formatMoney(contract.room.boardingHouse.defaultWaterRate) }} đ</strong>
+                        ({{ contract.room.boardingHouse.waterBillingType === 'BY_INDEX' ? 'đ/m³ tiêu thụ thực tế' : (contract.room.boardingHouse.waterBillingType === 'FIXED_PER_PERSON' ? 'đ/người/tháng' : 'đ/phòng/tháng') }}).
+                      </li>
+                    </ul>
+                  </li>
+                  <li v-if="extraFees && extraFees.length > 0">
+                    - Các phụ phí dịch vụ định kỳ áp dụng:
+                    <ul class="list-none pl-5 mt-1 space-y-0.5">
+                      <li v-for="cef in extraFees" :key="cef.id">
+                        + {{ cef.extraFee.name }}: <strong>{{ formatMoney(cef.customPrice) }} đ</strong> (Tính theo {{ cef.extraFee.unitType === 'FIXED_PER_PERSON' ? 'người' : 'phòng' }}).
+                      </li>
+                    </ul>
+                  </li>
+                  <li>- Hình thức đóng tiền: <strong>{{ contract.billingMode === 'BY_RENTAL_DAYS' ? 'Theo ngày dọn vào (anniversary)' : 'Đóng vào ngày cố định (' + contract.fixedBillingDay + ' hàng tháng)' }}</strong>.</li>
+                </ul>
+              </div>
+
+              <!-- Điều 4 -->
+              <div>
+                <h4 class="font-bold uppercase text-black">ĐIỀU 4: TRÁCH NHIỆM CHUNG</h4>
+                <ul class="list-none pl-4 space-y-1 mt-1">
+                  <li>- Bên B cam kết tuân thủ đầy đủ quy định pháp luật về cư trú, an ninh trật tự và phòng cháy chữa cháy. Không chứa chất cấm hoặc tổ chức các hoạt động vi phạm pháp luật.</li>
+                  <li>- Bên B tự bảo quản tài sản cá nhân và giữ gìn cơ sở vật chất, vệ sinh chung trong phòng và khu vực dãy trọ.</li>
+                  <li>- Thanh toán đúng và đầy đủ các khoản chi phí phòng ở và điện nước theo hóa đơn chủ nhà phát hành định kỳ.</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Signature section -->
+            <div class="signature-section mt-12 pb-8 pt-4 border-t border-dashed border-border-main/50 text-xs font-serif text-black">
+              <div>
+                <h5 class="font-bold uppercase">ĐẠI DIỆN BÊN A</h5>
+                <span class="text-[10px] text-text-sub block italic mt-0.5 mb-16">(Ký và ghi rõ họ tên)</span>
+                <div class="font-bold mt-8">{{ contract.room.boardingHouse.landlord?.fullName || '' }}</div>
+              </div>
+              <div>
+                <h5 class="font-bold uppercase">ĐẠI DIỆN BÊN B</h5>
+                <span class="text-[10px] text-text-sub block italic mt-0.5 mb-16">(Ký và ghi rõ họ tên)</span>
+                <div class="font-bold mt-8">{{ contract.tenant.fullName }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-3 justify-end mt-4">
+          <FormButton type="button" @click="showPreviewModal = false" variant="secondary">Đóng</FormButton>
+          <FormButton type="button" @click="printContract" variant="primary">In hợp đồng</FormButton>
+        </div>
+      </Modal>
 
     </div>
   </div>
