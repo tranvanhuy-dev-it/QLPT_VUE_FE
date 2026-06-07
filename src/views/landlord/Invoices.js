@@ -212,10 +212,12 @@ export default {
 
     const saveInvoice = async () => {
       try {
-        await invoiceStore.createInvoice(form.value);
-        alert("Lập hóa đơn và tính tiền thành công!");
+        const createdInvoice = await invoiceStore.createInvoice(form.value);
         closeModal();
-        fetchInvoices();
+        router.push({
+          name: "InvoiceDetail",
+          params: { id: createdInvoice.id }
+        });
       } catch (err) {
         alert(err.response?.data?.error || "Lập hóa đơn thất bại");
       }
@@ -314,11 +316,11 @@ export default {
 
     onMounted(async () => {
       fetchInvoices();
+      await fetchActiveContracts();
 
       // Check if redirected from dashboard to create invoice for a contract
       const contractIdQuery = route.query.createForContractId;
       if (contractIdQuery) {
-        await fetchActiveContracts();
         const contractExists = activeContracts.value.some(c => c.id === contractIdQuery);
         if (contractExists) {
           try {

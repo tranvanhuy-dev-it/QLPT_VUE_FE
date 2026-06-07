@@ -190,10 +190,12 @@ export default {
           delete payload.endDate;
         }
 
-        await contractStore.createContract(payload);
-        alert('Tạo hợp đồng thuê phòng thành công!');
+        const createdContract = await contractStore.createContract(payload);
         closeModal();
-        fetchContracts();
+        router.push({
+          name: 'ContractDetail',
+          params: { id: createdContract.id }
+        });
       } catch (err) {
         alert(err.response?.data?.error || 'Tạo hợp đồng thất bại');
       }
@@ -232,6 +234,8 @@ export default {
 
     onMounted(() => {
       fetchContracts();
+      fetchVacantRooms();
+      fetchTenants();
     });
 
     return {
