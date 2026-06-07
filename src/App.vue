@@ -31,11 +31,12 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed, onMounted, onUnmounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import Sidebar from './components/Sidebar.vue';
 import Header from './components/Header.vue';
 import { isApiLoading, isApiSaving } from './services/api';
+import { useAuthStore, isTokenExpired } from './stores/auth.js';
 
 export default {
   name: 'App',
@@ -45,8 +46,34 @@ export default {
   },
   setup() {
     const route = useRoute();
+    const router = useRouter();
+    const authStore = useAuthStore();
+
     const isGuest = computed(() => {
       return !!(route.meta && route.meta.guestOnly);
+    });
+
+    let checkInterval = null;
+
+    const checkSession = () => {
+      if (authStore.token && isTokenExpired(authStore.token)) {
+        authStore.logout();
+        if (route.name !== 'Login' && route.name !== 'Register') {
+          router.push('/login');
+        }
+      }
+    };
+
+    onMounted(() => {
+      checkSession();
+      // Kiểm tra định kỳ mỗi 10 giây xem phiên đăng nhập đã hết hạn chưa
+      checkInterval = setInterval(checkSession, 10000);
+    });
+
+    onUnmounted(() => {
+      if (checkInterval) {
+        clearInterval(checkInterval);
+      }
     });
 
     return {

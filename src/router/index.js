@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { useAuthStore } from '../stores/auth.js';
+import { useAuthStore, isTokenExpired } from '../stores/auth.js';
 
 // Định nghĩa danh sách routes
 const routes = [
@@ -98,6 +98,11 @@ const router = createRouter({
 // Navigation Guards: Bảo mật trang theo vai trò (Role-based Authorization)
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
+
+  // Tự động đăng xuất nếu token đã hết hạn
+  if (authStore.token && isTokenExpired(authStore.token)) {
+    authStore.logout();
+  }
 
   // Route yêu cầu xác thực
   if (to.matched.some((record) => record.meta.requiresAuth)) {

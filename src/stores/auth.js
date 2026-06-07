@@ -1,6 +1,36 @@
 import { defineStore } from 'pinia';
 import api from '../services/api.js';
 
+export function isTokenExpired(token) {
+  if (!token) return true;
+  try {
+    const base64Url = token.split('.')[1];
+    if (!base64Url) return true;
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    const { exp } = JSON.parse(jsonPayload);
+    if (!exp) return false;
+    return Date.now() >= exp * 1000;
+  } catch (error) {
+    return true;
+  }
+}
+
+// Kiểm tra và dọn dẹp localStorage nếu token đã hết hạn trước khi khởi tạo store
+const checkAndCleanExpiredToken = () => {
+  const token = localStorage.getItem('token');
+  if (token && isTokenExpired(token)) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  }
+};
+checkAndCleanExpiredToken();
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('token') || null,
