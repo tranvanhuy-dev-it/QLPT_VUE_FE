@@ -23,13 +23,23 @@
         <template #cell(actions)="{ item }">
           <div class="flex justify-center">
             <button
+              v-if="item.status === 'ACTIVE'"
               @click.stop="toggleTenantStatus(item)"
-              :class="item.status === 'ACTIVE' 
-                ? 'text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20' 
-                : 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'"
-              class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all border border-current duration-150"
+              :disabled="item.hasActiveContract"
+              :title="item.hasActiveContract ? 'Tài khoản đang có hợp đồng hoạt động, không thể khóa' : 'Khóa tài khoản'"
+              :class="item.hasActiveContract 
+                ? 'text-slate-400 dark:text-slate-600 border-slate-200 dark:border-slate-800 cursor-not-allowed bg-slate-50 dark:bg-slate-900/50' 
+                : 'text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 border-rose-600 dark:border-rose-400'"
+              class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all border duration-150"
             >
-              {{ item.status === 'ACTIVE' ? 'Khóa' : 'Mở khóa' }}
+              Khóa
+            </button>
+            <button
+              v-else
+              @click.stop="toggleTenantStatus(item)"
+              class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all border border-emerald-600 dark:border-emerald-400 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 duration-150"
+            >
+              Mở khóa
             </button>
           </div>
         </template>
