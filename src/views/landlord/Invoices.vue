@@ -10,7 +10,7 @@
       <DataTable
         :headers="tableHeaders"
         :items="filteredInvoices"
-        :loading="loading"
+        :loading="isTableLoading"
         loadingText="Đang tải danh sách hóa đơn..."
         emptyText="Không tìm thấy hóa đơn nào."
         showPagination
@@ -26,7 +26,11 @@
 
     <!-- Create Invoice Modal -->
     <Modal v-if="showCreateModal" title="Lập Hóa Đơn Tiền Phòng" maxWidth="lg" @close="closeModal">
-      <form @submit.prevent="saveInvoice">
+      <div v-if="isLoadingModalData" class="flex flex-col items-center justify-center py-12 gap-3">
+        <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <div class="text-text-sub text-xs">Đang tải cấu hình hợp đồng...</div>
+      </div>
+      <form v-else @submit.prevent="saveInvoice">
         <div class="mb-4">
           <FormSelect
             label="Chọn Hợp Đồng Thuê Hoạt Động"
@@ -224,8 +228,8 @@
         </div>
 
         <div class="flex gap-3 justify-end mt-4">
-          <FormButton type="button" @click="closeModal" variant="secondary">Hủy</FormButton>
-          <FormButton type="submit">Lập hóa đơn</FormButton>
+          <FormButton type="button" @click="closeModal" variant="secondary" :disabled="isSaving">Hủy</FormButton>
+          <FormButton type="submit" :loading="isSaving">Lập hóa đơn</FormButton>
         </div>
       </form>
     </Modal>

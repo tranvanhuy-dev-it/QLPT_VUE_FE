@@ -266,6 +266,89 @@ export default {
       printWindow.document.close();
     };
 
+    const copyAndShareZalo = async () => {
+      if (!invoice.value) return;
+      const inv = invoice.value;
+      const tenantName = inv.contract?.tenant?.fullName || 'Khách thuê';
+      const roomNum = inv.contract?.room?.roomNumber || '';
+      const bhName = inv.contract?.room?.boardingHouse?.name || '';
+      const start = formatDate(inv.billingPeriodStart);
+      const end = formatDate(inv.billingPeriodEnd);
+
+      let msg = `[HÓA ĐƠN TIỀN PHÒNG & DỊCH VỤ]\n`;
+      msg += `Kính gửi Anh/Chị ${tenantName},\n`;
+      msg += `Thông tin hóa đơn tiền phòng (Kỳ tính tiền: ${start} - ${end}):\n`;
+      msg += `- Phòng: Phòng ${roomNum} (${bhName})\n`;
+      msg += `- Tiền phòng: ${formatMoney(inv.roomPrice)} đ\n`;
+
+      const elecUsage = inv.newElectricityIndex - inv.oldElectricityIndex;
+      msg += `- Tiền điện: ${formatMoney(elecUsage * inv.electricityRate)} đ (Chỉ số: ${inv.oldElectricityIndex} -> ${inv.newElectricityIndex} kWh, Tiêu thụ: ${elecUsage} kWh)\n`;
+
+      const bh = inv.contract?.room?.boardingHouse;
+      if (bh) {
+        if (bh.waterBillingType === 'BY_INDEX') {
+          const waterUsage = inv.newWaterIndex - inv.oldWaterIndex;
+          msg += `- Tiền nước: ${formatMoney(waterUsage * inv.waterRate)} đ (Chỉ số: ${inv.oldWaterIndex} -> ${inv.newWaterIndex} m³, Tiêu thụ: ${waterUsage} m³)\n`;
+        } else if (bh.waterBillingType === 'FIXED_PER_PERSON') {
+          const tenants = inv.contract?.numberOfTenants || 1;
+          msg += `- Tiền nước: ${formatMoney(tenants * inv.waterRate)} đ (Cố định: ${tenants} người)\n`;
+        } else {
+          msg += `- Tiền nước: ${formatMoney(inv.waterRate)} đ (Cố định theo phòng)\n`;
+        }
+      }
+
+      if (invoiceItems.value && invoiceItems.value.length > 0) {
+        msg += `- Phụ phí & Dịch vụ đi kèm:\n`;
+        invoiceItems.value.forEach(item => {
+          msg += `  + ${item.name}: ${formatMoney(item.subtotal)} đ (${formatMoney(item.price)} đ x ${item.quantity})\n`;
+        });
+      }
+
+      if (inv.discount > 0) {
+        msg += `- Giảm giá: -${formatMoney(inv.discount)} đ\n`;
+      }
+
+      msg += `-----------------------------------\n`;
+      msg += `TỔNG CỘNG CẦN ĐÓNG: ${formatMoney(inv.totalAmount)} đ\n`;
+      msg += `Đã đóng: ${formatMoney(inv.paidAmount)} đ\n`;
+      msg += `Còn nợ: ${formatMoney(inv.totalAmount - inv.paidAmount)} đ\n`;
+
+      if (bh && bh.bankName && bh.bankAccountNumber) {
+        msg += `\nThông tin chuyển khoản:\n`;
+        msg += `- Ngân hàng: ${bh.bankName}\n`;
+        msg += `- Số tài khoản: ${bh.bankAccountNumber}\n`;
+        if (bh.bankAccountName) {
+          msg += `- Chủ tài khoản: ${bh.bankAccountName}\n`;
+        }
+        msg += `- Nội dung chuyển khoản: PHONG ${roomNum} CK TIEN PHONG\n`;
+        if (vietQrUrl.value) {
+          msg += `- Quét mã VietQR thanh toán nhanh tại: ${vietQrUrl.value}\n`;
+        }
+      }
+
+      msg += `\nAnh/Chị vui lòng kiểm tra và thanh toán sớm. Xin cảm ơn!`;
+
+      try {
+        await navigator.clipboard.writeText(msg);
+        alert('Đã sao chép nội dung hóa đơn vào bộ nhớ tạm! Hệ thống sẽ mở Zalo để gửi cho khách thuê.');
+      } catch (err) {
+        console.error('Không thể tự động sao chép:', err);
+      }
+
+      const phone = inv.contract?.tenant?.phone;
+      if (phone) {
+        let cleanPhone = phone.replace(/[\s.-]/g, '');
+        if (cleanPhone.startsWith('+84')) {
+          cleanPhone = '0' + cleanPhone.substring(3);
+        } else if (cleanPhone.startsWith('84') && cleanPhone.length > 9) {
+          cleanPhone = '0' + cleanPhone.substring(2);
+        }
+        window.open(`https://zalo.me/${cleanPhone}`, '_blank');
+      } else {
+        alert('Khách thuê chưa đăng ký số điện thoại trên hệ thống!');
+      }
+    };
+
     onMounted(() => {
       fetchInvoiceDetail();
     });
@@ -285,6 +368,7 @@ export default {
       submitPayment,
       quickPayInvoice,
       printInvoice,
+      copyAndShareZalo,
       activeTab,
       showPreviewModal,
       vietQrUrl

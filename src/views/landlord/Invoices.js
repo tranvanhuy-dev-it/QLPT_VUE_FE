@@ -10,6 +10,7 @@ import FormSelect from "../../components/FormSelect.vue";
 import FormButton from "../../components/FormButton.vue";
 import { useInvoiceStore } from "../../stores/invoice.js";
 import { useContractStore } from "../../stores/contract.js";
+import invoiceService from "../../services/invoiceService.js";
 
 export default {
   name: "Invoices",
@@ -73,6 +74,9 @@ export default {
     const showPayModal = ref(false);
     const showDetailModal = ref(false);
     const isLoadingDetails = ref(false);
+    const isSaving = ref(false);
+    const isTableLoading = ref(false);
+    const isLoadingModalData = ref(false);
 
     const invoiceDetails = ref(null);
     const selectedContract = ref(null);
@@ -104,6 +108,7 @@ export default {
 
 
     const fetchInvoices = async () => {
+      isTableLoading.value = true;
       try {
         await invoiceStore.fetchInvoices({
           page: page.value,
@@ -111,6 +116,8 @@ export default {
         });
       } catch (err) {
         alert(err.response?.data?.error || "Không thể tải danh sách hóa đơn");
+      } finally {
+        isTableLoading.value = false;
       }
     };
 
@@ -136,73 +143,78 @@ export default {
     const contractExtraFees = ref([]);
 
     const onContractChange = async () => {
-      selectedContract.value = activeContracts.value.find(
-        (c) => c.id === form.value.contractId,
-      );
-      // Reset advanced configurations when changing contract
-      form.value.excludeRoomPrice = false;
-      form.value.excludeExtraFees = false;
-      form.value.discount = 0;
-      contractExtraFees.value = [];
+      isLoadingModalData.value = true;
+      try {
+        selectedContract.value = activeContracts.value.find(
+          (c) => c.id === form.value.contractId,
+        );
+        // Reset advanced configurations when changing contract
+        form.value.excludeRoomPrice = false;
+        form.value.excludeExtraFees = false;
+        form.value.discount = 0;
+        contractExtraFees.value = [];
 
-      if (selectedContract.value) {
-        try {
-          const detail = await contractStore.fetchContractDetail(form.value.contractId);
-          contractExtraFees.value = detail.extraFees || [];
-        } catch (err) {
-          console.error("Không tải được chi tiết hợp đồng:", err);
-        }
-
-        const room = selectedContract.value.room;
-        const bh = room.boardingHouse;
-        const timing = bh.billingTiming || "PREPAID";
-
-        // Filter and sort invoices for this contract by billingPeriodEnd descending
-        const contractInvoices = allInvoices.value
-          .filter((inv) => inv.contract.id === form.value.contractId)
-          .sort(
-            (a, b) =>
-              new Date(b.billingPeriodEnd) - new Date(a.billingPeriodEnd),
-          );
-
-        if (contractInvoices.length > 0) {
-          const lastInvoice = contractInvoices[0];
-          form.value.billingPeriodStart = lastInvoice.billingPeriodEnd;
-
-          const start = new Date(lastInvoice.billingPeriodEnd);
-          start.setMonth(start.getMonth() + 1);
-          const endStr = start.toISOString().substring(0, 10);
-          form.value.billingPeriodEnd = endStr;
-
-          // Default invoiceDate based on timing
-          if (timing === "PREPAID") {
-            form.value.invoiceDate = lastInvoice.billingPeriodEnd; // Start of the next billing period
-            form.value.newElectricityIndex = room.currentElectricityIndex;
-            form.value.newWaterIndex = room.currentWaterIndex;
-          } else {
-            form.value.invoiceDate = endStr; // End of the next billing period
-            form.value.newElectricityIndex = room.currentElectricityIndex;
-            form.value.newWaterIndex = room.currentWaterIndex;
+        if (selectedContract.value) {
+          try {
+            const detail = await contractStore.fetchContractDetail(form.value.contractId);
+            contractExtraFees.value = detail.extraFees || [];
+          } catch (err) {
+            console.error("Không tải được chi tiết hợp đồng:", err);
           }
-        } else {
-          // First invoice ever
-          form.value.billingPeriodStart = selectedContract.value.startDate;
 
-          const start = new Date(selectedContract.value.startDate);
-          start.setMonth(start.getMonth() + 1);
-          const endStr = start.toISOString().substring(0, 10);
-          form.value.billingPeriodEnd = endStr;
+          const room = selectedContract.value.room;
+          const bh = room.boardingHouse;
+          const timing = bh.billingTiming || "PREPAID";
 
-          if (timing === "PREPAID") {
-            form.value.invoiceDate = selectedContract.value.startDate; // Check-in start date
-            form.value.newElectricityIndex = room.currentElectricityIndex;
-            form.value.newWaterIndex = room.currentWaterIndex;
+          // Filter and sort invoices for this contract by billingPeriodEnd descending
+          const contractInvoices = allInvoices.value
+            .filter((inv) => inv.contract.id === form.value.contractId)
+            .sort(
+              (a, b) =>
+                new Date(b.billingPeriodEnd) - new Date(a.billingPeriodEnd),
+            );
+
+          if (contractInvoices.length > 0) {
+            const lastInvoice = contractInvoices[0];
+            form.value.billingPeriodStart = lastInvoice.billingPeriodEnd;
+
+            const start = new Date(lastInvoice.billingPeriodEnd);
+            start.setMonth(start.getMonth() + 1);
+            const endStr = start.toISOString().substring(0, 10);
+            form.value.billingPeriodEnd = endStr;
+
+            // Default invoiceDate based on timing
+            if (timing === "PREPAID") {
+              form.value.invoiceDate = lastInvoice.billingPeriodEnd; // Start of the next billing period
+              form.value.newElectricityIndex = room.currentElectricityIndex;
+              form.value.newWaterIndex = room.currentWaterIndex;
+            } else {
+              form.value.invoiceDate = endStr; // End of the next billing period
+              form.value.newElectricityIndex = room.currentElectricityIndex;
+              form.value.newWaterIndex = room.currentWaterIndex;
+            }
           } else {
-            form.value.invoiceDate = endStr; // End of month 1
-            form.value.newElectricityIndex = room.currentElectricityIndex;
-            form.value.newWaterIndex = room.currentWaterIndex;
+            // First invoice ever
+            form.value.billingPeriodStart = selectedContract.value.startDate;
+
+            const start = new Date(selectedContract.value.startDate);
+            start.setMonth(start.getMonth() + 1);
+            const endStr = start.toISOString().substring(0, 10);
+            form.value.billingPeriodEnd = endStr;
+
+            if (timing === "PREPAID") {
+              form.value.invoiceDate = selectedContract.value.startDate; // Check-in start date
+              form.value.newElectricityIndex = room.currentElectricityIndex;
+              form.value.newWaterIndex = room.currentWaterIndex;
+            } else {
+              form.value.invoiceDate = endStr; // End of month 1
+              form.value.newElectricityIndex = room.currentElectricityIndex;
+              form.value.newWaterIndex = room.currentWaterIndex;
+            }
           }
         }
+      } finally {
+        isLoadingModalData.value = false;
       }
     };
 
@@ -306,22 +318,26 @@ export default {
     });
 
     const openCreateModal = async () => {
+      showCreateModal.value = true;
+      isLoadingModalData.value = true;
       await fetchActiveContracts();
       try {
-        // We can just query all invoices for period start calculation
-        const all = await invoiceStore.fetchInvoices({ page: 0, size: 1000 });
-        allInvoices.value = all || [];
+        const res = await invoiceService.getAll({ page: 0, size: 1000 });
+        allInvoices.value = res.data?.content || [];
       } catch (err) {
         console.error("Không tải được danh sách hóa đơn:", err);
       }
       if (activeContracts.value.length > 0) {
         form.value.contractId = activeContracts.value[0].id;
         await onContractChange();
+      } else {
+        isLoadingModalData.value = false;
       }
-      showCreateModal.value = true;
     };
 
     const saveInvoice = async () => {
+      if (isSaving.value) return;
+      isSaving.value = true;
       try {
         const createdInvoice = await invoiceStore.createInvoice(form.value);
         closeModal();
@@ -331,6 +347,8 @@ export default {
         });
       } catch (err) {
         alert(err.response?.data?.error || "Lập hóa đơn thất bại");
+      } finally {
+        isSaving.value = false;
       }
     };
 
@@ -436,16 +454,16 @@ export default {
       if (contractIdQuery) {
         const contractExists = activeContracts.value.some(c => c.id === contractIdQuery);
         if (contractExists) {
+          showCreateModal.value = true;
+          isLoadingModalData.value = true;
           try {
-            // Fetch all invoices to populate allInvoices list (used for billing period calculations)
-            const all = await invoiceStore.fetchInvoices({ page: 0, size: 1000 });
-            allInvoices.value = all || [];
+            const res = await invoiceService.getAll({ page: 0, size: 1000 });
+            allInvoices.value = res.data?.content || [];
           } catch (err) {
             console.error("Không tải được danh sách hóa đơn:", err);
           }
           form.value.contractId = contractIdQuery;
           await onContractChange();
-          showCreateModal.value = true;
         }
       }
     });
@@ -492,7 +510,10 @@ export default {
       computedWaterCost,
       computedExtraFeesList,
       computedExtraFeesTotal,
-      computedTotalAmount
+      computedTotalAmount,
+      isSaving,
+      isTableLoading,
+      isLoadingModalData
     };
   },
 };
