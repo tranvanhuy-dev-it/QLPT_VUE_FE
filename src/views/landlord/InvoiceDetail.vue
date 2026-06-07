@@ -87,8 +87,19 @@
     <div v-else-if="invoice" class="flex flex-col gap-4">
 
       <!-- SUMMARY TAB VIEW -->
-      <div v-if="activeTab === 'summary'" class="flex flex-col gap-4">
-        <!-- Room Info Card -->
+      <div v-if="activeTab === 'summary'">
+        <div :class="[
+          'gap-6 w-full',
+          (invoice.status !== 'PAID' && vietQrUrl && !isLandlord) 
+            ? 'grid grid-cols-1 lg:grid-cols-3' 
+            : 'flex flex-col'
+        ]">
+          <!-- Left Column: Invoice Details -->
+          <div :class="[
+            'flex flex-col gap-4',
+            (invoice.status !== 'PAID' && vietQrUrl && !isLandlord) ? 'lg:col-span-2' : 'w-full'
+          ]">
+            <!-- Room Info Card -->
         <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
           <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Thông tin phòng trọ</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 text-xs">
@@ -279,57 +290,59 @@
             </div>
           </div>
         </div>
-
-        <!-- VietQR Payment Card (Only show if not paid and QR details configured) -->
-        <div v-if="invoice.status !== 'PAID' && vietQrUrl" class="bg-card border border-border-main rounded-xl p-5 shadow-xs flex flex-col md:flex-row items-center gap-6 animate-fade-in">
-          <!-- Left: Larger QR Code -->
-          <div class="w-56 h-56 sm:w-60 sm:h-60 bg-white border border-border-main p-3 rounded-2xl flex items-center justify-center shrink-0 shadow-xs">
-            <img :src="vietQrUrl" class="w-full h-full object-contain" alt="Mã chuyển khoản VietQR" />
-          </div>
-
-          <!-- Right: Transfer Info & Notice -->
-          <div class="flex-1 w-full">
-            <h3 class="text-sm font-bold text-text-main mb-1">Thanh toán chuyển khoản nhanh</h3>
-            <p class="text-xs text-text-sub mb-4">Quét mã QR bằng ứng dụng ngân hàng của bạn để thanh toán tự động tiền thuê phòng & dịch vụ tháng này.</p>
-            
-            <div class="space-y-2 text-xs">
-              <div class="flex justify-between border-b border-border-main/20 pb-1.5">
-                <span class="text-text-sub font-semibold">Ngân hàng:</span>
-                <span class="font-bold text-text-main">{{ invoice.contract?.room?.boardingHouse?.bankName }}</span>
-              </div>
-              <div class="flex justify-between border-b border-border-main/20 pb-1.5">
-                <span class="text-text-sub font-semibold">Số tài khoản:</span>
-                <span class="font-bold text-primary">{{ invoice.contract?.room?.boardingHouse?.bankAccountNumber }}</span>
-              </div>
-              <div class="flex justify-between border-b border-border-main/20 pb-1.5">
-                <span class="text-text-sub font-semibold">Tên chủ tài khoản:</span>
-                <span class="font-bold text-text-main">{{ invoice.contract?.room?.boardingHouse?.bankAccountName }}</span>
-              </div>
-              <div class="flex justify-between border-b border-border-main/20 pb-1.5">
-                <span class="text-text-sub font-semibold">Số tiền thanh toán:</span>
-                <span class="font-extrabold text-danger text-sm">{{ formatMoney(invoice.totalAmount - invoice.paidAmount) }} đ</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-text-sub font-semibold">Nội dung chuyển khoản:</span>
-                <span class="font-mono bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-text-main">
-                  PHONG {{ invoice.contract?.room?.roomNumber }} CK TIEN PHONG
-                </span>
-              </div>
-            </div>
-
-            <!-- Lưu ý cho người thuê -->
-            <div class="mt-4 p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-xl text-amber-800 dark:text-amber-300 flex gap-2 items-start leading-relaxed">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 shrink-0 mt-0.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-              <div>
-                <span class="font-bold block text-[11px] mb-0.5">Lưu ý quan trọng:</span>
-                <p class="text-[10px] leading-relaxed m-0">Sau khi chuyển khoản thành công, quý khách vui lòng đợi chủ trọ đối soát tài khoản ngân hàng và xác nhận duyệt trạng thái thanh toán trên hệ thống.</p>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
+
+      <!-- Right Column: VietQR Payment Card (Only show for tenant when unpaid and bank configured) -->
+          <div v-if="invoice.status !== 'PAID' && vietQrUrl && !isLandlord" class="lg:col-span-1">
+            <div class="bg-card border border-border-main rounded-xl p-5 shadow-xs flex flex-col items-center sticky top-20">
+              <h3 class="text-sm font-bold text-text-main mb-1 w-full text-center">Thanh toán chuyển khoản nhanh</h3>
+              <p class="text-[11px] text-text-sub mb-4 text-center">Quét mã QR bằng ứng dụng ngân hàng để thanh toán tự động.</p>
+              
+              <!-- QR Code (Large) -->
+              <div class="w-52 h-52 sm:w-56 sm:h-56 bg-white border border-border-main p-2 rounded-2xl flex items-center justify-center shrink-0 shadow-xs mb-4">
+                <img :src="vietQrUrl" class="w-full h-full object-contain" alt="Mã chuyển khoản VietQR" />
+              </div>
+
+              <!-- Details -->
+              <div class="space-y-2.5 text-xs w-full">
+                <div class="flex justify-between border-b border-border-main/20 pb-1.5">
+                  <span class="text-text-sub font-semibold">Ngân hàng:</span>
+                  <span class="font-bold text-text-main">{{ invoice.contract?.room?.boardingHouse?.bankName }}</span>
+                </div>
+                <div class="flex justify-between border-b border-border-main/20 pb-1.5">
+                  <span class="text-text-sub font-semibold">Số tài khoản:</span>
+                  <span class="font-bold text-primary">{{ invoice.contract?.room?.boardingHouse?.bankAccountNumber }}</span>
+                </div>
+                <div class="flex justify-between border-b border-border-main/20 pb-1.5">
+                  <span class="text-text-sub font-semibold">Tên chủ tài khoản:</span>
+                  <span class="font-bold text-text-main">{{ invoice.contract?.room?.boardingHouse?.bankAccountName }}</span>
+                </div>
+                <div class="flex justify-between border-b border-border-main/20 pb-1.5">
+                  <span class="text-text-sub font-semibold">Số tiền cần đóng:</span>
+                  <span class="font-extrabold text-danger text-sm">{{ formatMoney(invoice.totalAmount - invoice.paidAmount) }} đ</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <span class="text-text-sub font-semibold">Nội dung chuyển khoản:</span>
+                  <span class="font-mono bg-slate-100 dark:bg-slate-800 px-1.5 py-1.5 rounded text-text-main text-center text-[10.5px]">
+                    PHONG {{ invoice.contract?.room?.roomNumber }} CK TIEN PHONG
+                  </span>
+                </div>
+              </div>
+
+              <!-- Lưu ý cho người thuê -->
+              <div class="mt-4 p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-xl text-amber-800 dark:text-amber-300 flex gap-2 items-start leading-relaxed w-full">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 shrink-0 mt-0.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <div>
+                  <span class="font-bold block text-[10px] mb-0.5">Lưu ý quan trọng:</span>
+                  <p class="text-[9px] leading-normal m-0">Sau khi chuyển khoản thành công, quý khách vui lòng đợi chủ trọ đối soát tài khoản và xác nhận duyệt trạng thái thanh toán trên hệ thống.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> <!-- End Grid Wrapper -->
+      </div> <!-- End Summary Tab -->
 
       <!-- PRINTABLE INVOICE SHEET VIEW -->
       <div v-else-if="activeTab === 'receipt'" id="invoice-print-area"
