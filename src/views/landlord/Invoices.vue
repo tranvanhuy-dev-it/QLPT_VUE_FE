@@ -43,13 +43,13 @@
         <!-- Preview details of the room index -->
         <div v-if="selectedContract"
           class="bg-[rgba(0,102,204,0.05)] border border-border-main/50 rounded-xl p-4 mb-4 text-xs flex flex-col gap-2">
-          <div class="text-text-main">⚡ Chỉ số điện cũ: <span class="font-bold">{{
+          <div class="text-text-main">Chỉ số điện cũ: <span class="font-bold">{{
             selectedContract.room.currentElectricityIndex }} kWh</span></div>
           <div v-if="selectedContract.room.boardingHouse.waterBillingType === 'BY_INDEX'" class="text-text-main">
-            💧 Chỉ số nước cũ: <span class="font-bold">{{ selectedContract.room.currentWaterIndex }} m³</span>
+            Chỉ số nước cũ: <span class="font-bold">{{ selectedContract.room.currentWaterIndex }} m³</span>
           </div>
-          <div v-else class="text-text-main">
-            💧 Tiền nước cố định:
+          <div class="text-text-main" v-else>
+            Tiền nước cố định:
             <span class="font-bold">
               {{ formatMoney(selectedContract.room.boardingHouse.defaultWaterRate) }} đ
               ({{ selectedContract.room.boardingHouse.waterBillingType === 'FIXED_PER_PERSON' ?
@@ -156,7 +156,7 @@
             <!-- Tiền phòng -->
             <div class="flex justify-between items-center">
               <span class="text-text-sub font-medium flex items-center gap-1">
-                🏠 Tiền phòng 
+                Tiền phòng 
                 <span v-if="form.excludeRoomPrice" class="text-[10px] text-rose-500 font-bold bg-rose-50 dark:bg-rose-950/20 px-1.5 py-0.5 rounded border border-rose-200/50">Bỏ qua</span>
               </span>
               <span class="font-semibold" :class="form.excludeRoomPrice ? 'text-text-sub line-through' : ''">
@@ -167,7 +167,7 @@
             <!-- Tiền điện -->
             <div class="flex justify-between items-center">
               <span class="text-text-sub font-medium">
-                ⚡ Điện (Tiêu thụ: <span class="font-bold text-text-main">{{ computedElectricityUsage }} kWh</span>)
+                Điện (Tiêu thụ: <span class="font-bold text-text-main">{{ computedElectricityUsage }} kWh</span>)
               </span>
               <span class="font-semibold">{{ formatMoney(computedElectricityCost) }} đ</span>
             </div>
@@ -175,7 +175,7 @@
             <!-- Tiền nước -->
             <div class="flex justify-between items-center">
               <span class="text-text-sub font-medium">
-                💧 Nước 
+                Nước 
                 <span v-if="selectedContract.room.boardingHouse.waterBillingType === 'BY_INDEX'">
                   (Tiêu thụ: <span class="font-bold text-text-main">{{ computedWaterUsage }} m³</span>)
                 </span>
@@ -205,13 +205,13 @@
               </div>
             </template>
             <div v-else-if="contractExtraFees.length > 0 && form.excludeExtraFees" class="border-t border-border-main/50 my-1 pt-1.5 flex justify-between items-center">
-              <span class="text-text-sub font-medium">🛠️ Dịch vụ đi kèm</span>
+              <span class="text-text-sub font-medium">Dịch vụ đi kèm</span>
               <span class="text-[10px] text-rose-500 font-bold bg-rose-50 dark:bg-rose-950/20 px-1.5 py-0.5 rounded border border-rose-200/50">Bỏ qua</span>
             </div>
 
             <!-- Giảm giá -->
             <div v-if="form.discount > 0" class="flex justify-between items-center text-rose-600 dark:text-rose-400 font-semibold border-t border-border-main/30 pt-2 mt-2">
-              <span>🎁 Giảm giá:</span>
+              <span>Giảm giá:</span>
               <span>-{{ formatMoney(form.discount) }} đ</span>
             </div>
           </div>

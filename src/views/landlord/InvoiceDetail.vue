@@ -180,7 +180,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Điện -->
             <div class="bg-slate-50 dark:bg-slate-900/30 rounded-lg p-3.5 border border-border-main/50 text-xs">
-              <h4 class="font-bold text-primary mb-2 flex items-center gap-1">⚡ Điện năng tiêu thụ</h4>
+              <h4 class="font-bold text-primary mb-2 flex items-center gap-1">Điện năng tiêu thụ</h4>
               <div class="space-y-1.5 text-text-main">
                 <div class="flex justify-between"><span>Chỉ số cũ:</span> <strong>{{ invoice.oldElectricityIndex }}
                     kWh</strong></div>
@@ -201,7 +201,7 @@
             </div>
             <!-- Nước -->
             <div class="bg-slate-50 dark:bg-slate-900/30 rounded-lg p-3.5 border border-border-main/50 text-xs">
-              <h4 class="font-bold text-blue-600 mb-2 flex items-center gap-1">💧 Nước sinh hoạt</h4>
+              <h4 class="font-bold text-blue-600 mb-2 flex items-center gap-1">Nước sinh hoạt</h4>
               <div class="space-y-1.5 text-text-main">
                 <template v-if="invoice.contract?.room?.boardingHouse?.waterBillingType === 'BY_INDEX'">
                   <div class="flex justify-between"><span>Chỉ số cũ:</span> <strong>{{ invoice.oldWaterIndex }}
@@ -276,7 +276,7 @@
               <div>
                 <strong class="text-text-main text-base sm:text-lg block">{{ formatMoney(invoice.totalAmount) }} đ</strong>
                 <span v-if="invoice.discount > 0" class="text-[10px] text-rose-500 dark:text-rose-400 font-semibold block mt-0.5">
-                  🎁 Đã giảm: {{ formatMoney(invoice.discount) }} đ
+                  Đã giảm: {{ formatMoney(invoice.discount) }} đ
                 </span>
               </div>
             </div>
