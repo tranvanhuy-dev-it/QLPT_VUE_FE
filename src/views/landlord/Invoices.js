@@ -132,15 +132,25 @@ export default {
       }
     };
 
-    const onContractChange = () => {
+    const contractExtraFees = ref([]);
+
+    const onContractChange = async () => {
       selectedContract.value = activeContracts.value.find(
         (c) => c.id === form.value.contractId,
       );
       // Reset advanced configurations when changing contract
       form.value.excludeRoomPrice = false;
       form.value.excludeExtraFees = false;
+      contractExtraFees.value = [];
 
       if (selectedContract.value) {
+        try {
+          const detail = await contractStore.fetchContractDetail(form.value.contractId);
+          contractExtraFees.value = detail.extraFees || [];
+        } catch (err) {
+          console.error("Không tải được chi tiết hợp đồng:", err);
+        }
+
         const room = selectedContract.value.room;
         const bh = room.boardingHouse;
         const timing = bh.billingTiming || "PREPAID";
@@ -194,6 +204,103 @@ export default {
       }
     };
 
+    const computedRoomPrice = computed(() => {
+      if (!selectedContract.value || form.value.excludeRoomPrice) return 0;
+      
+      const startStr = form.value.billingPeriodStart;
+      const endStr = form.value.billingPeriodEnd;
+      if (!startStr || !endStr) return 0;
+      
+      const start = new Date(startStr);
+      const end = new Date(endStr);
+      if (end <= start) return 0;
+
+      const contractedPrice = selectedContract.value.contractedRoomPrice || 0;
+      if (selectedContract.value.billingMode === 'BY_RENTAL_DAYS') {
+        return contractedPrice;
+      }
+      
+      // FIXED_DATE_OF_MONTH
+      const startDay = start.getDate();
+      const endDay = end.getDate();
+      const fixedDay = selectedContract.value.fixedBillingDay;
+      const stayedDays = Math.round((end - start) / (1000 * 60 * 60 * 24));
+      
+      const isFullMonth = startDay === fixedDay && endDay === fixedDay && stayedDays >= 28;
+      if (isFullMonth) {
+        return contractedPrice;
+      } else {
+        // Prorated by stayed days
+        const year = start.getFullYear();
+        const month = start.getMonth(); // 0-indexed
+        const daysInStartMonth = new Date(year, month + 1, 0).getDate();
+        const dailyRate = contractedPrice / daysInStartMonth;
+        return Math.round(dailyRate * stayedDays);
+      }
+    });
+
+    const computedElectricityUsage = computed(() => {
+      if (!selectedContract.value) return 0;
+      const oldElec = selectedContract.value.room.currentElectricityIndex || 0;
+      const newElec = Number(form.value.newElectricityIndex) || 0;
+      return Math.max(0, newElec - oldElec);
+    });
+
+    const computedElectricityCost = computed(() => {
+      if (!selectedContract.value) return 0;
+      const rate = selectedContract.value.room.boardingHouse.defaultElectricityRate || 0;
+      return Math.round(computedElectricityUsage.value * rate);
+    });
+
+    const computedWaterUsage = computed(() => {
+      if (!selectedContract.value) return 0;
+      if (selectedContract.value.room.boardingHouse.waterBillingType !== 'BY_INDEX') return 0;
+      const oldWater = selectedContract.value.room.currentWaterIndex || 0;
+      const newWater = Number(form.value.newWaterIndex) || 0;
+      return Math.max(0, newWater - oldWater);
+    });
+
+    const computedWaterCost = computed(() => {
+      if (!selectedContract.value) return 0;
+      const bh = selectedContract.value.room.boardingHouse;
+      const rate = bh.defaultWaterRate || 0;
+      if (bh.waterBillingType === 'BY_INDEX') {
+        return Math.round(computedWaterUsage.value * rate);
+      } else if (bh.waterBillingType === 'FIXED_PER_PERSON') {
+        const tenants = selectedContract.value.numberOfTenants || 1;
+        return Math.round(tenants * rate);
+      } else { // FIXED_PER_ROOM
+        return rate;
+      }
+    });
+
+    const computedExtraFeesList = computed(() => {
+      if (!selectedContract.value || form.value.excludeExtraFees) return [];
+      return contractExtraFees.value.map(cef => {
+        const quantity = cef.extraFee.unitType === 'FIXED_PER_PERSON' 
+          ? (selectedContract.value.numberOfTenants || 1) 
+          : 1;
+        const subtotal = Math.round(cef.customPrice * quantity);
+        return {
+          name: cef.extraFee.name,
+          price: cef.customPrice,
+          quantity,
+          subtotal
+        };
+      });
+    });
+
+    const computedExtraFeesTotal = computed(() => {
+      return computedExtraFeesList.value.reduce((sum, item) => sum + item.subtotal, 0);
+    });
+
+    const computedTotalAmount = computed(() => {
+      return computedRoomPrice.value + 
+             computedElectricityCost.value + 
+             computedWaterCost.value + 
+             computedExtraFeesTotal.value;
+    });
+
     const openCreateModal = async () => {
       await fetchActiveContracts();
       try {
@@ -205,7 +312,7 @@ export default {
       }
       if (activeContracts.value.length > 0) {
         form.value.contractId = activeContracts.value[0].id;
-        onContractChange();
+        await onContractChange();
       }
       showCreateModal.value = true;
     };
@@ -296,6 +403,7 @@ export default {
       selectedContract.value = null;
       invoiceDetails.value = null;
       invoiceItems.value = [];
+      contractExtraFees.value = [];
       form.value = {
         contractId: "",
         invoiceDate: new Date().toISOString().substring(0, 10),
@@ -331,7 +439,7 @@ export default {
             console.error("Không tải được danh sách hóa đơn:", err);
           }
           form.value.contractId = contractIdQuery;
-          onContractChange();
+          await onContractChange();
           showCreateModal.value = true;
         }
       }
@@ -370,6 +478,16 @@ export default {
       formatMoney,
       formatDate,
       tableHeaders,
+
+      contractExtraFees,
+      computedRoomPrice,
+      computedElectricityUsage,
+      computedElectricityCost,
+      computedWaterUsage,
+      computedWaterCost,
+      computedExtraFeesList,
+      computedExtraFeesTotal,
+      computedTotalAmount
     };
   },
 };
