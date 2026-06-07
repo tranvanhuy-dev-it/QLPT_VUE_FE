@@ -281,10 +281,17 @@
         </div>
 
         <!-- VietQR Payment Card (Only show if not paid and QR details configured) -->
-        <div v-if="invoice.status !== 'PAID' && vietQrUrl" class="bg-card border border-border-main rounded-xl p-4 shadow-xs flex flex-col md:flex-row items-center gap-6">
-          <div class="flex-1">
+        <div v-if="invoice.status !== 'PAID' && vietQrUrl" class="bg-card border border-border-main rounded-xl p-5 shadow-xs flex flex-col md:flex-row items-center gap-6 animate-fade-in">
+          <!-- Left: Larger QR Code -->
+          <div class="w-56 h-56 sm:w-60 sm:h-60 bg-white border border-border-main p-3 rounded-2xl flex items-center justify-center shrink-0 shadow-xs">
+            <img :src="vietQrUrl" class="w-full h-full object-contain" alt="Mã chuyển khoản VietQR" />
+          </div>
+
+          <!-- Right: Transfer Info & Notice -->
+          <div class="flex-1 w-full">
             <h3 class="text-sm font-bold text-text-main mb-1">Thanh toán chuyển khoản nhanh</h3>
             <p class="text-xs text-text-sub mb-4">Quét mã QR bằng ứng dụng ngân hàng của bạn để thanh toán tự động tiền thuê phòng & dịch vụ tháng này.</p>
+            
             <div class="space-y-2 text-xs">
               <div class="flex justify-between border-b border-border-main/20 pb-1.5">
                 <span class="text-text-sub font-semibold">Ngân hàng:</span>
@@ -309,9 +316,17 @@
                 </span>
               </div>
             </div>
-          </div>
-          <div class="w-48 h-48 bg-white border border-border-main p-2 rounded-xl flex items-center justify-center shrink-0 shadow-xs">
-            <img :src="vietQrUrl" class="w-full h-full object-contain" alt="Mã chuyển khoản VietQR" />
+
+            <!-- Lưu ý cho người thuê -->
+            <div class="mt-4 p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-xl text-amber-800 dark:text-amber-300 flex gap-2 items-start leading-relaxed">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 shrink-0 mt-0.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <div>
+                <span class="font-bold block text-[11px] mb-0.5">Lưu ý quan trọng:</span>
+                <p class="text-[10px] leading-relaxed m-0">Sau khi chuyển khoản thành công, quý khách vui lòng đợi chủ trọ đối soát tài khoản ngân hàng và xác nhận duyệt trạng thái thanh toán trên hệ thống.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
