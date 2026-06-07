@@ -122,27 +122,7 @@
           />
         </div>
 
-        <!-- Advanced options (e.g., checkout/final billing) -->
-        <div v-if="selectedContract"
-          class="mb-6 p-4 rounded-xl border border-border-main/50 bg-slate-50/50 dark:bg-slate-900/10 space-y-3">
-          <div class="text-[10px] font-bold text-text-sub uppercase tracking-wider mb-1">Cấu hình nâng cao (Kỳ cuối /
-            Trả phòng)</div>
 
-          <Checkbox
-            v-if="selectedContract.room.boardingHouse.billingTiming === 'PREPAID'"
-            v-model="form.excludeRoomPrice"
-            label="Không thu tiền phòng (Chỉ tính điện nước)"
-            description="Sử dụng cho kỳ hóa đơn cuối cùng trước khi trả phòng (do tiền phòng đã đóng trước đó)."
-            class="text-xs font-medium text-text-main"
-          />
-
-          <Checkbox
-            v-model="form.excludeExtraFees"
-            label="Không thu các phụ phí dịch vụ"
-            description="Sử dụng để bỏ qua các phí dịch vụ định kỳ (Wifi, vệ sinh...) khi thanh lý hợp đồng."
-            class="text-xs font-medium text-text-main"
-          />
-        </div>
 
         <!-- Preview Estimated Cost Breakdown -->
         <div v-if="selectedContract" class="mb-6 border border-border-main rounded-xl overflow-hidden bg-slate-50/40 dark:bg-slate-900/5">
@@ -159,11 +139,8 @@
           <div class="p-4 space-y-2.5 text-xs text-text-main">
             <!-- Tiền phòng -->
             <div class="flex justify-between items-center">
-              <span class="text-text-sub font-medium flex items-center gap-1">
-                Tiền phòng 
-                <span v-if="form.excludeRoomPrice" class="text-[10px] text-rose-500 font-bold bg-rose-50 dark:bg-rose-950/20 px-1.5 py-0.5 rounded border border-rose-200/50">Bỏ qua</span>
-              </span>
-              <span class="font-semibold" :class="form.excludeRoomPrice ? 'text-text-sub line-through' : ''">
+              <span class="text-text-sub font-medium">Tiền phòng</span>
+              <span class="font-semibold">
                 {{ formatMoney(computedRoomPrice) }} đ
               </span>
             </div>
@@ -183,11 +160,8 @@
                 <span v-if="selectedContract.room.boardingHouse.waterBillingType === 'BY_INDEX'">
                   (Tiêu thụ: <span class="font-bold text-text-main">{{ computedWaterUsage }} m³</span>)
                 </span>
-                <span v-else-if="selectedContract.room.boardingHouse.waterBillingType === 'FIXED_PER_PERSON'">
-                  (Cố định: <span class="font-bold text-text-main">{{ selectedContract.numberOfTenants }} người</span>)
-                </span>
                 <span v-else>
-                  (Cố định theo phòng)
+                  (Cố định: <span class="font-bold text-text-main">{{ selectedContract.numberOfTenants }} người</span>)
                 </span>
               </span>
               <span class="font-semibold">{{ formatMoney(computedWaterCost) }} đ</span>

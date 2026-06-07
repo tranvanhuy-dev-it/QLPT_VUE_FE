@@ -71,7 +71,7 @@
             <FormInput
               type="text"
               label="Đơn giá nước (đ)"
-              :model-value="formatMoney(selectedRoom.boardingHouse.defaultWaterRate) + (selectedRoom.boardingHouse.waterBillingType === 'BY_INDEX' ? ' đ/m³' : (selectedRoom.boardingHouse.waterBillingType === 'FIXED_PER_PERSON' ? ' đ/người' : ' đ/phòng'))"
+              :model-value="formatMoney(selectedRoom.boardingHouse.defaultWaterRate) + (selectedRoom.boardingHouse.waterBillingType === 'BY_INDEX' ? ' đ/m³' : ' đ/người')"
               readonly
             />
           </div>
@@ -149,30 +149,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div>
-            <FormSelect
-              label="Chế độ tính tiền"
-              v-model="form.billingMode"
-              required
-            >
-              <option value="BY_RENTAL_DAYS">Tính theo ngày dọn vào (anniversary)</option>
-              <option value="FIXED_DATE_OF_MONTH">Đóng tiền vào ngày cố định hàng tháng</option>
-            </FormSelect>
-          </div>
 
-          <div v-if="form.billingMode === 'FIXED_DATE_OF_MONTH'">
-            <FormInput
-              type="number"
-              label="Ngày đóng tiền cố định"
-              v-model="form.fixedBillingDay"
-              min="1"
-              max="31"
-              placeholder="Ví dụ: 5"
-              required
-            />
-          </div>
-        </div>
 
         <!-- Dịch vụ phụ phí của dãy trọ -->
         <div class="mt-6 pt-4 border-t border-border-main mb-6">

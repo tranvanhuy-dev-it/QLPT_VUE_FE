@@ -21,5 +21,15 @@ export default {
   },
   terminate(id) {
     return api.post(`/api/contracts/${id}/terminate`);
-  }
+  },
+  // Addendums
+  getAddendums(contractId) {
+    return api.get(`/api/contracts/${contractId}/addendums`);
+  },
+  createAddendum(contractId, data) {
+    return api.post(`/api/contracts/${contractId}/addendums`, data);
+  },
+  getAddendumExtraFees(contractId, addendumId) {
+    return api.get(`/api/contracts/${contractId}/addendums/${addendumId}/extra-fees`);
+  },
 };

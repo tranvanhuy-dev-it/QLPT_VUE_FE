@@ -155,20 +155,10 @@
           >
             <option value="BY_INDEX">Tính theo chỉ số đồng hồ (tiêu thụ thực tế)</option>
             <option value="FIXED_PER_PERSON">Tính cố định theo đầu người (đ/người/tháng)</option>
-            <option value="FIXED_PER_ROOM">Tính cố định theo phòng (đ/phòng/tháng)</option>
           </FormSelect>
         </div>
 
-        <div class="mb-4">
-          <FormSelect
-            label="Thời điểm thu tiền phòng"
-            v-model="form.billingTiming"
-            required
-          >
-            <option value="PREPAID">Thu đầu tháng (Tiền phòng trả trước, điện nước trả sau)</option>
-            <option value="POSTPAID">Thu cuối tháng (Thu cả tiền phòng và điện nước vào cuối tháng)</option>
-          </FormSelect>
-        </div>
+
 
         <!-- Cấu hình nhận thanh toán bằng QR Code -->
         <div class="mt-6 pt-4 border-t border-border-main">

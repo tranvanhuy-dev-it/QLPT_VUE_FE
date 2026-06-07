@@ -54,7 +54,7 @@
               <!-- Tiền phòng -->
               <tr class="hover:bg-slate-50/30">
                 <td class="py-2.5 px-2 text-slate-800 font-medium break-words">Tiền phòng</td>
-                <td class="text-right py-2.5 px-2 text-slate-600">{{ formatMoney(invoice.contract?.contractedRoomPrice) }} đ</td>
+                <td class="text-right py-2.5 px-2 text-slate-600">{{ formatMoney(invoice.contractedRoomPrice || invoice.contract?.contractedRoomPrice) }} đ</td>
                 <td class="text-right py-2.5 px-2 text-slate-600 text-center">1</td>
                 <td class="text-right py-2.5 px-2 font-bold text-slate-800">{{ formatMoney(invoice.roomPrice) }} đ</td>
               </tr>
@@ -76,30 +76,27 @@
               <tr class="hover:bg-slate-50/30">
                 <td class="py-2.5 px-2 text-slate-800 font-medium break-words">
                   Tiền nước
-                  <div v-if="invoice.contract?.room?.boardingHouse?.waterBillingType === 'BY_INDEX'" class="text-[9px] text-slate-400 font-normal mt-0.5">
+                  <div v-if="(invoice.waterBillingType || invoice.contract?.room?.boardingHouse?.waterBillingType) === 'BY_INDEX'" class="text-[9px] text-slate-400 font-normal mt-0.5">
                     Chỉ số: {{ invoice.newWaterIndex }} - {{ invoice.oldWaterIndex }} ({{ invoice.newWaterIndex - invoice.oldWaterIndex }} m³)
                   </div>
-                  <div v-else-if="invoice.contract?.room?.boardingHouse?.waterBillingType === 'FIXED_PER_PERSON'" class="text-[9px] text-slate-400 font-normal mt-0.5">Cố định theo đầu người</div>
-                  <div v-else class="text-[9px] text-slate-400 font-normal mt-0.5">Cố định theo phòng</div>
+                  <div v-else class="text-[9px] text-slate-400 font-normal mt-0.5">Cố định theo đầu người</div>
                 </td>
                 <td class="text-right py-2.5 px-2 text-slate-600">{{ formatMoney(invoice.waterRate) }} đ</td>
                 <td class="text-right py-2.5 px-2 text-slate-600 text-center">
-                  <span v-if="invoice.contract?.room?.boardingHouse?.waterBillingType === 'BY_INDEX'">
+                  <span v-if="(invoice.waterBillingType || invoice.contract?.room?.boardingHouse?.waterBillingType) === 'BY_INDEX'">
                     {{ invoice.newWaterIndex - invoice.oldWaterIndex }}
                   </span>
-                  <span v-else-if="invoice.contract?.room?.boardingHouse?.waterBillingType === 'FIXED_PER_PERSON'">
-                    {{ invoice.contract?.numberOfTenants }}
+                  <span v-else>
+                    {{ invoice.numberOfTenants || invoice.contract?.numberOfTenants }}
                   </span>
-                  <span v-else>1</span>
                 </td>
                 <td class="text-right py-2.5 px-2 font-bold text-slate-800">
-                  <span v-if="invoice.contract?.room?.boardingHouse?.waterBillingType === 'BY_INDEX'">
+                  <span v-if="(invoice.waterBillingType || invoice.contract?.room?.boardingHouse?.waterBillingType) === 'BY_INDEX'">
                     {{ formatMoney((invoice.newWaterIndex - invoice.oldWaterIndex) * invoice.waterRate) }} đ
                   </span>
-                  <span v-else-if="invoice.contract?.room?.boardingHouse?.waterBillingType === 'FIXED_PER_PERSON'">
-                    {{ formatMoney(invoice.contract?.numberOfTenants * invoice.waterRate) }} đ
+                  <span v-else>
+                    {{ formatMoney((invoice.numberOfTenants || invoice.contract?.numberOfTenants) * invoice.waterRate) }} đ
                   </span>
-                  <span v-else>{{ formatMoney(invoice.waterRate) }} đ</span>
                 </td>
               </tr>
               <!-- Phụ phí dịch vụ riêng -->

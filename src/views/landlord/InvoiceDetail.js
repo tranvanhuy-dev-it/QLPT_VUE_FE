@@ -284,17 +284,14 @@ export default {
       const elecUsage = inv.newElectricityIndex - inv.oldElectricityIndex;
       msg += `- Tiền điện: ${formatMoney(elecUsage * inv.electricityRate)} đ (Chỉ số: ${inv.oldElectricityIndex} -> ${inv.newElectricityIndex} kWh, Tiêu thụ: ${elecUsage} kWh)\n`;
 
-      const bh = inv.contract?.room?.boardingHouse;
-      if (bh) {
-        if (bh.waterBillingType === 'BY_INDEX') {
-          const waterUsage = inv.newWaterIndex - inv.oldWaterIndex;
-          msg += `- Tiền nước: ${formatMoney(waterUsage * inv.waterRate)} đ (Chỉ số: ${inv.oldWaterIndex} -> ${inv.newWaterIndex} m³, Tiêu thụ: ${waterUsage} m³)\n`;
-        } else if (bh.waterBillingType === 'FIXED_PER_PERSON') {
-          const tenants = inv.contract?.numberOfTenants || 1;
-          msg += `- Tiền nước: ${formatMoney(tenants * inv.waterRate)} đ (Cố định: ${tenants} người)\n`;
-        } else {
-          msg += `- Tiền nước: ${formatMoney(inv.waterRate)} đ (Cố định theo phòng)\n`;
-        }
+      // Use snapshot water billing type from invoice
+      const waterBillingType = inv.waterBillingType || inv.contract?.room?.boardingHouse?.waterBillingType;
+      if (waterBillingType === 'BY_INDEX') {
+        const waterUsage = inv.newWaterIndex - inv.oldWaterIndex;
+        msg += `- Tiền nước: ${formatMoney(waterUsage * inv.waterRate)} đ (Chỉ số: ${inv.oldWaterIndex} -> ${inv.newWaterIndex} m³, Tiêu thụ: ${waterUsage} m³)\n`;
+      } else { // FIXED_PER_PERSON
+        const tenants = inv.numberOfTenants || inv.contract?.numberOfTenants || 1;
+        msg += `- Tiền nước: ${formatMoney(tenants * inv.waterRate)} đ (Cố định: ${tenants} người)\n`;
       }
 
       if (invoiceItems.value && invoiceItems.value.length > 0) {
@@ -313,6 +310,7 @@ export default {
       msg += `Đã đóng: ${formatMoney(inv.paidAmount)} đ\n`;
       msg += `Còn nợ: ${formatMoney(inv.totalAmount - inv.paidAmount)} đ\n`;
 
+      const bh = inv.contract?.room?.boardingHouse;
       if (bh && bh.bankName && bh.bankAccountNumber) {
         msg += `\nThông tin chuyển khoản:\n`;
         msg += `- Ngân hàng: ${bh.bankName}\n`;

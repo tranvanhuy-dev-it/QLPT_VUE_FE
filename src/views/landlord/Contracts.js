@@ -84,8 +84,6 @@ export default {
       endDate: '',
       deposit: 0,
       contractedRoomPrice: 0,
-      billingMode: 'BY_RENTAL_DAYS',
-      fixedBillingDay: 5,
       numberOfTenants: 1,
     });
 
@@ -218,8 +216,6 @@ export default {
         endDate: '',
         deposit: 0,
         contractedRoomPrice: 0,
-        billingMode: 'BY_RENTAL_DAYS',
-        fixedBillingDay: 5,
         numberOfTenants: 1,
       };
     };

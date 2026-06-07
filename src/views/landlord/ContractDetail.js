@@ -2,12 +2,19 @@ import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useContractStore } from '../../stores/contract.js';
 import FormButton from '../../components/FormButton.vue';
+import FormInput from '../../components/FormInput.vue';
+import FormSelect from '../../components/FormSelect.vue';
+import Checkbox from '../../components/Checkbox.vue';
 import Modal from '../../components/Modal.vue';
+import contractService from '../../services/contractService.js';
 
 export default {
   name: 'ContractDetail',
   components: {
     FormButton,
+    FormInput,
+    FormSelect,
+    Checkbox,
     Modal,
   },
   setup() {
@@ -23,6 +30,23 @@ export default {
     const saving = ref(false);
     const activeTab = ref('contract'); // 'summary' or 'contract'
     const showPreviewModal = ref(false);
+
+    // Addendum state
+    const addendums = ref([]);
+    const loadingAddendums = ref(false);
+    const showAddendumModal = ref(false);
+    const savingAddendum = ref(false);
+    const availableExtraFees = ref([]);
+
+    const addendumForm = ref({
+      startDate: new Date().toISOString().substring(0, 10),
+      roomPrice: 0,
+      electricityRate: 0,
+      waterRate: 0,
+      waterBillingType: 'BY_INDEX',
+      numberOfTenants: 1,
+      description: '',
+    });
 
     const today = new Date();
     const currentDay = today.getDate();
@@ -94,7 +118,7 @@ export default {
               .border-dashed { border-style: dashed !important; }
               .border-border-main\\/50 { border-color: rgba(226, 232, 240, 0.5) !important; }
               .text-xs { font-size: 12px !important; }
-              .text-[10px] { font-size: 9.5px !important; }
+              .text-\\[10px\\] { font-size: 9.5px !important; }
               .italic { font-style: italic !important; }
               .block { display: block !important; }
               .mt-0\\.5 { margin-top: 0.08rem !important; }
@@ -154,6 +178,14 @@ export default {
       return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
     };
 
+    const formatWaterBillingType = (type) => {
+      switch (type) {
+        case 'BY_INDEX': return 'Theo chỉ số (đ/m³)';
+        case 'FIXED_PER_PERSON': return 'Theo đầu người (đ/người)';
+        default: return type;
+      }
+    };
+
     const fetchContractDetail = async () => {
       try {
         const contractId = route.params.id;
@@ -165,9 +197,88 @@ export default {
           isEditMode.value = true;
           activeTab.value = 'summary';
         }
+
+        // Fetch addendums
+        await fetchAddendums();
       } catch (err) {
         alert(err.response?.data?.error || 'Không thể tải thông tin chi tiết hợp đồng');
         router.push({ name: 'Contracts' });
+      }
+    };
+
+    const fetchAddendums = async () => {
+      try {
+        loadingAddendums.value = true;
+        const contractId = route.params.id;
+        const res = await contractService.getAddendums(contractId);
+        addendums.value = res.data || [];
+      } catch (err) {
+        console.error('Không tải được danh sách phụ lục:', err);
+      } finally {
+        loadingAddendums.value = false;
+      }
+    };
+
+    const openAddendumModal = async () => {
+      if (!contract.value) return;
+      // Pre-fill with latest addendum values or contract defaults
+      const latest = addendums.value.length > 0 ? addendums.value[0] : null;
+      const bh = contract.value.room.boardingHouse;
+
+      addendumForm.value = {
+        startDate: new Date().toISOString().substring(0, 10),
+        roomPrice: latest ? latest.roomPrice : contract.value.contractedRoomPrice,
+        electricityRate: latest ? latest.electricityRate : bh.defaultElectricityRate,
+        waterRate: latest ? latest.waterRate : bh.defaultWaterRate,
+        waterBillingType: latest ? latest.waterBillingType : bh.waterBillingType,
+        numberOfTenants: latest ? latest.numberOfTenants : contract.value.numberOfTenants,
+        description: '',
+      };
+
+      // Load extra fees from boarding house
+      try {
+        const response = await contractService.getBoardingHouseExtraFees(bh.id);
+        const latestFees = latest?.extraFees || [];
+        availableExtraFees.value = (response.data || []).map(ef => {
+          const matched = latestFees.find(lf => lf.extraFee?.id === ef.id);
+          return {
+            ...ef,
+            selected: !!matched || latestFees.length === 0,
+            customPrice: matched ? matched.customPrice : ef.defaultPrice,
+          };
+        });
+      } catch (err) {
+        console.error('Không tải được dịch vụ dãy trọ:', err);
+        availableExtraFees.value = [];
+      }
+
+      showAddendumModal.value = true;
+    };
+
+    const saveAddendum = async () => {
+      savingAddendum.value = true;
+      try {
+        const extraFeesPayload = availableExtraFees.value
+          .filter(ef => ef.selected)
+          .map(ef => ({
+            extraFeeId: ef.id,
+            customPrice: ef.customPrice,
+          }));
+
+        const payload = {
+          ...addendumForm.value,
+          extraFees: extraFeesPayload,
+        };
+
+        await contractService.createAddendum(contract.value.id, payload);
+        showAddendumModal.value = false;
+        alert('Thêm phụ lục hợp đồng thành công!');
+        // Reload contract details and addendums
+        await fetchContractDetail();
+      } catch (err) {
+        alert(err.response?.data?.error || 'Thêm phụ lục hợp đồng thất bại');
+      } finally {
+        savingAddendum.value = false;
       }
     };
 
@@ -301,6 +412,7 @@ export default {
       saving,
       formatMoney,
       formatDate,
+      formatWaterBillingType,
       docTienBangChu,
       toggleEditMode,
       submitEdit,
@@ -311,7 +423,16 @@ export default {
       currentDay,
       currentMonth,
       currentYear,
-      showPreviewModal
+      showPreviewModal,
+      // Addendums
+      addendums,
+      loadingAddendums,
+      showAddendumModal,
+      savingAddendum,
+      addendumForm,
+      availableExtraFees,
+      openAddendumModal,
+      saveAddendum,
     };
   }
 };

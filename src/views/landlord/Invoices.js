@@ -88,8 +88,6 @@ export default {
       billingPeriodEnd: "",
       newElectricityIndex: 0,
       newWaterIndex: 0,
-      excludeRoomPrice: false,
-      excludeExtraFees: false,
       discount: 0,
     });
 
@@ -149,8 +147,6 @@ export default {
           (c) => c.id === form.value.contractId,
         );
         // Reset advanced configurations when changing contract
-        form.value.excludeRoomPrice = false;
-        form.value.excludeExtraFees = false;
         form.value.discount = 0;
         contractExtraFees.value = [];
 
@@ -163,8 +159,6 @@ export default {
           }
 
           const room = selectedContract.value.room;
-          const bh = room.boardingHouse;
-          const timing = bh.billingTiming || "PREPAID";
 
           // Filter and sort invoices for this contract by billingPeriodEnd descending
           const contractInvoices = allInvoices.value
@@ -180,38 +174,20 @@ export default {
 
             const start = new Date(lastInvoice.billingPeriodEnd);
             start.setMonth(start.getMonth() + 1);
-            const endStr = start.toISOString().substring(0, 10);
-            form.value.billingPeriodEnd = endStr;
-
-            // Default invoiceDate based on timing
-            if (timing === "PREPAID") {
-              form.value.invoiceDate = lastInvoice.billingPeriodEnd; // Start of the next billing period
-              form.value.newElectricityIndex = room.currentElectricityIndex;
-              form.value.newWaterIndex = room.currentWaterIndex;
-            } else {
-              form.value.invoiceDate = endStr; // End of the next billing period
-              form.value.newElectricityIndex = room.currentElectricityIndex;
-              form.value.newWaterIndex = room.currentWaterIndex;
-            }
+            form.value.billingPeriodEnd = start.toISOString().substring(0, 10);
           } else {
             // First invoice ever
             form.value.billingPeriodStart = selectedContract.value.startDate;
 
             const start = new Date(selectedContract.value.startDate);
             start.setMonth(start.getMonth() + 1);
-            const endStr = start.toISOString().substring(0, 10);
-            form.value.billingPeriodEnd = endStr;
-
-            if (timing === "PREPAID") {
-              form.value.invoiceDate = selectedContract.value.startDate; // Check-in start date
-              form.value.newElectricityIndex = room.currentElectricityIndex;
-              form.value.newWaterIndex = room.currentWaterIndex;
-            } else {
-              form.value.invoiceDate = endStr; // End of month 1
-              form.value.newElectricityIndex = room.currentElectricityIndex;
-              form.value.newWaterIndex = room.currentWaterIndex;
-            }
+            form.value.billingPeriodEnd = start.toISOString().substring(0, 10);
           }
+
+          // Always set invoiceDate to billingPeriodEnd (end-of-month billing)
+          form.value.invoiceDate = form.value.billingPeriodEnd;
+          form.value.newElectricityIndex = room.currentElectricityIndex;
+          form.value.newWaterIndex = room.currentWaterIndex;
         }
       } finally {
         isLoadingModalData.value = false;
@@ -219,38 +195,8 @@ export default {
     };
 
     const computedRoomPrice = computed(() => {
-      if (!selectedContract.value || form.value.excludeRoomPrice) return 0;
-      
-      const startStr = form.value.billingPeriodStart;
-      const endStr = form.value.billingPeriodEnd;
-      if (!startStr || !endStr) return 0;
-      
-      const start = new Date(startStr);
-      const end = new Date(endStr);
-      if (end <= start) return 0;
-
-      const contractedPrice = selectedContract.value.contractedRoomPrice || 0;
-      if (selectedContract.value.billingMode === 'BY_RENTAL_DAYS') {
-        return contractedPrice;
-      }
-      
-      // FIXED_DATE_OF_MONTH
-      const startDay = start.getDate();
-      const endDay = end.getDate();
-      const fixedDay = selectedContract.value.fixedBillingDay;
-      const stayedDays = Math.round((end - start) / (1000 * 60 * 60 * 24));
-      
-      const isFullMonth = startDay === fixedDay && endDay === fixedDay && stayedDays >= 28;
-      if (isFullMonth) {
-        return contractedPrice;
-      } else {
-        // Prorated by stayed days
-        const year = start.getFullYear();
-        const month = start.getMonth(); // 0-indexed
-        const daysInStartMonth = new Date(year, month + 1, 0).getDate();
-        const dailyRate = contractedPrice / daysInStartMonth;
-        return Math.round(dailyRate * stayedDays);
-      }
+      if (!selectedContract.value) return 0;
+      return selectedContract.value.contractedRoomPrice || 0;
     });
 
     const computedElectricityUsage = computed(() => {
@@ -280,16 +226,14 @@ export default {
       const rate = bh.defaultWaterRate || 0;
       if (bh.waterBillingType === 'BY_INDEX') {
         return Math.round(computedWaterUsage.value * rate);
-      } else if (bh.waterBillingType === 'FIXED_PER_PERSON') {
+      } else { // FIXED_PER_PERSON
         const tenants = selectedContract.value.numberOfTenants || 1;
         return Math.round(tenants * rate);
-      } else { // FIXED_PER_ROOM
-        return rate;
       }
     });
 
     const computedExtraFeesList = computed(() => {
-      if (!selectedContract.value || form.value.excludeExtraFees) return [];
+      if (!selectedContract.value) return [];
       return contractExtraFees.value.map(cef => {
         const quantity = cef.extraFee.unitType === 'FIXED_PER_PERSON' 
           ? (selectedContract.value.numberOfTenants || 1) 
@@ -433,8 +377,6 @@ export default {
         billingPeriodEnd: "",
         newElectricityIndex: 0,
         newWaterIndex: 0,
-        excludeRoomPrice: false,
-        excludeExtraFees: false,
         discount: 0,
       };
       payForm.value = {

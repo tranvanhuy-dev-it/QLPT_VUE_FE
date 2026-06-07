@@ -141,10 +141,7 @@
             </div>
             <div class="flex items-center">
               <span class="text-text-sub font-semibold w-36 shrink-0">Kỳ hạn tính tiền:</span>
-              <span class="font-semibold text-text-main flex-1">
-                <span v-if="contract.billingMode === 'BY_RENTAL_DAYS'">Theo ngày thuê</span>
-                <span v-else>Cố định ngày {{ contract.fixedBillingDay }} hằng tháng</span>
-              </span>
+              <span class="font-semibold text-text-main flex-1">Thanh toán vào cuối tháng</span>
             </div>
           </div>
         </div>
@@ -235,6 +232,53 @@
           </div>
         </div>
       </div>
+
+        <!-- Addendums History Card -->
+        <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
+          <div class="flex items-center justify-between border-b border-border-main pb-2.5 mb-4">
+            <h3 class="text-sm font-bold text-text-main">Lịch sử phụ lục hợp đồng</h3>
+            <FormButton v-if="contract.status === 'ACTIVE'" variant="primary" size="sm" @click="openAddendumModal" class="!px-2.5 !py-1.5">
+              + Thêm phụ lục
+            </FormButton>
+          </div>
+
+          <div v-if="loadingAddendums" class="text-center py-6 text-text-sub text-xs">
+            <div class="w-6 h-6 border-3 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+            Đang tải...
+          </div>
+
+          <div v-else-if="addendums.length === 0" class="text-center py-6 text-text-sub text-xs italic">
+            Chưa có phụ lục nào.
+          </div>
+
+          <div v-else class="flex flex-col gap-3">
+            <div v-for="(addendum, index) in addendums" :key="addendum.id"
+              :class="['border rounded-xl p-3.5 text-xs', index === 0 ? 'border-primary/40 bg-primary/5' : 'border-border-main/50 bg-slate-50/30 dark:bg-slate-900/20']">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-bold text-text-main text-sm flex items-center gap-2">
+                  {{ addendum.description || 'Phụ lục #' + (addendums.length - index) }}
+                  <span v-if="index === 0" class="text-[10px] px-1.5 py-0.5 rounded bg-primary/15 text-primary font-semibold">Hiện hành</span>
+                </span>
+                <span class="text-text-sub text-[11px]">Từ {{ formatDate(addendum.startDate) }}</span>
+              </div>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1.5">
+                <div><span class="text-text-sub">Giá phòng:</span> <span class="font-bold text-text-main">{{ formatMoney(addendum.roomPrice) }} đ</span></div>
+                <div><span class="text-text-sub">Giá điện:</span> <span class="font-bold text-text-main">{{ formatMoney(addendum.electricityRate) }} đ/kWh</span></div>
+                <div><span class="text-text-sub">Giá nước:</span> <span class="font-bold text-text-main">{{ formatMoney(addendum.waterRate) }} đ</span></div>
+                <div><span class="text-text-sub">Tính nước:</span> <span class="font-semibold text-text-main">{{ formatWaterBillingType(addendum.waterBillingType) }}</span></div>
+                <div><span class="text-text-sub">Số người:</span> <span class="font-bold text-text-main">{{ addendum.numberOfTenants }}</span></div>
+              </div>
+              <div v-if="addendum.extraFees && addendum.extraFees.length > 0" class="mt-2 pt-2 border-t border-border-main/30">
+                <span class="text-text-sub text-[10px] font-semibold uppercase">Phụ phí:</span>
+                <div class="flex flex-wrap gap-1.5 mt-1">
+                  <span v-for="ef in addendum.extraFees" :key="ef.id" class="inline-flex px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-medium text-text-sub">
+                    {{ ef.extraFee.name }}: {{ formatMoney(ef.customPrice) }}đ
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
       <!-- LEGAL CONTRACT TAB VIEW (A4 Preview & printable layout) -->
       <div v-else-if="activeTab === 'contract'" id="contract-print-area"
@@ -347,9 +391,7 @@
                   <li>+ Giá điện: <strong>{{ formatMoney(contract.room.boardingHouse.defaultElectricityRate) }}
                       đ/kWh</strong>.</li>
                   <li>+ Giá nước: <strong>{{ formatMoney(contract.room.boardingHouse.defaultWaterRate) }} đ</strong>
-                    ({{ contract.room.boardingHouse.waterBillingType === 'BY_INDEX' ? 'đ/m³ tiêu thụ thực tế' :
-                      (contract.room.boardingHouse.waterBillingType === 'FIXED_PER_PERSON' ? 'đ/người/tháng' :
-                        'đ/phòng/tháng') }}).
+                    ({{ contract.room.boardingHouse.waterBillingType === 'BY_INDEX' ? 'đ/m³ tiêu thụ thực tế' : 'đ/người/tháng' }}).
                   </li>
                 </ul>
               </li>
@@ -362,12 +404,7 @@
                   </li>
                 </ul>
               </li>
-              <li>- Hạn thanh toán và chu kỳ:
-                <span v-if="contract.billingMode === 'BY_RENTAL_DAYS'">Hóa đơn được lập định kỳ dựa trên ngày dọn vào
-                  (Anniversary).</span>
-                <span v-else>Hóa đơn được lập cố định và Bên B cần thanh toán đầy đủ trước ngày <strong>{{
-                  contract.fixedBillingDay }} hàng tháng</strong>.</span>
-              </li>
+              <li>- Hạn thanh toán: Hóa đơn được lập vào cuối mỗi tháng. Bên B cần thanh toán đầy đủ trước ngày cuối tháng.</li>
               <li>- Phương thức thanh toán: Bằng tiền mặt trực tiếp hoặc chuyển khoản tài khoản ngân hàng của Bên A.
               </li>
             </ul>
@@ -550,9 +587,7 @@
                       <li>+ Giá điện: <strong>{{ formatMoney(contract.room.boardingHouse.defaultElectricityRate) }}
                           đ/kWh</strong>.</li>
                       <li>+ Giá nước: <strong>{{ formatMoney(contract.room.boardingHouse.defaultWaterRate) }} đ</strong>
-                        ({{ contract.room.boardingHouse.waterBillingType === 'BY_INDEX' ? 'đ/m³ tiêu thụ thực tế' :
-                          (contract.room.boardingHouse.waterBillingType === 'FIXED_PER_PERSON' ? 'đ/người/tháng' :
-                            'đ/phòng/tháng') }}).
+                        ({{ contract.room.boardingHouse.waterBillingType === 'BY_INDEX' ? 'đ/m³ tiêu thụ thực tế' : 'đ/người/tháng' }}).
                       </li>
                     </ul>
                   </li>
@@ -565,12 +600,7 @@
                       </li>
                     </ul>
                   </li>
-                  <li>- Hạn thanh toán và chu kỳ:
-                    <span v-if="contract.billingMode === 'BY_RENTAL_DAYS'">Hóa đơn được lập định kỳ dựa trên ngày dọn
-                      vào (Anniversary).</span>
-                    <span v-else>Hóa đơn được lập cố định và Bên B cần thanh toán đầy đủ trước ngày <strong>{{
-                      contract.fixedBillingDay }} hàng tháng</strong>.</span>
-                  </li>
+                  <li>- Hạn thanh toán: Hóa đơn được lập vào cuối mỗi tháng. Bên B cần thanh toán đầy đủ trước ngày cuối tháng.</li>
                   <li>- Phương thức thanh toán: Bằng tiền mặt trực tiếp hoặc chuyển khoản tài khoản ngân hàng của Bên A.
                   </li>
                 </ul>
@@ -643,6 +673,107 @@
           <FormButton type="button" @click="printContract" variant="primary">In hợp đồng</FormButton>
         </div>
       </Modal>
+
+    <!-- Add Addendum Modal -->
+    <Modal v-if="showAddendumModal" title="Thêm Phụ Lục Hợp Đồng" maxWidth="lg" @close="showAddendumModal = false">
+      <form @submit.prevent="saveAddendum">
+        <div class="mb-4">
+          <FormInput
+            type="date"
+            label="Ngày bắt đầu hiệu lực"
+            v-model="addendumForm.startDate"
+            required
+          />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            <FormInput
+              type="number"
+              label="Giá phòng (đ/tháng)"
+              v-model="addendumForm.roomPrice"
+              min="0"
+              required
+            />
+          </div>
+          <div>
+            <FormInput
+              type="number"
+              label="Số người ở"
+              v-model="addendumForm.numberOfTenants"
+              min="1"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            <FormInput
+              type="number"
+              label="Giá điện (đ/kWh)"
+              v-model="addendumForm.electricityRate"
+              min="0"
+              required
+            />
+          </div>
+          <div>
+            <FormInput
+              type="number"
+              label="Giá nước (đ)"
+              v-model="addendumForm.waterRate"
+              min="0"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            <FormSelect
+              label="Cách tính tiền nước"
+              v-model="addendumForm.waterBillingType"
+              required
+            >
+              <option value="BY_INDEX">Theo chỉ số đồng hồ (đ/m³)</option>
+              <option value="FIXED_PER_PERSON">Cố định theo đầu người (đ/người)</option>
+            </FormSelect>
+          </div>
+          <div>
+            <FormInput
+              type="text"
+              label="Ghi chú / Mô tả"
+              v-model="addendumForm.description"
+              placeholder="Ví dụ: Điều chỉnh giá phòng T7/2026"
+            />
+          </div>
+        </div>
+
+        <!-- Dịch vụ phụ phí -->
+        <div class="mt-4 pt-4 border-t border-border-main">
+          <h4 class="text-sm font-bold text-text-main mb-3">Phụ Phí & Dịch Vụ Áp Dụng:</h4>
+          <div v-if="availableExtraFees.length === 0" class="text-xs text-text-sub italic">
+            Dãy trọ này chưa cấu hình dịch vụ phụ phí.
+          </div>
+          <div v-else class="flex flex-col gap-2.5">
+            <div v-for="(ef, index) in availableExtraFees" :key="ef.id"
+              class="flex items-center justify-between bg-slate-50 dark:bg-slate-900/50 border border-border-main rounded-xl px-4 py-3">
+              <Checkbox v-model="ef.selected" :label="ef.name" />
+              <div class="flex items-center gap-2">
+                <input type="number" v-model.number="ef.customPrice" min="0"
+                  class="w-24 text-right border border-border-main rounded px-1.5 py-0.5 bg-card text-text-main text-xs font-bold outline-none" />
+                <span class="text-xs text-text-sub font-medium">đ/{{ ef.unitType === 'FIXED_PER_PERSON' ? 'người' : 'phòng' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3 justify-end mt-6">
+          <FormButton type="button" @click="showAddendumModal = false" variant="secondary">Hủy</FormButton>
+          <FormButton type="submit" :disabled="savingAddendum">{{ savingAddendum ? 'Đang lưu...' : 'Lưu phụ lục' }}</FormButton>
+        </div>
+      </form>
+    </Modal>
 
     </div>
   </div>

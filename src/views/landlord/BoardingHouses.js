@@ -49,7 +49,6 @@ export default {
       defaultElectricityRate: 3500,
       defaultWaterRate: 15000,
       waterBillingType: 'BY_INDEX',
-      billingTiming: 'PREPAID',
       bankName: '',
       bankAccountNumber: '',
       bankAccountName: '',
@@ -65,7 +64,6 @@ export default {
       switch (type) {
         case 'BY_INDEX': return 'Theo chỉ số điện nước';
         case 'FIXED_PER_PERSON': return 'Theo người ở';
-        case 'FIXED_PER_ROOM': return 'Theo phòng';
         default: return type;
       }
     };
@@ -112,7 +110,6 @@ export default {
         defaultElectricityRate: house.defaultElectricityRate,
         defaultWaterRate: house.defaultWaterRate,
         waterBillingType: house.waterBillingType,
-        billingTiming: house.billingTiming || 'PREPAID',
         bankName: house.bankName || '',
         bankAccountNumber: house.bankAccountNumber || '',
         bankAccountName: house.bankAccountName || '',
@@ -146,7 +143,6 @@ export default {
         defaultElectricityRate: 3500,
         defaultWaterRate: 15000,
         waterBillingType: 'BY_INDEX',
-        billingTiming: 'PREPAID',
         bankName: '',
         bankAccountNumber: '',
         bankAccountName: '',
