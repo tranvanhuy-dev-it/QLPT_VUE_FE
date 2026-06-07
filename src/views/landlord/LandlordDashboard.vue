@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 bg-bg-main min-h-screen">
+  <div class="p-4 bg-bg-main min-h-full">
     <!-- Loading -->
     <div v-if="loading" class="flex flex-col items-center justify-center py-20 gap-4 text-text-sub">
       <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>

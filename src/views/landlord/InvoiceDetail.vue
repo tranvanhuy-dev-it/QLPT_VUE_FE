@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 bg-bg-main min-h-screen">
+  <div class="p-4 bg-bg-main min-h-full">
     <!-- Header Block (hidden during print) -->
     <div class="mb-6 pb-4 border-b border-border-main no-print flex flex-col gap-4">
       <!-- Top Row: Back button + Title + Status -->

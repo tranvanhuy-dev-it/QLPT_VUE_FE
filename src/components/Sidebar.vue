@@ -4,7 +4,7 @@
   </div>
 
   <aside
-    class="w-[260px] bg-card border-r border-border-main flex flex-col h-screen fixed lg:sticky top-0 inset-y-0 left-0 shrink-0 z-50 transition-transform duration-200 ease-in-out lg:translate-x-0"
+    class="w-[260px] bg-card border-r border-border-main flex flex-col h-[100dvh] fixed lg:sticky top-0 inset-y-0 left-0 shrink-0 z-50 transition-transform duration-200 ease-in-out lg:translate-x-0"
     :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'">
     <!-- Brand Header -->
     <div class="flex items-center justify-between p-6 pb-5">

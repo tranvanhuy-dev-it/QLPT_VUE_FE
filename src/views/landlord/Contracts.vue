@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 bg-bg-main min-h-screen">
+  <div class="p-4 bg-bg-main min-h-full">
     <PageHeader title="Hợp Đồng Thuê"
       subtitle="Quản lý hợp đồng cho thuê phòng, cấu hình phụ phí dịch vụ riêng biệt cho từng người ở"
       :icon="contractIcon" :showAdd="true" addText="Thêm"

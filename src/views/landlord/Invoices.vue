@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 bg-bg-main min-h-screen">
+  <div class="p-4 bg-bg-main min-h-full">
     <PageHeader title="Hóa Đơn & Thanh Toán"
       subtitle="Ghi chỉ số điện nước, lập hóa đơn phòng hàng tháng và theo dõi nợ" :icon="invoiceIcon" :showAdd="true"
       addText="Thêm" :disableAdd="activeContracts.length === 0"

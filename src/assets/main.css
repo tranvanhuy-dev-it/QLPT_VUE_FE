@@ -53,6 +53,33 @@
 }
 
 @layer base {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    overscroll-behavior: none; /* Disable viewport-level rubber-banding/pull-to-refresh */
+  }
+
+  /* Smooth scroll container config */
+  [class*='overflow-y-auto'],
+  .overflow-y-auto {
+    overscroll-behavior-y: contain; /* Prevents scroll chaining to parent */
+    -webkit-overflow-scrolling: touch; /* Momentum scroll on iOS */
+  }
+
+  /* Prevent automatic text zoom on focus in iOS Safari */
+  @media (max-width: 767px) {
+    input,
+    select,
+    textarea,
+    .form-input,
+    .form-select {
+      font-size: 16px !important;
+    }
+  }
+
   * {
     box-sizing: border-box;
     margin: 0;

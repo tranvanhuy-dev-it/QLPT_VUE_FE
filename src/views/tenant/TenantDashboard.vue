@@ -1,5 +1,5 @@
 <template>
-  <div class="p-6 bg-bg-main min-h-screen">
+  <div class="p-6 bg-bg-main min-h-full">
     <PageHeader 
       title="Thông Tin Phòng Trọ Của Tôi" 
       subtitle="Xem chi tiết hợp đồng thuê, chỉ số điện nước và hóa đơn thanh toán hàng tháng" 

@@ -1,7 +1,7 @@
 <template>
-  <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+  <div class="fixed inset-0 bg-black/50 flex justify-center items-start z-50 p-4 overflow-y-auto">
     <div
-      class="bg-card border border-border-main rounded-2xl shadow-lg w-full p-6 md:p-8 m-auto relative"
+      class="bg-card border border-border-main rounded-2xl shadow-lg w-full p-6 md:p-8 my-4 md:my-auto relative"
       :class="maxWidthClass"
     >
       <div class="flex justify-between items-center mb-6">
