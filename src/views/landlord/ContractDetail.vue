@@ -231,7 +231,6 @@
             </div>
           </div>
         </div>
-      </div>
 
         <!-- Addendums History Card -->
         <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
@@ -279,6 +278,7 @@
             </div>
           </div>
         </div>
+      </div>
 
       <!-- LEGAL CONTRACT TAB VIEW (A4 Preview & printable layout) -->
       <div v-else-if="activeTab === 'contract'" id="contract-print-area"
