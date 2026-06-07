@@ -60,6 +60,10 @@ export default {
       fullName: '',
       phone: '',
       email: '',
+      identityCard: '',
+      idCardIssueDate: '',
+      idCardIssuePlace: '',
+      permanentAddress: '',
     });
 
     const fetchTenants = async () => {
@@ -107,6 +111,10 @@ export default {
         fullName: '',
         phone: '',
         email: '',
+        identityCard: '',
+        idCardIssueDate: '',
+        idCardIssuePlace: '',
+        permanentAddress: '',
       };
     };
 

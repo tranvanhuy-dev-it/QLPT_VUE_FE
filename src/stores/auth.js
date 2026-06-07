@@ -42,7 +42,7 @@ export const useAuthStore = defineStore('auth', {
     closeSidebar() {
       this.isSidebarOpen = false;
     },
-    async register(username, password, email, phone, fullName, role) {
+    async register(username, password, email, phone, fullName, role, identityCard, idCardIssueDate, idCardIssuePlace) {
       try {
         const response = await api.post('/api/auth/register', {
           username,
@@ -51,6 +51,9 @@ export const useAuthStore = defineStore('auth', {
           phone,
           fullName,
           role,
+          identityCard,
+          idCardIssueDate,
+          idCardIssuePlace,
         });
         return response.data;
       } catch (error) {

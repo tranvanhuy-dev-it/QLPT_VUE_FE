@@ -79,7 +79,7 @@
           />
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="grid grid-cols-2 gap-4 mb-4">
           <div>
             <FormInput
               type="text"
@@ -97,6 +97,43 @@
               placeholder="Địa chỉ email"
             />
           </div>
+        </div>
+
+        <div class="mb-4">
+          <FormInput
+            type="text"
+            label="Số CMND/CCCD"
+            v-model="form.identityCard"
+            placeholder="Nhập số định danh cá nhân"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <FormInput
+              type="date"
+              label="Ngày cấp"
+              v-model="form.idCardIssueDate"
+            />
+          </div>
+
+          <div>
+            <FormInput
+              type="text"
+              label="Nơi cấp"
+              v-model="form.idCardIssuePlace"
+              placeholder="Ví dụ: Cục Cảnh sát QLHC về TTXH"
+            />
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <FormInput
+            type="text"
+            label="Hộ khẩu thường trú"
+            v-model="form.permanentAddress"
+            placeholder="Địa chỉ thường trú ghi trên CCCD"
+          />
         </div>
 
         <div class="flex gap-3 justify-end mt-4">

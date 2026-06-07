@@ -256,8 +256,8 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-4">
               <div><strong>Họ và tên:</strong> {{ contract.room.boardingHouse.landlord?.fullName || '......................................................' }}</div>
               <div><strong>Số điện thoại:</strong> {{ contract.room.boardingHouse.landlord?.phone || '......................................................' }}</div>
-              <div><strong>Số CMND/CCCD:</strong> ......................................................</div>
-              <div><strong>Ngày cấp:</strong> ......................... <strong>Nơi cấp:</strong> .........................</div>
+              <div><strong>Số CMND/CCCD:</strong> {{ contract.room.boardingHouse.landlord?.identityCard || '......................................................' }}</div>
+              <div><strong>Ngày cấp:</strong> {{ contract.room.boardingHouse.landlord?.idCardIssueDate ? formatDate(contract.room.boardingHouse.landlord.idCardIssueDate) : '.........................' }} <strong>Nơi cấp:</strong> {{ contract.room.boardingHouse.landlord?.idCardIssuePlace || '.........................' }}</div>
               <div class="sm:col-span-2"><strong>Địa chỉ dãy trọ:</strong> {{ contract.room.boardingHouse.address || '......................................................' }}</div>
             </div>
           </div>
@@ -270,9 +270,9 @@
               <div><strong>Tài khoản hệ thống:</strong> {{ contract.tenant.username }}</div>
               <div><strong>Số điện thoại:</strong> {{ contract.tenant.phone || '......................................................' }}</div>
               <div><strong>Email:</strong> {{ contract.tenant.email || '......................................................' }}</div>
-              <div><strong>Số CMND/CCCD:</strong> ......................................................</div>
-              <div><strong>Ngày cấp:</strong> ......................... <strong>Nơi cấp:</strong> .........................</div>
-              <div class="sm:col-span-2"><strong>Hộ khẩu thường trú:</strong> ................................................................................................</div>
+              <div><strong>Số CMND/CCCD:</strong> {{ contract.tenant.identityCard || '......................................................' }}</div>
+              <div><strong>Ngày cấp:</strong> {{ contract.tenant.idCardIssueDate ? formatDate(contract.tenant.idCardIssueDate) : '.........................' }} <strong>Nơi cấp:</strong> {{ contract.tenant.idCardIssuePlace || '.........................' }}</div>
+              <div class="sm:col-span-2"><strong>Hộ khẩu thường trú:</strong> {{ contract.tenant.permanentAddress || '................................................................................................' }}</div>
               <div class="sm:col-span-2"><strong>Số người cùng ở thực tế:</strong> {{ contract.numberOfTenants }} người.</div>
             </div>
           </div>
@@ -409,8 +409,8 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-4">
                   <div><strong>Họ và tên:</strong> {{ contract.room.boardingHouse.landlord?.fullName || '......................................................' }}</div>
                   <div><strong>Số điện thoại:</strong> {{ contract.room.boardingHouse.landlord?.phone || '......................................................' }}</div>
-                  <div><strong>Số CMND/CCCD:</strong> ......................................................</div>
-                  <div><strong>Ngày cấp:</strong> ......................... <strong>Nơi cấp:</strong> .........................</div>
+                  <div><strong>Số CMND/CCCD:</strong> {{ contract.room.boardingHouse.landlord?.identityCard || '......................................................' }}</div>
+                  <div><strong>Ngày cấp:</strong> {{ contract.room.boardingHouse.landlord?.idCardIssueDate ? formatDate(contract.room.boardingHouse.landlord.idCardIssueDate) : '.........................' }} <strong>Nơi cấp:</strong> {{ contract.room.boardingHouse.landlord?.idCardIssuePlace || '.........................' }}</div>
                   <div class="sm:col-span-2"><strong>Địa chỉ dãy trọ:</strong> {{ contract.room.boardingHouse.address || '......................................................' }}</div>
                 </div>
               </div>
@@ -423,9 +423,9 @@
                   <div><strong>Tài khoản hệ thống:</strong> {{ contract.tenant.username }}</div>
                   <div><strong>Số điện thoại:</strong> {{ contract.tenant.phone || '......................................................' }}</div>
                   <div><strong>Email:</strong> {{ contract.tenant.email || '......................................................' }}</div>
-                  <div><strong>Số CMND/CCCD:</strong> ......................................................</div>
-                  <div><strong>Ngày cấp:</strong> ......................... <strong>Nơi cấp:</strong> .........................</div>
-                  <div class="sm:col-span-2"><strong>Hộ khẩu thường trú:</strong> ................................................................................................</div>
+                  <div><strong>Số CMND/CCCD:</strong> {{ contract.tenant.identityCard || '......................................................' }}</div>
+                  <div><strong>Ngày cấp:</strong> {{ contract.tenant.idCardIssueDate ? formatDate(contract.tenant.idCardIssueDate) : '.........................' }} <strong>Nơi cấp:</strong> {{ contract.tenant.idCardIssuePlace || '.........................' }}</div>
+                  <div class="sm:col-span-2"><strong>Hộ khẩu thường trú:</strong> {{ contract.tenant.permanentAddress || '................................................................................................' }}</div>
                   <div class="sm:col-span-2"><strong>Số người cùng ở thực tế:</strong> {{ contract.numberOfTenants }} người.</div>
                 </div>
               </div>

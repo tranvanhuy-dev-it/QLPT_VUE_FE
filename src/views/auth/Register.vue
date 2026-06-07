@@ -66,7 +66,37 @@
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;" :disabled="loading">
+        <div class="form-group" style="margin-top: 1rem;">
+          <label class="form-label">Số CMND/CCCD</label>
+          <input 
+            type="text" 
+            class="form-input" 
+            v-model="identityCard" 
+            placeholder="Số định danh cá nhân" 
+          />
+        </div>
+
+        <div class="grid grid-cols-2" style="gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Ngày cấp</label>
+            <input 
+              type="date" 
+              class="form-input" 
+              v-model="idCardIssueDate" 
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nơi cấp</label>
+            <input 
+              type="text" 
+              class="form-input" 
+              v-model="idCardIssuePlace" 
+              placeholder="Ví dụ: Cục Cảnh sát QLHC về TTXH" 
+            />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;" :disabled="loading">
           {{ loading ? 'Đang tạo tài khoản...' : 'Đăng Ký' }}
         </button>
       </form>

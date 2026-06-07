@@ -13,6 +13,9 @@ export default {
     const fullName = ref('');
     const phone = ref('');
     const email = ref('');
+    const identityCard = ref('');
+    const idCardIssueDate = ref('');
+    const idCardIssuePlace = ref('');
     
     const error = ref('');
     const success = ref('');
@@ -29,7 +32,10 @@ export default {
           email.value,
           phone.value,
           fullName.value,
-          'LANDLORD' // Vai trò mặc định khi tự đăng ký là CHỦ TRỌ
+          'LANDLORD', // Vai trò mặc định khi tự đăng ký là CHỦ TRỌ
+          identityCard.value,
+          idCardIssueDate.value ? idCardIssueDate.value : null,
+          idCardIssuePlace.value
         );
 
         success.value = 'Đăng ký tài khoản thành công! Đang chuyển về trang Đăng nhập...';
@@ -51,6 +57,9 @@ export default {
       fullName,
       phone,
       email,
+      identityCard,
+      idCardIssueDate,
+      idCardIssuePlace,
       error,
       success,
       loading,
