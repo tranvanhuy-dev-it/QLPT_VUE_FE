@@ -4,6 +4,9 @@ export default {
   getAll(params) {
     return api.get('/api/rooms', { params });
   },
+  getById(id) {
+    return api.get(`/api/rooms/${id}`);
+  },
   getByBoardingHouse(houseId, params) {
     return api.get(`/api/rooms/boarding-houses/${houseId}/rooms`, { params });
   },

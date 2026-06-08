@@ -24,6 +24,18 @@ export const useRoomStore = defineStore('room', {
         this.loading = false;
       }
     },
+    async fetchRoomById(id) {
+      this.loading = true;
+      try {
+        const response = await roomService.getById(id);
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching room by id:', error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
     async fetchRoomsByBoardingHouse(houseId, params) {
       this.loading = true;
       try {

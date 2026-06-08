@@ -36,15 +36,15 @@
         unit="phòng"
         clickable
         @change-page="changePage"
-        @row-click="editRoom"
+        @row-click="goToRoomDetail"
       />
     </div>
 
-    <!-- Add/Edit Room Modal -->
-    <Modal v-if="showAddModal || showEditModal" :title="showEditModal ? 'Cập Nhật Phòng Trọ' : 'Thêm Phòng Trọ Mới'" maxWidth="md" @close="closeModal">
+    <!-- Add Room Modal -->
+    <Modal v-if="showAddModal" title="Thêm Phòng Trọ Mới" maxWidth="md" @close="closeModal">
       <form @submit.prevent="saveRoom">
-        <!-- Chọn dãy trọ khi thêm mới -->
-        <div class="mb-4" v-if="!showEditModal">
+        <!-- Chọn dãy trọ -->
+        <div class="mb-4">
           <FormSelect
             label="Chọn dãy trọ"
             v-model="form.boardingHouseId"
@@ -110,22 +110,9 @@
           </div>
         </div>
 
-        <div class="flex justify-between items-center mt-6 pt-4 border-t border-border-main">
-          <div>
-            <FormButton
-              v-if="showEditModal"
-              type="button"
-              @click="deleteRoom(editId)"
-              variant="danger"
-              :disabled="selectedRoom?.status === 'OCCUPIED'"
-            >
-              Xóa phòng
-            </FormButton>
-          </div>
-          <div class="flex gap-3">
-            <FormButton type="button" @click="closeModal" variant="secondary">Hủy</FormButton>
-            <FormButton type="submit">Lưu</FormButton>
-          </div>
+        <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-border-main">
+          <FormButton type="button" @click="closeModal" variant="secondary">Hủy</FormButton>
+          <FormButton type="submit">Lưu</FormButton>
         </div>
       </form>
     </Modal>

@@ -1,4 +1,5 @@
 import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import PageHeader from '../../components/PageHeader.vue';
 import DataTable from '../../components/DataTable.vue';
 import Modal from '../../components/Modal.vue';
@@ -19,6 +20,7 @@ export default {
     FormButton,
   },
   setup() {
+    const router = useRouter();
     const roomIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>`;
     
     const tableHeaders = [
@@ -117,11 +119,7 @@ export default {
 
     const saveRoom = async () => {
       try {
-        if (showEditModal.value) {
-          await roomStore.updateRoom(editId.value, form.value);
-        } else {
-          await roomStore.createRoom(form.value.boardingHouseId, form.value);
-        }
+        await roomStore.createRoom(form.value.boardingHouseId, form.value);
         closeModal();
         fetchRooms();
       } catch (err) {
@@ -129,30 +127,8 @@ export default {
       }
     };
 
-    const editRoom = (room) => {
-      editId.value = room.id;
-      selectedRoom.value = room;
-      form.value = {
-        boardingHouseId: room.boardingHouse.id,
-        roomNumber: room.roomNumber,
-        basePrice: room.basePrice,
-        maxPeople: room.maxPeople,
-        currentElectricityIndex: room.currentElectricityIndex,
-        currentWaterIndex: room.currentWaterIndex,
-      };
-      showEditModal.value = true;
-    };
-
-    const deleteRoom = async (id) => {
-      if (confirm('Bạn có chắc chắn muốn xóa phòng trọ này?')) {
-        try {
-          await roomStore.deleteRoom(id);
-          closeModal();
-          fetchRooms();
-        } catch (err) {
-          alert(err.response?.data?.error || 'Xóa phòng trọ thất bại');
-        }
-      }
+    const goToRoomDetail = (room) => {
+      router.push(`/landlord/rooms/${room.id}`);
     };
 
     const changePage = (newPage) => {
@@ -199,14 +175,10 @@ export default {
       totalPages,
       totalElements,
       showAddModal,
-      showEditModal,
-      editId,
-      selectedRoom,
       form,
       openAddModal,
       saveRoom,
-      editRoom,
-      deleteRoom,
+      goToRoomDetail,
       changePage,
       onHouseFilterChange,
       closeModal,
