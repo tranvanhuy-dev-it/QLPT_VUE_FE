@@ -12,7 +12,7 @@
             size="sm"
             class="w-[120px] sm:w-[200px]"
           >
-            <option :value="null">-- Tất cả --</option>
+            <option value="">-- Tất cả --</option>
             <option v-for="house in boardingHouses" :key="house.id" :value="house.id">
               {{ house.name }}
             </option>
