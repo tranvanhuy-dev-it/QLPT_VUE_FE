@@ -12,11 +12,11 @@
         </h2>
         
         <!-- Add Button (Mobile) -->
-        <button v-if="showAdd" @click="$emit('add-click')" :disabled="disableAdd" class="inline-flex items-center px-3 py-1.5 text-[11px] font-extrabold rounded-lg bg-primary text-white hover:bg-primary-hover disabled:bg-slate-300 disabled:cursor-not-allowed cursor-pointer gap-1 transition-all shadow-xs shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <button v-if="showAdd" @click="$emit('add-click')" :disabled="disableAdd" class="inline-flex items-center px-2 py-1 text-[10px] font-bold rounded-md bg-primary text-white hover:bg-primary-hover disabled:bg-slate-300 disabled:cursor-not-allowed cursor-pointer gap-1 transition-all shadow-xs shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
-          <span>{{ addText || 'Thêm' }}</span>
+          <span>Thêm</span>
         </button>
       </div>
 
