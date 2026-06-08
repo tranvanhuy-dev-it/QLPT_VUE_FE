@@ -7,8 +7,8 @@
           <AppIcon name="arrow-left" class="text-text-sub !w-4 !h-4" />
         </FormButton>
         <h2 class="text-base sm:text-xl font-bold text-text-main flex items-center gap-2 flex-wrap">
-          <span>Chi Tiết Người Thuê</span>
-          <span v-if="tenant" class="text-primary">{{ tenant.fullName }}</span>
+          <span></span>
+          <span v-if="tenant" class="text-primary text-black">{{ tenant.fullName }}</span>
           <span v-if="tenant" :class="[
             'text-[11px] font-semibold px-2.5 py-0.5 rounded border',
             tenant.status === 'ACTIVE'
@@ -28,11 +28,6 @@
     <div v-else-if="tenant" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Left Column: Detailed Info -->
       <div class="bg-card border border-border-main rounded-2xl p-6 shadow-xs lg:col-span-2">
-        <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-3 mb-5 flex items-center gap-2">
-          <AppIcon name="user-card" class="text-primary !w-4 !h-4" />
-          <span>Thông tin hồ sơ người ở</span>
-        </h3>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-6">
           <DetailField label="Tên đăng nhập (Username)" :value="tenant.username" value-class="font-semibold" />
 
@@ -58,7 +53,7 @@
         <!-- Status Card -->
         <div class="bg-card border border-border-main rounded-2xl p-6 shadow-xs">
           <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-3 mb-4">Trạng thái tài khoản</h3>
-          
+
           <div class="space-y-4">
             <div class="flex justify-between items-center">
               <span class="text-xs text-text-sub">Trạng thái hoạt động</span>
@@ -89,35 +84,24 @@
         <!-- Action Card -->
         <div class="bg-card border border-border-main rounded-2xl p-6 shadow-xs">
           <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-3 mb-4">Thao tác tài khoản</h3>
-          
+
           <div class="flex flex-col gap-3">
-            <FormButton
-              v-if="tenant.status === 'ACTIVE'"
-              @click="handleToggleStatus"
+            <FormButton v-if="tenant.status === 'ACTIVE'" @click="handleToggleStatus"
               :disabled="tenant.hasActiveContract"
               :title="tenant.hasActiveContract ? 'Tài khoản đang có hợp đồng hoạt động, không thể khóa' : 'Khóa tài khoản'"
-              variant="danger"
-              class="w-full flex items-center justify-center gap-2"
-            >
+              variant="danger" class="w-full flex items-center justify-center gap-2">
               <AppIcon name="lock" class="!w-4 !h-4" />
               <span>Khóa tài khoản</span>
             </FormButton>
-            
-            <FormButton
-              v-else
-              @click="handleToggleStatus"
-              variant="success"
-              class="w-full flex items-center justify-center gap-2"
-            >
+
+            <FormButton v-else @click="handleToggleStatus" variant="success"
+              class="w-full flex items-center justify-center gap-2">
               <AppIcon name="lock-open" class="!w-4 !h-4" />
               <span>Mở khóa tài khoản</span>
             </FormButton>
-            
-            <FormButton
-              @click="handleResetPassword"
-              variant="warning"
-              class="w-full flex items-center justify-center gap-2"
-            >
+
+            <FormButton @click="handleResetPassword" variant="warning"
+              class="w-full flex items-center justify-center gap-2">
               <AppIcon name="key" class="!w-4 !h-4" />
               <span>Đặt lại mật khẩu</span>
             </FormButton>
@@ -127,17 +111,9 @@
     </div>
 
     <!-- Custom Confirm Modal -->
-    <ConfirmModal
-      :show="confirmModal.show"
-      :title="confirmModal.title"
-      :message="confirmModal.message"
-      :type="confirmModal.type"
-      :confirmText="confirmModal.confirmText"
-      :cancelText="confirmModal.cancelText"
-      :showCancel="confirmModal.showCancel"
-      @confirm="onConfirmModal"
-      @cancel="closeConfirmModal"
-    />
+    <ConfirmModal :show="confirmModal.show" :title="confirmModal.title" :message="confirmModal.message"
+      :type="confirmModal.type" :confirmText="confirmModal.confirmText" :cancelText="confirmModal.cancelText"
+      :showCancel="confirmModal.showCancel" @confirm="onConfirmModal" @cancel="closeConfirmModal" />
   </div>
 </template>
 

@@ -8,7 +8,7 @@
           <AppIcon name="arrow-left" class="!w-4 !h-4" />
         </FormButton>
         <h2 class="text-base sm:text-xl font-bold text-text-main flex items-center gap-2">
-          <span>Chi Tiết Hợp Đồng</span>
+          <span>Hợp Đồng</span>
           <span v-if="contract" :class="[
             'text-[11px] font-semibold px-2.5 py-0.5 rounded border',
             contract.status === 'ACTIVE'
@@ -43,8 +43,8 @@
             <span class="hidden sm:inline">In hợp đồng</span>
           </FormButton>
 
-          <FormButton v-if="activeTab === 'summary' && contract.status === 'ACTIVE' && isLandlord" variant="danger" size="sm"
-            @click="terminateContract" class="!px-2.5 !py-1.5">
+          <FormButton v-if="activeTab === 'summary' && contract.status === 'ACTIVE' && isLandlord" variant="danger"
+            size="sm" @click="terminateContract" class="!px-2.5 !py-1.5">
             <AppIcon name="minus-circle" class="!w-4 !h-4" />
             <span>Thanh lý</span>
           </FormButton>
@@ -153,8 +153,8 @@
         <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
           <div class="flex items-center justify-between border-b border-border-main pb-2.5 mb-4">
             <h3 class="text-sm font-bold text-text-main">Lịch sử phụ lục hợp đồng</h3>
-            <FormButton v-if="contract.status === 'ACTIVE' && isLandlord" variant="primary" size="sm" @click="openAddendumModal"
-              class="!px-2.5 !py-1.5">
+            <FormButton v-if="contract.status === 'ACTIVE' && isLandlord" variant="primary" size="sm"
+              @click="openAddendumModal" class="!px-2.5 !py-1.5">
               + Thêm phụ lục
             </FormButton>
           </div>

@@ -7,7 +7,6 @@
           <AppIcon name="arrow-left" class="text-text-sub !w-4 !h-4" />
         </FormButton>
         <h2 class="text-base sm:text-xl font-bold text-text-main flex items-center gap-2 flex-wrap">
-          <span>Chi Tiết Phòng</span>
           <span v-if="room" class="text-primary">Phòng {{ room.roomNumber }}</span>
           <span v-if="room" :class="[
             'text-[11px] font-semibold px-2.5 py-0.5 rounded border',
@@ -58,71 +57,36 @@
       <div v-if="activeTab === 'info'" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Left: Edit Form -->
         <div class="bg-card border border-border-main rounded-2xl p-6 shadow-xs lg:col-span-2">
-          <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-3 mb-5 flex items-center gap-2">
-            <AppIcon name="pencil" class="text-primary !w-4 !h-4" />
-            <span>Chỉnh sửa thông tin phòng</span>
-          </h3>
 
           <form @submit.prevent="handleSave" class="flex flex-col gap-4">
             <div>
-              <FormInput
-                type="text"
-                label="Dãy trọ hiện tại (Không thể thay đổi)"
-                :model-value="room.boardingHouse?.name"
-                disabled
-              />
+              <FormInput type="text" label="Dãy trọ hiện tại (Không thể thay đổi)"
+                :model-value="room.boardingHouse?.name" disabled />
             </div>
 
             <div>
-              <FormInput
-                type="text"
-                label="Số phòng / Tên phòng"
-                v-model="form.roomNumber"
-                required
-              />
+              <FormInput type="text" label="Số phòng / Tên phòng" v-model="form.roomNumber" required />
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <FormInput
-                  type="number"
-                  label="Giá thuê"
-                  v-model="form.basePrice"
-                  min="0"
-                  required
-                />
+                <FormInput type="number" label="Giá thuê" v-model="form.basePrice" min="0" required />
               </div>
 
               <div>
-                <FormInput
-                  type="number"
-                  label="Số người tối đa"
-                  v-model="form.maxPeople"
-                  min="1"
-                  required
-                />
+                <FormInput type="number" label="Số người tối đa" v-model="form.maxPeople" min="1" required />
               </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <FormInput
-                  type="number"
-                  label="Chỉ số điện hiện tại (kWh)"
-                  v-model="form.currentElectricityIndex"
-                  min="0"
-                  required
-                />
+                <FormInput type="number" label="Chỉ số điện hiện tại (kWh)" v-model="form.currentElectricityIndex"
+                  min="0" required />
               </div>
 
               <div>
-                <FormInput
-                  type="number"
-                  label="Chỉ số nước hiện tại (m³)"
-                  v-model="form.currentWaterIndex"
-                  min="0"
-                  required
-                />
+                <FormInput type="number" label="Chỉ số nước hiện tại (m³)" v-model="form.currentWaterIndex" min="0"
+                  required />
               </div>
             </div>
           </form>
@@ -200,17 +164,9 @@
     </div>
 
     <!-- CONFIRM MODAL -->
-    <ConfirmModal
-      :show="confirmModal.show"
-      :title="confirmModal.title"
-      :message="confirmModal.message"
-      :type="confirmModal.type"
-      :confirm-text="confirmModal.confirmText"
-      :cancel-text="confirmModal.cancelText"
-      :show-cancel="confirmModal.showCancel"
-      @confirm="onConfirmModal"
-      @cancel="closeConfirmModal"
-    />
+    <ConfirmModal :show="confirmModal.show" :title="confirmModal.title" :message="confirmModal.message"
+      :type="confirmModal.type" :confirm-text="confirmModal.confirmText" :cancel-text="confirmModal.cancelText"
+      :show-cancel="confirmModal.showCancel" @confirm="onConfirmModal" @cancel="closeConfirmModal" />
   </div>
 </template>
 
