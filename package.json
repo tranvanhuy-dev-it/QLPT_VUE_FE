@@ -9,6 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/cli": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
     "axios": "^1.17.0",
     "html2canvas-pro": "^2.0.4",
     "pinia": "^3.0.4",

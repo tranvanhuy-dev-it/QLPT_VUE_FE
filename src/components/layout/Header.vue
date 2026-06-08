@@ -1,5 +1,8 @@
 <template>
-  <header class="sticky top-0 h-16 bg-card border-b border-border-main flex items-center justify-between px-4 sm:px-6 md:px-8 z-30 shadow-xs shrink-0">
+  <header 
+    class="sticky top-0 bg-card border-b border-border-main flex items-center justify-between px-4 sm:px-6 md:px-8 z-30 shadow-xs shrink-0"
+    style="padding-top: env(safe-area-inset-top); height: calc(4rem + env(safe-area-inset-top));"
+  >
     <div class="flex items-center">
       <!-- Mobile Sidebar Toggle -->
       <button 
@@ -147,22 +150,6 @@
         </div>
       </div>
 
-      <!-- Theme Toggle -->
-      <button 
-        @click="toggleTheme" 
-        class="bg-transparent border-0 text-text-sub cursor-pointer p-1.5 flex items-center justify-center transition-all duration-150 hover:bg-slate-100 hover:text-text-main rounded-lg cursor-pointer"
-        :title="theme === 'dark' ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối'"
-      >
-        <!-- Sun icon (shown in dark mode) -->
-        <svg v-if="theme === 'dark'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m0 13.5V21M4.978 4.978l1.59 1.59m10.864 10.864l1.59 1.59m-18 0l1.59-1.59m10.864-10.864l1.59-1.59M3 12h2.25m13.5 0H21M12 7.5a4.5 4.5 0 110 9 4.5 4.5 0 010-9z" />
-        </svg>
-        <!-- Moon icon (shown in light mode) -->
-        <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-        </svg>
-      </button>
-      
       <!-- Profile Dropdown Container -->
       <div class="relative profile-dropdown-container flex items-center border-l border-border-main pl-2 sm:pl-4">
         <!-- Dropdown trigger -->
@@ -207,6 +194,19 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span class="font-medium">Gói dịch vụ</span>
+          </button>
+
+          <!-- Chế độ tối/sáng -->
+          <button @click="toggleTheme" class="w-full text-left px-4 py-2.5 text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer flex items-center gap-2">
+            <!-- Sun icon (shown in dark mode) -->
+            <svg v-if="theme === 'dark'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-text-sub">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m0 13.5V21M4.978 4.978l1.59 1.59m10.864 10.864l1.59 1.59m-18 0l1.59-1.59m10.864-10.864l1.59-1.59M3 12h2.25m13.5 0H21M12 7.5a4.5 4.5 0 110 9 4.5 4.5 0 010-9z" />
+            </svg>
+            <!-- Moon icon (shown in light mode) -->
+            <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-text-sub">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+            </svg>
+            <span class="font-medium">{{ theme === 'dark' ? 'Giao diện sáng' : 'Giao diện tối' }}</span>
           </button>
           
           <div class="border-t border-border-main my-1"></div>

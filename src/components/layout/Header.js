@@ -71,6 +71,7 @@ export default {
       theme.value = newTheme;
       localStorage.setItem('theme', newTheme);
       document.documentElement.setAttribute('data-theme', newTheme);
+      showDropdown.value = false; // Đóng dropdown sau khi đổi theme
     };
 
     // Dropdown and Profile/Password Modals State
