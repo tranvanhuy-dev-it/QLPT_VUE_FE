@@ -3,12 +3,18 @@ import { useAuthStore } from '../../stores/auth.js';
 import { useRouter } from 'vue-router';
 import adminService from '../../services/adminService.js';
 import userService from '../../services/userService.js';
+import ConfirmModal from '../../components/ConfirmModal.vue';
+import { useConfirmModal } from '../../composables/useConfirmModal.js';
 
 export default {
   name: 'AdminDashboard',
+  components: {
+    ConfirmModal,
+  },
   setup() {
     const authStore = useAuthStore();
     const router = useRouter();
+    const { confirmModal, showAlert, showConfirm, onConfirmModal, closeConfirmModal } = useConfirmModal();
 
     const landlords = ref([]);
     const loading = ref(false);
@@ -30,7 +36,7 @@ export default {
         totalPages.value = response.data.totalPages;
         totalElements.value = response.data.totalElements;
       } catch (err) {
-        alert(err.response?.data?.error || 'Không thể tải danh sách chủ trọ');
+        showAlert('Lỗi', err.response?.data?.error || 'Không thể tải danh sách chủ trọ', 'danger');
       } finally {
         loading.value = false;
       }
@@ -42,20 +48,25 @@ export default {
         // Refresh the active page
         fetchLandlords();
       } catch (err) {
-        alert(err.response?.data?.error || 'Thao tác thay đổi trạng thái thất bại');
+        showAlert('Lỗi', err.response?.data?.error || 'Thao tác thay đổi trạng thái thất bại', 'danger');
       }
     };
 
     const resetPassword = async (landlord) => {
       const confirmMsg = `Bạn có chắc chắn muốn đặt lại mật khẩu cho chủ trọ "${landlord.fullName}"? Mật khẩu mới sẽ là số điện thoại của họ (hoặc "123456" nếu không có số điện thoại).`;
-      if (confirm(confirmMsg)) {
-        try {
-          await userService.resetPassword(landlord.id);
-          alert('Đặt lại mật khẩu thành công!');
-        } catch (err) {
-          alert(err.response?.data?.error || 'Không thể đặt lại mật khẩu cho chủ trọ');
+      showConfirm(
+        'Đặt lại mật khẩu',
+        confirmMsg,
+        'warning',
+        async () => {
+          try {
+            await userService.resetPassword(landlord.id);
+            showAlert('Thành công', 'Đặt lại mật khẩu thành công!', 'success');
+          } catch (err) {
+            showAlert('Lỗi', err.response?.data?.error || 'Không thể đặt lại mật khẩu cho chủ trọ', 'danger');
+          }
         }
-      }
+      );
     };
 
     const changePage = (newPage) => {
@@ -84,6 +95,9 @@ export default {
       resetPassword,
       changePage,
       logout,
+      confirmModal,
+      onConfirmModal,
+      closeConfirmModal,
     };
   },
 };

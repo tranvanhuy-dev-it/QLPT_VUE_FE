@@ -4,6 +4,8 @@ import { useBoardingHouseStore } from '../../stores/boardingHouse.js';
 import FormInput from '../../components/FormInput.vue';
 import FormSelect from '../../components/FormSelect.vue';
 import FormButton from '../../components/FormButton.vue';
+import ConfirmModal from '../../components/ConfirmModal.vue';
+import { useConfirmModal } from '../../composables/useConfirmModal.js';
 
 export default {
   name: 'BoardingHouseDetail',
@@ -11,11 +13,13 @@ export default {
     FormInput,
     FormSelect,
     FormButton,
+    ConfirmModal,
   },
   setup() {
     const route = useRoute();
     const router = useRouter();
     const store = useBoardingHouseStore();
+    const { confirmModal, showAlert, showConfirm, onConfirmModal, closeConfirmModal } = useConfirmModal();
 
     const houseId = route.params.id;
     const house = ref(null);
@@ -184,7 +188,7 @@ export default {
         };
       } catch (err) {
         console.error('Lỗi khi tải thông tin dãy trọ:', err);
-        alert('Không thể tải thông tin chi tiết dãy trọ');
+        showAlert('Lỗi', 'Không thể tải thông tin chi tiết dãy trọ', 'danger');
         router.push({ name: 'BoardingHouses' });
       } finally {
         loading.value = false;
@@ -194,23 +198,30 @@ export default {
     const handleSave = async () => {
       try {
         await store.updateBoardingHouse(houseId, form.value);
-        alert('Cập nhật thông tin dãy trọ thành công!');
-        router.push({ name: 'BoardingHouses' });
+        showAlert('Thành công', 'Cập nhật thông tin dãy trọ thành công!', 'success', () => {
+          router.push({ name: 'BoardingHouses' });
+        });
       } catch (err) {
-        alert(err.response?.data?.error || 'Cập nhật dãy trọ thất bại');
+        showAlert('Lỗi', err.response?.data?.error || 'Cập nhật dãy trọ thất bại', 'danger');
       }
     };
 
     const handleDelete = async () => {
-      if (confirm('Bạn có chắc chắn muốn xóa dãy trọ này? Hành động này sẽ xóa toàn bộ các phòng trọ và dữ liệu liên quan!')) {
-        try {
-          await store.deleteBoardingHouse(houseId);
-          alert('Xóa dãy trọ thành công!');
-          router.push({ name: 'BoardingHouses' });
-        } catch (err) {
-          alert(err.response?.data?.error || 'Xóa dãy trọ thất bại');
+      showConfirm(
+        'Xóa dãy trọ',
+        'Bạn có chắc chắn muốn xóa dãy trọ này? Hành động này sẽ xóa toàn bộ các phòng trọ và dữ liệu liên quan!',
+        'danger',
+        async () => {
+          try {
+            await store.deleteBoardingHouse(houseId);
+            showAlert('Thành công', 'Xóa dãy trọ thành công!', 'success', () => {
+              router.push({ name: 'BoardingHouses' });
+            });
+          } catch (err) {
+            showAlert('Lỗi', err.response?.data?.error || 'Xóa dãy trọ thất bại', 'danger');
+          }
         }
-      }
+      );
     };
 
     const goBack = () => {
@@ -236,6 +247,9 @@ export default {
       handleDelete,
       goBack,
       formatMoney,
+      confirmModal,
+      onConfirmModal,
+      closeConfirmModal,
     };
   },
 };

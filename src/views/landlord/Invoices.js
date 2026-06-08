@@ -8,9 +8,11 @@ import Checkbox from "../../components/Checkbox.vue";
 import FormInput from "../../components/FormInput.vue";
 import FormSelect from "../../components/FormSelect.vue";
 import FormButton from "../../components/FormButton.vue";
+import ConfirmModal from "../../components/ConfirmModal.vue";
 import { useInvoiceStore } from "../../stores/invoice.js";
 import { useContractStore } from "../../stores/contract.js";
 import invoiceService from "../../services/invoiceService.js";
+import { useConfirmModal } from "../../composables/useConfirmModal.js";
 
 export default {
   name: "Invoices",
@@ -23,10 +25,12 @@ export default {
     FormInput,
     FormSelect,
     FormButton,
+    ConfirmModal,
   },
   setup() {
     const route = useRoute();
     const router = useRouter();
+    const { confirmModal, showAlert, showConfirm, onConfirmModal, closeConfirmModal } = useConfirmModal();
     const invoiceIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>`;
 
     const formatDate = (dateString) => {
@@ -113,7 +117,7 @@ export default {
           size: size.value,
         });
       } catch (err) {
-        alert(err.response?.data?.error || "Không thể tải danh sách hóa đơn");
+        showAlert('Lỗi', err.response?.data?.error || "Không thể tải danh sách hóa đơn", 'danger');
       } finally {
         isTableLoading.value = false;
       }
@@ -290,7 +294,7 @@ export default {
           params: { id: createdInvoice.id }
         });
       } catch (err) {
-        alert(err.response?.data?.error || "Lập hóa đơn thất bại");
+        showAlert('Lỗi', err.response?.data?.error || "Lập hóa đơn thất bại", 'danger');
       } finally {
         isSaving.value = false;
       }
@@ -312,11 +316,11 @@ export default {
           payForm.value.invoiceId,
           payForm.value.paidAmount,
         );
-        alert("Ghi nhận thanh toán thành công!");
+        showAlert('Thành công', "Ghi nhận thanh toán thành công!", 'success');
         closeModal();
         fetchInvoices();
       } catch (err) {
-        alert(err.response?.data?.error || "Ghi nhận thanh toán thất bại");
+        showAlert('Lỗi', err.response?.data?.error || "Ghi nhận thanh toán thất bại", 'danger');
       }
     };
 
@@ -336,20 +340,21 @@ export default {
       if (invoiceDetails.value) {
         const inv = invoiceDetails.value;
         const remaining = inv.totalAmount - inv.paidAmount;
-        if (
-          confirm(
-            `Xác nhận ghi nhận đã thu đủ số tiền còn lại: ${formatMoney(remaining)} đ?`,
-          )
-        ) {
-          try {
-            await invoiceStore.payInvoice(inv.id, remaining);
-            alert("Ghi nhận thanh toán thành công!");
-            closeModal();
-            fetchInvoices();
-          } catch (err) {
-            alert(err.response?.data?.error || "Ghi nhận thanh toán thất bại");
+        showConfirm(
+          'Xác nhận thanh toán',
+          `Xác nhận ghi nhận đã thu đủ số tiền còn lại: ${formatMoney(remaining)} đ?`,
+          'info',
+          async () => {
+            try {
+              await invoiceStore.payInvoice(inv.id, remaining);
+              showAlert('Thành công', "Ghi nhận thanh toán thành công!", 'success');
+              closeModal();
+              fetchInvoices();
+            } catch (err) {
+              showAlert('Lỗi', err.response?.data?.error || "Ghi nhận thanh toán thất bại", 'danger');
+            }
           }
-        }
+        );
       }
     };
 
@@ -455,7 +460,10 @@ export default {
       computedTotalAmount,
       isSaving,
       isTableLoading,
-      isLoadingModalData
+      isLoadingModalData,
+      confirmModal,
+      onConfirmModal,
+      closeConfirmModal,
     };
   },
 };

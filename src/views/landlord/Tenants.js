@@ -5,8 +5,10 @@ import DataTable from '../../components/DataTable.vue';
 import Modal from '../../components/Modal.vue';
 import FormInput from '../../components/FormInput.vue';
 import FormButton from '../../components/FormButton.vue';
+import ConfirmModal from '../../components/ConfirmModal.vue';
 import { useTenantStore } from '../../stores/tenant.js';
 import { validateEmail, validatePhone, validatePastDate } from '../../utils/validation.js';
+import { useConfirmModal } from '../../composables/useConfirmModal.js';
 
 export default {
   name: 'Tenants',
@@ -16,9 +18,11 @@ export default {
     Modal,
     FormInput,
     FormButton,
+    ConfirmModal,
   },
   setup() {
     const router = useRouter();
+    const { confirmModal, showAlert, showConfirm, onConfirmModal, closeConfirmModal } = useConfirmModal();
     const tenantIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
     
     const tableHeaders = [
@@ -39,7 +43,6 @@ export default {
           INACTIVE: 'Tạm khóa',
         },
       },
-      { label: 'Thao tác', key: 'actions', align: 'center', cellClass: 'w-[100px]' }
     ];
     const tenantStore = useTenantStore();
 
@@ -73,7 +76,7 @@ export default {
       try {
         await tenantStore.fetchTenants({ page: page.value, size: size.value });
       } catch (err) {
-        alert(err.response?.data?.error || 'Không thể tải danh sách tài khoản người thuê');
+        showAlert('Lỗi', err.response?.data?.error || 'Không thể tải danh sách tài khoản người thuê', 'danger');
       }
     };
 
@@ -90,27 +93,27 @@ export default {
 
     const createTenantAccount = async () => {
       if (form.value.email && !validateEmail(form.value.email)) {
-        alert('Định dạng Email không hợp lệ.');
+        showAlert('Lỗi nhập liệu', 'Định dạng Email không hợp lệ.', 'warning');
         return;
       }
 
       if (form.value.phone && !validatePhone(form.value.phone)) {
-        alert('Định dạng số điện thoại không hợp lệ (yêu cầu từ 9-12 chữ số).');
+        showAlert('Lỗi nhập liệu', 'Định dạng số điện thoại không hợp lệ (yêu cầu từ 9-12 chữ số).', 'warning');
         return;
       }
 
       if (form.value.idCardIssueDate && !validatePastDate(form.value.idCardIssueDate)) {
-        alert('Ngày cấp CMND/CCCD phải ở trước ngày hiện tại.');
+        showAlert('Lỗi nhập liệu', 'Ngày cấp CMND/CCCD phải ở trước ngày hiện tại.', 'warning');
         return;
       }
 
       try {
         await tenantStore.createTenantAccount(form.value);
-        alert('Tạo tài khoản người ở thành công!');
+        showAlert('Thành công', 'Tạo tài khoản người ở thành công!', 'success');
         closeModal();
         fetchTenants();
       } catch (err) {
-        alert(err.response?.data?.error || 'Không thể tạo tài khoản cho người ở');
+        showAlert('Lỗi', err.response?.data?.error || 'Không thể tạo tài khoản cho người ở', 'danger');
       }
     };
 
@@ -136,7 +139,7 @@ export default {
       };
     };
 
-    const viewDetail = (tenant) => {
+    const onRowClick = (tenant) => {
       router.push(`/landlord/tenants/${tenant.id}`);
     };
 
@@ -159,7 +162,10 @@ export default {
       changePage,
       closeModal,
       tableHeaders,
-      viewDetail,
+      onRowClick,
+      confirmModal,
+      onConfirmModal,
+      closeConfirmModal,
     };
   },
 };

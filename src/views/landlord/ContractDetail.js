@@ -6,8 +6,10 @@ import FormInput from '../../components/FormInput.vue';
 import FormSelect from '../../components/FormSelect.vue';
 import Checkbox from '../../components/Checkbox.vue';
 import Modal from '../../components/Modal.vue';
+import ConfirmModal from '../../components/ConfirmModal.vue';
 import contractService from '../../services/contractService.js';
 import { validateDateRange } from '../../utils/validation.js';
+import { useConfirmModal } from '../../composables/useConfirmModal.js';
 
 export default {
   name: 'ContractDetail',
@@ -17,11 +19,13 @@ export default {
     FormSelect,
     Checkbox,
     Modal,
+    ConfirmModal,
   },
   setup() {
     const route = useRoute();
     const router = useRouter();
     const contractStore = useContractStore();
+    const { confirmModal, showAlert, showConfirm, onConfirmModal, closeConfirmModal } = useConfirmModal();
 
     const contract = computed(() => contractStore.currentContract);
     const extraFees = computed(() => contractStore.currentExtraFees);
@@ -196,7 +200,7 @@ export default {
         // Fetch addendums
         await fetchAddendums();
       } catch (err) {
-        alert(err.response?.data?.error || 'Không thể tải thông tin chi tiết hợp đồng');
+        showAlert('Lỗi', err.response?.data?.error || 'Không thể tải thông tin chi tiết hợp đồng', 'danger');
         router.push({ name: 'Contracts' });
       }
     };
@@ -252,7 +256,7 @@ export default {
 
     const saveAddendum = async () => {
       if (contract.value && !validateDateRange(contract.value.startDate, addendumForm.value.startDate)) {
-        alert('Ngày hiệu lực của phụ lục không được trước ngày bắt đầu hợp đồng.');
+        showAlert('Lỗi nhập liệu', 'Ngày hiệu lực của phụ lục không được trước ngày bắt đầu hợp đồng.', 'warning');
         return;
       }
       savingAddendum.value = true;
@@ -271,11 +275,11 @@ export default {
 
         await contractService.createAddendum(contract.value.id, payload);
         showAddendumModal.value = false;
-        alert('Thêm phụ lục hợp đồng thành công!');
+        showAlert('Thành công', 'Thêm phụ lục hợp đồng thành công!', 'success');
         // Reload contract details and addendums
         await fetchContractDetail();
       } catch (err) {
-        alert(err.response?.data?.error || 'Thêm phụ lục hợp đồng thất bại');
+        showAlert('Lỗi', err.response?.data?.error || 'Thêm phụ lục hợp đồng thất bại', 'danger');
       } finally {
         savingAddendum.value = false;
       }
@@ -413,15 +417,20 @@ export default {
     };
 
     const terminateContract = async () => {
-      if (confirm('Bạn có chắc chắn muốn thanh lý hợp đồng này ngay bây giờ? Phòng trọ sẽ chuyển sang trạng thái trống.')) {
-        try {
-          await contractStore.terminateContract(contract.value.id);
-          alert('Đã thanh lý hợp đồng thành công!');
-          await fetchContractDetail();
-        } catch (err) {
-          alert(err.response?.data?.error || 'Thanh lý hợp đồng thất bại');
+      showConfirm(
+        'Thanh lý hợp đồng',
+        'Bạn có chắc chắn muốn thanh lý hợp đồng này ngay bây giờ? Phòng trọ sẽ chuyển sang trạng thái trống.',
+        'danger',
+        async () => {
+          try {
+            await contractStore.terminateContract(contract.value.id);
+            showAlert('Thành công', 'Đã thanh lý hợp đồng thành công!', 'success');
+            await fetchContractDetail();
+          } catch (err) {
+            showAlert('Lỗi', err.response?.data?.error || 'Thanh lý hợp đồng thất bại', 'danger');
+          }
         }
-      }
+      );
     };
 
     onMounted(() => {
@@ -521,6 +530,9 @@ export default {
       showPrintAddendumModal,
       openPrintAddendumModal,
       printAddendum,
+      confirmModal,
+      onConfirmModal,
+      closeConfirmModal,
     };
   }
 };

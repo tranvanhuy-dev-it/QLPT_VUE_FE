@@ -183,6 +183,19 @@
         </div>
       </div>
     </div>
+
+    <!-- Custom Confirm Modal -->
+    <ConfirmModal
+      :show="confirmModal.show"
+      :title="confirmModal.title"
+      :message="confirmModal.message"
+      :type="confirmModal.type"
+      :confirmText="confirmModal.confirmText"
+      :cancelText="confirmModal.cancelText"
+      :showCancel="confirmModal.showCancel"
+      @confirm="onConfirmModal"
+      @cancel="closeConfirmModal"
+    />
   </div>
 </template>
 

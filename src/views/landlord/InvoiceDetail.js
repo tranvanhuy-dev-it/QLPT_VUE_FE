@@ -5,6 +5,8 @@ import { useAuthStore } from '../../stores/auth.js';
 import FormButton from '../../components/FormButton.vue';
 import FormInput from '../../components/FormInput.vue';
 import Modal from '../../components/Modal.vue';
+import ConfirmModal from '../../components/ConfirmModal.vue';
+import { useConfirmModal } from '../../composables/useConfirmModal.js';
 
 export default {
   name: 'InvoiceDetail',
@@ -12,12 +14,14 @@ export default {
     FormButton,
     FormInput,
     Modal,
+    ConfirmModal,
   },
   setup() {
     const route = useRoute();
     const router = useRouter();
     const invoiceStore = useInvoiceStore();
     const authStore = useAuthStore();
+    const { confirmModal, showAlert, showConfirm, onConfirmModal, closeConfirmModal } = useConfirmModal();
 
     const invoice = ref(null);
     const invoiceItems = computed(() => invoiceStore.currentInvoiceItems);
@@ -64,7 +68,7 @@ export default {
         const res = await invoiceStore.fetchInvoiceDetail(invoiceId);
         invoice.value = res.invoice;
       } catch (err) {
-        alert(err.response?.data?.error || 'Không thể tải thông tin chi tiết hóa đơn');
+        showAlert('Lỗi', err.response?.data?.error || 'Không thể tải thông tin chi tiết hóa đơn', 'danger');
         goBack();
       }
     };
@@ -95,31 +99,36 @@ export default {
       if (!invoice.value) return;
       const remaining = invoice.value.totalAmount - invoice.value.paidAmount;
       if (payForm.value.paidAmount > remaining) {
-        alert(`Số tiền thanh toán không được vượt quá số tiền còn lại (${formatMoney(remaining)} đ)`);
+        showAlert('Lỗi nhập liệu', `Số tiền thanh toán không được vượt quá số tiền còn lại (${formatMoney(remaining)} đ)`, 'warning');
         return;
       }
       try {
         await invoiceStore.payInvoice(invoice.value.id, payForm.value.paidAmount);
-        alert('Ghi nhận thanh toán thành công!');
+        showAlert('Thành công', 'Ghi nhận thanh toán thành công!', 'success');
         closePayModal();
         await fetchInvoiceDetail();
       } catch (err) {
-        alert(err.response?.data?.error || 'Ghi nhận thanh toán thất bại');
+        showAlert('Lỗi', err.response?.data?.error || 'Ghi nhận thanh toán thất bại', 'danger');
       }
     };
 
     const quickPayInvoice = async () => {
       if (!invoice.value) return;
       const remaining = invoice.value.totalAmount - invoice.value.paidAmount;
-      if (confirm(`Xác nhận ghi nhận đã thu đủ số tiền còn lại: ${formatMoney(remaining)} đ?`)) {
-        try {
-          await invoiceStore.payInvoice(invoice.value.id, remaining);
-          alert('Ghi nhận thanh toán thành công!');
-          await fetchInvoiceDetail();
-        } catch (err) {
-          alert(err.response?.data?.error || 'Ghi nhận thanh toán thất bại');
+      showConfirm(
+        'Xác nhận thanh toán',
+        `Xác nhận ghi nhận đã thu đủ số tiền còn lại: ${formatMoney(remaining)} đ?`,
+        'info',
+        async () => {
+          try {
+            await invoiceStore.payInvoice(invoice.value.id, remaining);
+            showAlert('Thành công', 'Ghi nhận thanh toán thành công!', 'success');
+            await fetchInvoiceDetail();
+          } catch (err) {
+            showAlert('Lỗi', err.response?.data?.error || 'Ghi nhận thanh toán thất bại', 'danger');
+          }
         }
-      }
+      );
     };
 
     const printInvoice = () => {
@@ -328,7 +337,7 @@ export default {
 
       try {
         await navigator.clipboard.writeText(msg);
-        alert('Đã sao chép nội dung hóa đơn vào bộ nhớ tạm! Hệ thống sẽ mở Zalo để gửi cho khách thuê.');
+        showAlert('Đã sao chép', 'Đã sao chép nội dung hóa đơn vào bộ nhớ tạm! Hệ thống sẽ mở Zalo để gửi cho khách thuê.', 'success');
       } catch (err) {
         console.error('Không thể tự động sao chép:', err);
       }
@@ -343,7 +352,7 @@ export default {
         }
         window.open(`https://zalo.me/${cleanPhone}`, '_blank');
       } else {
-        alert('Khách thuê chưa đăng ký số điện thoại trên hệ thống!');
+        showAlert('Thiếu thông tin', 'Khách thuê chưa đăng ký số điện thoại trên hệ thống!', 'warning');
       }
     };
 
@@ -369,7 +378,10 @@ export default {
       copyAndShareZalo,
       activeTab,
       showPreviewModal,
-      vietQrUrl
+      vietQrUrl,
+      confirmModal,
+      onConfirmModal,
+      closeConfirmModal,
     };
   }
 };

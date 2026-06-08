@@ -7,11 +7,13 @@ import Checkbox from '../../components/Checkbox.vue';
 import FormInput from '../../components/FormInput.vue';
 import FormSelect from '../../components/FormSelect.vue';
 import FormButton from '../../components/FormButton.vue';
+import ConfirmModal from '../../components/ConfirmModal.vue';
 import { useContractStore } from '../../stores/contract.js';
 import { useRoomStore } from '../../stores/room.js';
 import { useTenantStore } from '../../stores/tenant.js';
 import contractService from '../../services/contractService.js';
 import { validateDateRange } from '../../utils/validation.js';
+import { useConfirmModal } from '../../composables/useConfirmModal.js';
 
 export default {
   name: 'Contracts',
@@ -23,9 +25,11 @@ export default {
     FormInput,
     FormSelect,
     FormButton,
+    ConfirmModal,
   },
   setup() {
     const router = useRouter();
+    const { confirmModal, showAlert, showConfirm, onConfirmModal, closeConfirmModal } = useConfirmModal();
     const contractIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`;
     
     const tableHeaders = [
@@ -103,7 +107,7 @@ export default {
       try {
         await contractStore.fetchContracts({ page: page.value, size: size.value });
       } catch (err) {
-        alert(err.response?.data?.error || 'Không thể tải danh sách hợp đồng');
+        showAlert('Lỗi', err.response?.data?.error || 'Không thể tải danh sách hợp đồng', 'danger');
       }
     };
 
@@ -173,7 +177,7 @@ export default {
 
     const saveContract = async () => {
       if (form.value.endDate && !validateDateRange(form.value.startDate, form.value.endDate)) {
-        alert('Ngày bắt đầu thuê phải trước ngày kết thúc.');
+        showAlert('Lỗi nhập liệu', 'Ngày bắt đầu thuê phải trước ngày kết thúc.', 'warning');
         return;
       }
       try {
@@ -200,7 +204,7 @@ export default {
           params: { id: createdContract.id }
         });
       } catch (err) {
-        alert(err.response?.data?.error || 'Tạo hợp đồng thất bại');
+        showAlert('Lỗi', err.response?.data?.error || 'Tạo hợp đồng thất bại', 'danger');
       }
     };
 
@@ -263,6 +267,9 @@ export default {
       formatDate,
       viewContractDetail,
       tableHeaders,
+      confirmModal,
+      onConfirmModal,
+      closeConfirmModal,
     };
   },
 };

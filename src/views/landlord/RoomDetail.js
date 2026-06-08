@@ -3,17 +3,21 @@ import { useRoute, useRouter } from 'vue-router';
 import { useRoomStore } from '../../stores/room.js';
 import { useContractStore } from '../../stores/contract.js';
 import DataTable from '../../components/DataTable.vue';
+import ConfirmModal from '../../components/ConfirmModal.vue';
+import { useConfirmModal } from '../../composables/useConfirmModal.js';
 
 export default {
   name: 'RoomDetail',
   components: {
     DataTable,
+    ConfirmModal,
   },
   setup() {
     const route = useRoute();
     const router = useRouter();
     const roomStore = useRoomStore();
     const contractStore = useContractStore();
+    const { confirmModal, showAlert, showConfirm, onConfirmModal, closeConfirmModal } = useConfirmModal();
 
     const roomId = route.params.id;
     const room = ref(null);
@@ -83,7 +87,7 @@ export default {
         contracts.value = contractsData || [];
       } catch (err) {
         console.error('Lỗi khi tải thông tin phòng:', err);
-        alert(err.response?.data?.error || 'Không thể tải thông tin chi tiết phòng trọ');
+        showAlert('Lỗi', err.response?.data?.error || 'Không thể tải thông tin chi tiết phòng trọ', 'danger');
       } finally {
         loading.value = false;
       }
@@ -92,10 +96,10 @@ export default {
     const handleSave = async () => {
       try {
         await roomStore.updateRoom(roomId, form.value);
-        alert('Cập nhật thông tin phòng trọ thành công!');
+        showAlert('Thành công', 'Cập nhật thông tin phòng trọ thành công!', 'success');
         loadRoomData();
       } catch (err) {
-        alert(err.response?.data?.error || 'Không thể lưu thông tin phòng trọ');
+        showAlert('Lỗi', err.response?.data?.error || 'Không thể lưu thông tin phòng trọ', 'danger');
       }
     };
 
@@ -109,15 +113,21 @@ export default {
 
     const deleteRoom = async () => {
       if (!room.value) return;
-      if (confirm('Bạn có chắc chắn muốn xóa phòng trọ này? Hợp đồng liên quan (nếu có) cũng sẽ bị ảnh hưởng.')) {
-        try {
-          await roomStore.deleteRoom(roomId);
-          alert('Xóa phòng trọ thành công!');
-          router.push('/landlord/rooms');
-        } catch (err) {
-          alert(err.response?.data?.error || 'Xóa phòng trọ thất bại');
+      showConfirm(
+        'Xóa phòng trọ',
+        'Bạn có chắc chắn muốn xóa phòng trọ này? Hợp đồng liên quan (nếu có) cũng sẽ bị ảnh hưởng.',
+        'danger',
+        async () => {
+          try {
+            await roomStore.deleteRoom(roomId);
+            showAlert('Thành công', 'Xóa phòng trọ thành công!', 'success', () => {
+              router.push('/landlord/rooms');
+            });
+          } catch (err) {
+            showAlert('Lỗi', err.response?.data?.error || 'Xóa phòng trọ thất bại', 'danger');
+          }
         }
-      }
+      );
     };
 
     onMounted(() => {
@@ -137,6 +147,9 @@ export default {
       goBack,
       viewContractDetails,
       deleteRoom,
+      confirmModal,
+      onConfirmModal,
+      closeConfirmModal,
     };
   },
 };

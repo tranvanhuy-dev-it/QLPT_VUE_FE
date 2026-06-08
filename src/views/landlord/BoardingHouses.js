@@ -6,7 +6,9 @@ import Modal from '../../components/Modal.vue';
 import FormInput from '../../components/FormInput.vue';
 import FormSelect from '../../components/FormSelect.vue';
 import FormButton from '../../components/FormButton.vue';
+import ConfirmModal from '../../components/ConfirmModal.vue';
 import { useBoardingHouseStore } from '../../stores/boardingHouse.js';
+import { useConfirmModal } from '../../composables/useConfirmModal.js';
 
 export default {
   name: 'BoardingHouses',
@@ -17,9 +19,11 @@ export default {
     FormInput,
     FormSelect,
     FormButton,
+    ConfirmModal,
   },
   setup() {
     const router = useRouter();
+    const { confirmModal, showAlert, showConfirm, onConfirmModal, closeConfirmModal } = useConfirmModal();
     const houseIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>`;
 
     const store = useBoardingHouseStore();
@@ -109,7 +113,7 @@ export default {
         }
         closeModal();
       } catch (err) {
-        alert(err.response?.data?.error || 'Không thể lưu thông tin dãy trọ');
+        showAlert('Lỗi', err.response?.data?.error || 'Không thể lưu thông tin dãy trọ', 'danger');
       }
     };
 
@@ -136,13 +140,18 @@ export default {
     };
 
     const deleteHouse = async (id) => {
-      if (confirm('Bạn có chắc chắn muốn xóa dãy trọ này? Hành động này sẽ xóa toàn bộ các phòng trọ và dữ liệu liên quan!')) {
-        try {
-          await store.deleteBoardingHouse(id);
-        } catch (err) {
-          alert(err.response?.data?.error || 'Xóa dãy trọ thất bại');
+      showConfirm(
+        'Xóa dãy trọ',
+        'Bạn có chắc chắn muốn xóa dãy trọ này? Hành động này sẽ xóa toàn bộ các phòng trọ và dữ liệu liên quan!',
+        'danger',
+        async () => {
+          try {
+            await store.deleteBoardingHouse(id);
+          } catch (err) {
+            showAlert('Lỗi', err.response?.data?.error || 'Xóa dãy trọ thất bại', 'danger');
+          }
         }
-      }
+      );
     };
 
     const closeModal = () => {
@@ -261,7 +270,7 @@ export default {
       try {
         await store.fetchBoardingHouses();
       } catch (err) {
-        alert(err.response?.data?.error || 'Không thể tải danh sách dãy trọ');
+        showAlert('Lỗi', err.response?.data?.error || 'Không thể tải danh sách dãy trọ', 'danger');
       }
     };
 
@@ -290,6 +299,9 @@ export default {
       formatWaterBillingType,
       addExtraFeeRow,
       removeExtraFeeRow,
+      confirmModal,
+      onConfirmModal,
+      closeConfirmModal,
     };
   },
 };

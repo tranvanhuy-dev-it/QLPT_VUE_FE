@@ -116,6 +116,17 @@
         </div>
       </form>
     </Modal>
+
+    <!-- Confirm Modal -->
+    <ConfirmModal
+      :show="confirmModal.show"
+      :title="confirmModal.title"
+      :message="confirmModal.message"
+      :type="confirmModal.type"
+      :showCancel="confirmModal.showCancel"
+      @confirm="onConfirmModal"
+      @cancel="closeConfirmModal"
+    />
   </div>
 </template>
 
