@@ -37,12 +37,109 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9.75h4.875a2.625 2.625 0 010 5.25H12M8.25 9.75v5.25m0-5.25h-1.5m1.5 5.25h-1.5m1.5 0h8.25m-11.25-10.5h15a2.25 2.25 0 012.25 2.25v13.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V5.25A2.25 2.25 0 015.25 3z" />
         </svg>
       </button>
-      <button class="bg-transparent border-0 text-text-sub cursor-pointer p-1.5 relative flex items-center justify-center transition-all duration-150 hover:bg-slate-100 hover:text-text-main" title="Thông báo">
-        <div class="absolute top-[3px] right-[3px] w-1.5 h-1.5 rounded-full bg-danger"></div>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-        </svg>
-      </button>
+      <!-- Notifications Dropdown Container -->
+      <div class="relative notifications-dropdown-container flex items-center">
+        <!-- Notification bell button -->
+        <button 
+          @click="toggleNotifications"
+          class="bg-transparent border-0 text-text-sub cursor-pointer p-1.5 relative flex items-center justify-center transition-all duration-150 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-text-main rounded-lg" 
+          title="Thông báo"
+        >
+          <!-- Unread count badge -->
+          <div 
+            v-if="unreadCount > 0" 
+            class="absolute top-[1px] right-[1px] min-w-[14px] h-[14px] px-1 rounded-full bg-danger text-white text-[9px] font-bold flex items-center justify-center border border-white dark:border-slate-900 leading-none shadow-xs"
+          >
+            {{ unreadCount }}
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+          </svg>
+        </button>
+
+        <!-- Dropdown Popover -->
+        <div 
+          v-if="showNotificationsDropdown" 
+          class="absolute right-0 top-12 w-80 sm:w-96 bg-card border border-border-main rounded-2xl shadow-xl py-3 z-50 text-xs mt-1 animate-in fade-in slide-in-from-top-2 duration-150"
+        >
+          <!-- Header -->
+          <div class="px-4 pb-2 border-b border-border-main flex items-center justify-between">
+            <span class="font-bold text-[0.85rem] text-text-main">Thông báo</span>
+            <button 
+              v-if="unreadCount > 0"
+              @click="markAllAsRead" 
+              class="text-primary hover:underline font-semibold bg-transparent border-0 cursor-pointer"
+            >
+              Đánh dấu tất cả đã đọc
+            </button>
+          </div>
+
+          <!-- Body list -->
+          <div class="max-h-[360px] overflow-y-auto pr-0.5">
+            <!-- Loading -->
+            <div v-if="loadingNotifications" class="flex justify-center items-center py-8">
+              <div class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            </div>
+
+            <!-- Empty State -->
+            <div v-else-if="notifications.length === 0" class="flex flex-col items-center justify-center py-8 text-center text-text-sub">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-slate-300 dark:text-slate-700 mb-1">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+              </svg>
+              <span>Không có thông báo nào</span>
+            </div>
+
+            <!-- Notification Items -->
+            <div v-else class="divide-y divide-border-main/50">
+              <div 
+                v-for="notif in notifications" 
+                :key="notif.id"
+                @click="handleNotificationClick(notif)"
+                class="px-4 py-3 flex gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors relative"
+                :class="{'bg-primary/5 dark:bg-primary/5': !notif.isRead}"
+              >
+                <!-- Icon based on type -->
+                <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" :class="getIconClass(notif.type)">
+                  <svg v-if="notif.type === 'INVOICE_NEW'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <svg v-else-if="notif.type === 'PAYMENT_CONFIRMED'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <svg v-else-if="notif.type === 'CONTRACT_ACTIVE'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+
+                <!-- Content -->
+                <div class="flex-1 min-w-0 pr-2">
+                  <div class="font-bold text-text-main text-[0.8rem] truncate">{{ notif.title }}</div>
+                  <div class="text-[0.75rem] text-text-sub line-clamp-2 mt-0.5 leading-relaxed">{{ notif.content }}</div>
+                  <div class="text-[0.675rem] text-slate-400 mt-1 font-medium">{{ formatTime(notif.createdAt) }}</div>
+                </div>
+
+                <!-- Blue indicator for unread -->
+                <div v-if="!notif.isRead" class="w-2 h-2 rounded-full bg-primary absolute right-3 top-1/2 -translate-y-1/2 shrink-0"></div>
+              </div>
+
+              <!-- Load more button -->
+              <div v-if="hasMore" class="p-2 border-t border-border-main/40 hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors">
+                <button 
+                  @click.stop="loadMoreNotifications"
+                  class="w-full py-2 text-primary hover:text-primary-dark font-bold bg-transparent border-0 cursor-pointer flex items-center justify-center gap-1.5 text-[0.75rem]"
+                  :disabled="loadingNotifications"
+                >
+                  <span v-if="loadingNotifications" class="w-3 h-3 border border-primary border-t-transparent rounded-full animate-spin"></span>
+                  <span>Xem thêm thông báo</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Theme Toggle -->
       <button 
@@ -183,6 +280,19 @@
         </div>
       </form>
     </Modal>
+
+    <!-- CONFIRM MODAL -->
+    <ConfirmModal
+      :show="confirmModal.show"
+      :title="confirmModal.title"
+      :message="confirmModal.message"
+      :type="confirmModal.type"
+      :confirm-text="confirmModal.confirmText"
+      :cancel-text="confirmModal.cancelText"
+      :show-cancel="confirmModal.showCancel"
+      @confirm="onConfirmModal"
+      @cancel="closeConfirmModal"
+    />
   </header>
 </template>
 

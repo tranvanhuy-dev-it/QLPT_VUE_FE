@@ -1,9 +1,9 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import PageHeader from '../../components/PageHeader.vue';
-import DataTable from '../../components/DataTable.vue';
-import InvoiceReceipt from '../../components/InvoiceReceipt.vue';
-import FormButton from '../../components/FormButton.vue';
+import PageHeader from '../../components/ui/PageHeader.vue';
+import DataTable from '../../components/ui/DataTable.vue';
+import InvoiceReceipt from '../../components/document/InvoiceReceipt.vue';
+import FormButton from '../../components/ui/FormButton.vue';
 import { useContractStore } from '../../stores/contract.js';
 import { useInvoiceStore } from '../../stores/invoice.js';
 

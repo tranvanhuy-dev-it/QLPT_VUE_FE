@@ -191,6 +191,19 @@
         </button>
       </div>
     </div>
+
+    <!-- CONFIRM MODAL -->
+    <ConfirmModal
+      :show="confirmModal.show"
+      :title="confirmModal.title"
+      :message="confirmModal.message"
+      :type="confirmModal.type"
+      :confirm-text="confirmModal.confirmText"
+      :cancel-text="confirmModal.cancelText"
+      :show-cancel="confirmModal.showCancel"
+      @confirm="onConfirmModal"
+      @cancel="closeConfirmModal"
+    />
   </div>
 </template>
 

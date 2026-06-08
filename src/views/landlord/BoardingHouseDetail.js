@@ -1,10 +1,12 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useBoardingHouseStore } from '../../stores/boardingHouse.js';
-import FormInput from '../../components/FormInput.vue';
-import FormSelect from '../../components/FormSelect.vue';
-import FormButton from '../../components/FormButton.vue';
-import ConfirmModal from '../../components/ConfirmModal.vue';
+import FormInput from '../../components/ui/FormInput.vue';
+import FormSelect from '../../components/ui/FormSelect.vue';
+import FormButton from '../../components/ui/FormButton.vue';
+import ConfirmModal from '../../components/ui/ConfirmModal.vue';
+import AppIcon from '../../components/ui/icons/AppIcon.vue';
+import LoadingState from '../../components/ui/LoadingState.vue';
 import { useConfirmModal } from '../../composables/useConfirmModal.js';
 
 export default {
@@ -14,6 +16,8 @@ export default {
     FormSelect,
     FormButton,
     ConfirmModal,
+    AppIcon,
+    LoadingState,
   },
   setup() {
     const route = useRoute();

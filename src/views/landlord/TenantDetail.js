@@ -1,13 +1,18 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import ConfirmModal from '../../components/ConfirmModal.vue';
+import ConfirmModal from '../../components/ui/ConfirmModal.vue';
 import userService from '../../services/userService.js';
 import { useTenantStore } from '../../stores/tenant.js';
 import { useConfirmModal } from '../../composables/useConfirmModal.js';
 
+import FormButton from '../../components/ui/FormButton.vue';
+import AppIcon from '../../components/ui/icons/AppIcon.vue';
+import DetailField from '../../components/ui/DetailField.vue';
+import LoadingState from '../../components/ui/LoadingState.vue';
+
 export default {
   name: 'TenantDetail',
-  components: { ConfirmModal },
+  components: { ConfirmModal, FormButton, AppIcon, DetailField, LoadingState },
   setup() {
     const route = useRoute();
     const router = useRouter();

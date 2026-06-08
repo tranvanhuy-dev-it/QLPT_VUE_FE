@@ -1,4 +1,4 @@
-import { useAuthStore } from '../stores/auth.js';
+import { useAuthStore } from '../../stores/auth.js';
 import { useRouter } from 'vue-router';
 import { ref, computed } from 'vue';
 

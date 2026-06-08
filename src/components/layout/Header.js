@@ -1,10 +1,14 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useAuthStore } from '../stores/auth.js';
-import userService from '../services/userService.js';
-import Modal from './Modal.vue';
-import FormInput from './FormInput.vue';
-import FormButton from './FormButton.vue';
+import { useAuthStore } from '../../stores/auth.js';
+import { useNotificationStore } from '../../stores/notification.js';
+import userService from '../../services/userService.js';
+import Modal from '../ui/Modal.vue';
+import FormInput from '../ui/FormInput.vue';
+import FormButton from '../ui/FormButton.vue';
+import { useConfirmModal } from '../../composables/useConfirmModal.js';
+
+import ConfirmModal from '../ui/ConfirmModal.vue';
 
 export default {
   name: 'Header',
@@ -12,6 +16,7 @@ export default {
     Modal,
     FormInput,
     FormButton,
+    ConfirmModal,
   },
   setup() {
     const route = useRoute();
@@ -82,6 +87,13 @@ export default {
       confirmPassword: '',
     });
 
+    const {
+      confirmModal,
+      showAlert,
+      onConfirmModal,
+      closeConfirmModal
+    } = useConfirmModal();
+
     const fetchUserProfile = async () => {
       try {
         const res = await userService.getProfile();
@@ -108,10 +120,10 @@ export default {
       try {
         const res = await userService.updateProfile(profileForm.value);
         profileUser.value = res.data;
-        alert('Cập nhật thông tin cá nhân thành công!');
+        showAlert('Thành công', 'Cập nhật thông tin cá nhân thành công!', 'success');
         showProfileModal.value = false;
       } catch (err) {
-        alert(err.response?.data?.error || 'Cập nhật thông tin thất bại');
+        showAlert('Lỗi', err.response?.data?.error || 'Cập nhật thông tin thất bại', 'danger');
       }
     };
 
@@ -127,7 +139,7 @@ export default {
 
     const savePassword = async () => {
       if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
-        alert('Mật khẩu mới và xác nhận mật khẩu không trùng khớp!');
+        showAlert('Cảnh báo', 'Mật khẩu mới và xác nhận mật khẩu không trùng khớp!', 'warning');
         return;
       }
       try {
@@ -135,14 +147,86 @@ export default {
           oldPassword: passwordForm.value.oldPassword,
           newPassword: passwordForm.value.newPassword,
         });
-        alert('Đổi mật khẩu thành công!');
+        showAlert('Thành công', 'Đổi mật khẩu thành công!', 'success');
         showPasswordModal.value = false;
       } catch (err) {
-        alert(err.response?.data?.error || 'Đổi mật khẩu thất bại');
+        showAlert('Lỗi', err.response?.data?.error || 'Đổi mật khẩu thất bại', 'danger');
+      }
+    };
+
+    const notificationStore = useNotificationStore();
+    const showNotificationsDropdown = ref(false);
+
+    const notifications = computed(() => notificationStore.notifications);
+    const unreadCount = computed(() => notificationStore.unreadCount);
+    const loadingNotifications = computed(() => notificationStore.loading);
+    const hasMore = computed(() => notificationStore.hasMore);
+
+    const toggleNotifications = () => {
+      showNotificationsDropdown.value = !showNotificationsDropdown.value;
+      if (showNotificationsDropdown.value) {
+        notificationStore.fetchNotifications(0, 10);
+        notificationStore.fetchUnreadCount();
+      }
+    };
+
+    const loadMoreNotifications = async () => {
+      if (loadingNotifications.value) return;
+      const nextPage = notificationStore.currentPage + 1;
+      await notificationStore.fetchNotifications(nextPage, 10, true);
+    };
+
+    const markAllAsRead = async () => {
+      await notificationStore.markAllAsRead();
+    };
+
+    const handleNotificationClick = async (notif) => {
+      if (!notif.isRead) {
+        await notificationStore.markAsRead(notif.id);
+      }
+      showNotificationsDropdown.value = false;
+
+      // Điều hướng dựa trên loại thông báo
+      if (notif.type === 'INVOICE_NEW' || notif.type === 'PAYMENT_CONFIRMED' || notif.type === 'PAYMENT_REMINDER') {
+        if (authStore.role === 'LANDLORD') {
+          router.push('/landlord/invoices');
+        } else if (authStore.role === 'TENANT') {
+          router.push('/tenant');
+        }
+      } else if (notif.type === 'CONTRACT_ACTIVE') {
+        if (authStore.role === 'LANDLORD') {
+          router.push('/landlord/contracts');
+        } else if (authStore.role === 'TENANT') {
+          router.push('/tenant');
+        }
+      }
+    };
+
+    const getIconClass = (type) => {
+      switch (type) {
+        case 'INVOICE_NEW':
+          return 'bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400';
+        case 'PAYMENT_CONFIRMED':
+          return 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400';
+        case 'CONTRACT_ACTIVE':
+          return 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400';
+        default:
+          return 'bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400';
+      }
+    };
+
+    const formatTime = (timeStr) => {
+      if (!timeStr) return '';
+      try {
+        const d = new Date(timeStr);
+        return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+      } catch (e) {
+        return timeStr;
       }
     };
 
     const handleLogout = () => {
+      notificationStore.stopPolling();
       authStore.logout();
       router.push('/login');
     };
@@ -155,17 +239,22 @@ export default {
       if (!e.target.closest('.profile-dropdown-container')) {
         showDropdown.value = false;
       }
+      if (!e.target.closest('.notifications-dropdown-container')) {
+        showNotificationsDropdown.value = false;
+      }
     };
 
     onMounted(() => {
       document.documentElement.setAttribute('data-theme', theme.value);
       if (authStore.isAuthenticated) {
         fetchUserProfile();
+        notificationStore.startPolling();
       }
       document.addEventListener('click', handleDocumentClick);
     });
 
     onUnmounted(() => {
+      notificationStore.stopPolling();
       document.removeEventListener('click', handleDocumentClick);
     });
 
@@ -188,6 +277,21 @@ export default {
       saveProfile,
       openPasswordModal,
       savePassword,
+      confirmModal,
+      onConfirmModal,
+      closeConfirmModal,
+      // Notifications properties & methods
+      showNotificationsDropdown,
+      notifications,
+      unreadCount,
+      loadingNotifications,
+      hasMore,
+      toggleNotifications,
+      loadMoreNotifications,
+      markAllAsRead,
+      handleNotificationClick,
+      getIconClass,
+      formatTime,
     };
   }
 };

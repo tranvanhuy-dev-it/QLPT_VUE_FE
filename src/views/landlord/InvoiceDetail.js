@@ -2,10 +2,13 @@ import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useInvoiceStore } from '../../stores/invoice.js';
 import { useAuthStore } from '../../stores/auth.js';
-import FormButton from '../../components/FormButton.vue';
-import FormInput from '../../components/FormInput.vue';
-import Modal from '../../components/Modal.vue';
-import ConfirmModal from '../../components/ConfirmModal.vue';
+import FormButton from '../../components/ui/FormButton.vue';
+import FormInput from '../../components/ui/FormInput.vue';
+import Modal from '../../components/ui/Modal.vue';
+import ConfirmModal from '../../components/ui/ConfirmModal.vue';
+import AppIcon from '../../components/ui/icons/AppIcon.vue';
+import DetailField from '../../components/ui/DetailField.vue';
+import LoadingState from '../../components/ui/LoadingState.vue';
 import { useConfirmModal } from '../../composables/useConfirmModal.js';
 
 export default {
@@ -15,6 +18,9 @@ export default {
     FormInput,
     Modal,
     ConfirmModal,
+    AppIcon,
+    DetailField,
+    LoadingState,
   },
   setup() {
     const route = useRoute();

@@ -1,11 +1,11 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import PageHeader from '../../components/PageHeader.vue';
-import DataTable from '../../components/DataTable.vue';
-import Modal from '../../components/Modal.vue';
-import FormInput from '../../components/FormInput.vue';
-import FormButton from '../../components/FormButton.vue';
-import ConfirmModal from '../../components/ConfirmModal.vue';
+import PageHeader from '../../components/ui/PageHeader.vue';
+import DataTable from '../../components/ui/DataTable.vue';
+import Modal from '../../components/ui/Modal.vue';
+import FormInput from '../../components/ui/FormInput.vue';
+import FormButton from '../../components/ui/FormButton.vue';
+import ConfirmModal from '../../components/ui/ConfirmModal.vue';
 import { useTenantStore } from '../../stores/tenant.js';
 import { validateEmail, validatePhone, validatePastDate } from '../../utils/validation.js';
 import { useConfirmModal } from '../../composables/useConfirmModal.js';

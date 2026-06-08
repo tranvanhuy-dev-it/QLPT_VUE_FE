@@ -1,14 +1,15 @@
 import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import PageHeader from "../../components/PageHeader.vue";
-import DataTable from "../../components/DataTable.vue";
-import Modal from "../../components/Modal.vue";
-import InvoiceReceipt from "../../components/InvoiceReceipt.vue";
-import Checkbox from "../../components/Checkbox.vue";
-import FormInput from "../../components/FormInput.vue";
-import FormSelect from "../../components/FormSelect.vue";
-import FormButton from "../../components/FormButton.vue";
-import ConfirmModal from "../../components/ConfirmModal.vue";
+import PageHeader from "../../components/ui/PageHeader.vue";
+import DataTable from "../../components/ui/DataTable.vue";
+import Modal from "../../components/ui/Modal.vue";
+import InvoiceReceipt from "../../components/document/InvoiceReceipt.vue";
+import Checkbox from "../../components/ui/Checkbox.vue";
+import FormInput from "../../components/ui/FormInput.vue";
+import FormSelect from "../../components/ui/FormSelect.vue";
+import FormButton from "../../components/ui/FormButton.vue";
+import AppIcon from "../../components/ui/icons/AppIcon.vue";
+import ConfirmModal from "../../components/ui/ConfirmModal.vue";
 import { useInvoiceStore } from "../../stores/invoice.js";
 import { useContractStore } from "../../stores/contract.js";
 import invoiceService from "../../services/invoiceService.js";
@@ -26,6 +27,7 @@ export default {
     FormSelect,
     FormButton,
     ConfirmModal,
+    AppIcon,
   },
   setup() {
     const route = useRoute();

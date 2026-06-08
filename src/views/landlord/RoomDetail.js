@@ -2,8 +2,12 @@ import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useRoomStore } from '../../stores/room.js';
 import { useContractStore } from '../../stores/contract.js';
-import DataTable from '../../components/DataTable.vue';
-import ConfirmModal from '../../components/ConfirmModal.vue';
+import DataTable from '../../components/ui/DataTable.vue';
+import ConfirmModal from '../../components/ui/ConfirmModal.vue';
+import FormInput from '../../components/ui/FormInput.vue';
+import FormButton from '../../components/ui/FormButton.vue';
+import AppIcon from '../../components/ui/icons/AppIcon.vue';
+import LoadingState from '../../components/ui/LoadingState.vue';
 import { useConfirmModal } from '../../composables/useConfirmModal.js';
 
 export default {
@@ -11,6 +15,10 @@ export default {
   components: {
     DataTable,
     ConfirmModal,
+    FormInput,
+    FormButton,
+    AppIcon,
+    LoadingState,
   },
   setup() {
     const route = useRoute();

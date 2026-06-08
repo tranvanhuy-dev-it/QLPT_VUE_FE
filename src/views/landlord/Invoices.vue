@@ -128,9 +128,7 @@
         <div v-if="selectedContract" class="mb-6 border border-border-main rounded-xl overflow-hidden bg-slate-50/40 dark:bg-slate-900/5">
           <div class="px-4 py-3 bg-slate-50 dark:bg-slate-900/60 border-b border-border-main flex justify-between items-center">
             <h4 class="text-xs font-bold text-text-main flex items-center gap-1.5">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5 text-primary">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-              </svg>
+              <AppIcon name="currency" class="text-primary !w-3.5 !h-3.5" />
               <span>Tạm tính các khoản thu</span>
             </h4>
             <span class="text-[10px] text-text-sub italic">Cập nhật theo chỉ số và ngày nhập</span>

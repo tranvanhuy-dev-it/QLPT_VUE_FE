@@ -4,13 +4,9 @@
     <div class="mb-6 pb-4 border-b border-border-main flex flex-col gap-4">
       <div class="flex items-center justify-between gap-4 flex-wrap">
         <div class="flex items-center gap-2">
-          <button @click="goBack"
-            class="inline-flex items-center justify-center p-1.5 rounded-lg border border-border-main bg-card hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
-              stroke="currentColor" class="w-4 h-4 text-text-sub">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-            </svg>
-          </button>
+          <FormButton @click="goBack" variant="secondary" class="!p-1.5">
+            <AppIcon name="arrow-left" class="text-text-sub !w-4 !h-4" />
+          </FormButton>
           <h2 class="text-xl font-bold text-text-main flex items-center gap-2 flex-wrap">
             <span>Chi Tiết Dãy Trọ</span>
             <span v-if="house" class="text-primary">{{ house.name }}</span>
@@ -19,26 +15,32 @@
       </div>
 
       <!-- Tab Switcher -->
-      <div v-if="house" class="flex border border-border-main rounded-lg p-0.5 bg-slate-50 dark:bg-slate-900/60 w-fit shrink-0">
-        <button type="button" @click="activeTab = 'info'"
-          :class="['px-3.5 py-1.5 text-xs font-semibold rounded-md transition cursor-pointer', activeTab === 'info' ? 'bg-white dark:bg-slate-800 text-primary shadow-xs' : 'text-text-sub hover:text-text-main']">
-          Thông tin chung
-        </button>
-        <button type="button" @click="activeTab = 'rules'"
-          :class="['px-3.5 py-1.5 text-xs font-semibold rounded-md transition cursor-pointer', activeTab === 'rules' ? 'bg-white dark:bg-slate-800 text-primary shadow-xs' : 'text-text-sub hover:text-text-main']">
-          Nội quy dãy trọ
-        </button>
+      <div v-if="house" class="flex flex-row items-center justify-between gap-3 w-full flex-wrap sm:flex-nowrap">
+        <div class="flex border border-border-main rounded-lg p-0.5 bg-slate-50 dark:bg-slate-900/60 w-fit shrink-0">
+          <button type="button" @click="activeTab = 'info'"
+            :class="['px-3.5 py-1.5 text-xs font-semibold rounded-md transition cursor-pointer', activeTab === 'info' ? 'bg-white dark:bg-slate-800 text-primary shadow-xs' : 'text-text-sub hover:text-text-main']">
+            Thông tin chung
+          </button>
+          <button type="button" @click="activeTab = 'rules'"
+            :class="['px-3.5 py-1.5 text-xs font-semibold rounded-md transition cursor-pointer', activeTab === 'rules' ? 'bg-white dark:bg-slate-800 text-primary shadow-xs' : 'text-text-sub hover:text-text-main']">
+            Nội quy dãy trọ
+          </button>
+        </div>
+
+        <!-- Action buttons on header -->
+        <div class="flex items-center gap-2 shrink-0">
+          <FormButton type="button" @click="handleDelete" variant="danger" size="sm">
+            Xóa dãy trọ
+          </FormButton>
+          <FormButton type="button" @click="handleSave" variant="primary" size="sm">
+            Lưu thay đổi
+          </FormButton>
+        </div>
       </div>
     </div>
 
     <!-- Loading Spinner -->
-    <div v-if="loading"
-      class="bg-card border border-border-main rounded-xl flex justify-center items-center min-h-[300px] shadow-xs">
-      <div class="text-center flex flex-col items-center gap-2">
-        <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-        <div class="text-text-sub text-xs">Đang tải dữ liệu dãy trọ...</div>
-      </div>
-    </div>
+    <LoadingState v-if="loading" message="Đang tải dữ liệu dãy trọ..." />
 
     <!-- Main Content Area -->
     <div v-else-if="house" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -49,9 +51,7 @@
           <!-- TAB 1: THÔNG TIN CHUNG -->
           <div v-show="activeTab === 'info'" class="space-y-5">
             <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-3 mb-4 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-primary">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 1 1 .512 1.35h-.488a2.25 2.25 0 0 1-2.25-2.25V7.5a2.25 2.25 0 0 1 2.25-2.25h.75a2.25 2.25 0 0 1 2.25 2.25v2.25a2.25 2.25 0 0 1-.75 1.688m-6 3h12" />
-              </svg>
+              <AppIcon name="coin" class="text-primary !w-4 !h-4" />
               <span>Thông tin cơ bản & Giá mặc định</span>
             </h3>
 
@@ -183,9 +183,7 @@
                     <option value="FIXED_PER_PERSON">đ/người</option>
                   </FormSelect>
                   <FormButton type="button" @click="removeExtraFeeRow(index)" variant="danger" size="sm" class="!p-1.5 shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
+                    <AppIcon name="trash" size="sm" />
                   </FormButton>
                 </div>
               </div>
@@ -196,9 +194,7 @@
           <div v-show="activeTab === 'rules'" class="space-y-5">
             <div class="flex justify-between items-center border-b border-border-main pb-3 mb-4">
               <h3 class="text-sm font-bold text-text-main m-0 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-primary">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+                <AppIcon name="contract" class="text-primary !w-4 !h-4" />
                 <span>Quy định & Nội quy lưu trú</span>
               </h3>
               <FormButton type="button" @click="showRuleBuilder = !showRuleBuilder" variant="secondary" size="sm" class="!px-2.5 !py-1 text-xs">
@@ -357,24 +353,6 @@
               ></textarea>
             </div>
           </div>
-
-          <!-- Actions -->
-          <div class="flex justify-between items-center pt-4 border-t border-border-main">
-            <button type="button" @click="handleDelete"
-              class="px-4 py-2 rounded-lg border border-danger bg-card text-xs font-semibold text-danger hover:bg-red-50 dark:hover:bg-red-950/20 transition cursor-pointer">
-              Xóa dãy trọ
-            </button>
-            <div class="flex gap-3">
-              <button type="button" @click="goBack"
-                class="px-4 py-2 rounded-lg border border-border-main bg-card text-xs font-semibold text-text-sub hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer">
-                Hủy
-              </button>
-              <button type="submit"
-                class="px-4 py-2 rounded-lg bg-primary text-xs font-semibold text-white hover:bg-primary-hover transition cursor-pointer shadow-sm">
-                Lưu thay đổi
-              </button>
-            </div>
-          </div>
         </form>
       </div>
 
@@ -406,9 +384,7 @@
         <!-- Quick Tip -->
         <div class="bg-[rgba(0,102,204,0.04)] border border-primary/20 rounded-2xl p-5">
           <h4 class="text-xs font-bold text-primary mb-2 flex items-center gap-1.5">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0-3h.008v.008H12V9.75zm0.5 7.5a7.5 7.5 0 1 1 15 0 7.5 7.5 0 0 1-15 0z" />
-            </svg>
+            <AppIcon name="info-circle" class="!w-4 !h-4" />
             <span>VietQR & Nội quy</span>
           </h4>
           <p class="text-[11px] leading-relaxed text-text-sub">
@@ -417,6 +393,19 @@
         </div>
       </div>
     </div>
+
+    <!-- CONFIRM MODAL -->
+    <ConfirmModal
+      :show="confirmModal.show"
+      :title="confirmModal.title"
+      :message="confirmModal.message"
+      :type="confirmModal.type"
+      :confirm-text="confirmModal.confirmText"
+      :cancel-text="confirmModal.cancelText"
+      :show-cancel="confirmModal.showCancel"
+      @confirm="onConfirmModal"
+      @cancel="closeConfirmModal"
+    />
   </div>
 </template>
 

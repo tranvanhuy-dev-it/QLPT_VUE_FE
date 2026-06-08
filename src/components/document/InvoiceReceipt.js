@@ -1,7 +1,12 @@
 import html2canvas from "html2canvas-pro";
+import { useConfirmModal } from "../../composables/useConfirmModal.js";
+import ConfirmModal from "../ui/ConfirmModal.vue";
 
 export default {
   name: "InvoiceReceipt",
+  components: {
+    ConfirmModal,
+  },
   props: {
     invoice: {
       type: Object,
@@ -22,6 +27,13 @@ export default {
   },
   emits: ["close", "pay-before", "pay-all"],
   setup(props) {
+    const {
+      confirmModal,
+      showAlert,
+      onConfirmModal,
+      closeConfirmModal
+    } = useConfirmModal();
+
     const formatMoney = (amount) => {
       if (amount === undefined || amount === null) return "0";
       return Math.round(amount).toLocaleString("vi-VN");
@@ -400,7 +412,7 @@ export default {
         document.body.removeChild(link);
       } catch (err) {
         console.error("Không thể lưu ảnh biên lai:", err);
-        alert("Không thể xuất ảnh biên lai: " + err.message);
+        showAlert("Lỗi", "Không thể xuất ảnh biên lai: " + err.message, "danger");
       } finally {
         document.body.removeChild(container);
       }
@@ -411,6 +423,9 @@ export default {
       formatDate,
       printReceipt,
       downloadReceiptImage,
+      confirmModal,
+      onConfirmModal,
+      closeConfirmModal
     };
   },
 };

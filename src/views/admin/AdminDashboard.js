@@ -3,7 +3,7 @@ import { useAuthStore } from '../../stores/auth.js';
 import { useRouter } from 'vue-router';
 import adminService from '../../services/adminService.js';
 import userService from '../../services/userService.js';
-import ConfirmModal from '../../components/ConfirmModal.vue';
+import ConfirmModal from '../../components/ui/ConfirmModal.vue';
 import { useConfirmModal } from '../../composables/useConfirmModal.js';
 
 export default {

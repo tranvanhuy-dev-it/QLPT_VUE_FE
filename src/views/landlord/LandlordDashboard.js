@@ -5,9 +5,17 @@ import roomService from '../../services/roomService.js';
 import contractService from '../../services/contractService.js';
 import invoiceService from '../../services/invoiceService.js';
 
+import FormInput from '../../components/ui/FormInput.vue';
+import FormButton from '../../components/ui/FormButton.vue';
+import AppIcon from '../../components/ui/icons/AppIcon.vue';
+
 export default {
   name: 'LandlordDashboard',
-  components: {},
+  components: {
+    FormInput,
+    FormButton,
+    AppIcon,
+  },
   setup() {
     const router = useRouter();
 

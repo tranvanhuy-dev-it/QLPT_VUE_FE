@@ -1,18 +1,6 @@
 import { reactive } from 'vue';
 
-/**
- * Composable to manage a custom ConfirmModal dialog.
- * Replaces native alert() and confirm() with a polished in-app modal.
- *
- * Usage:
- *   const { confirmModal, showAlert, showConfirm, closeConfirmModal } = useConfirmModal();
- *
- *   // Alert (info/success/warning/danger - only OK button)
- *   showAlert('Thành công', 'Tạo tài khoản thành công!', 'success');
- *
- *   // Confirm (two buttons - calls callback on confirm)
- *   showConfirm('Xác nhận', 'Bạn có chắc chắn?', 'danger', () => { ... });
- */
+
 export function useConfirmModal() {
   const confirmModal = reactive({
     show: false,

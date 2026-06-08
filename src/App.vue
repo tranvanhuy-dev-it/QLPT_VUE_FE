@@ -33,8 +33,8 @@
 <script>
 import { computed, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import Sidebar from './components/Sidebar.vue';
-import Header from './components/Header.vue';
+import Sidebar from './components/layout/Sidebar.vue';
+import Header from './components/layout/Header.vue';
 import { isApiLoading, isApiSaving } from './services/api';
 import { useAuthStore, isTokenExpired } from './stores/auth.js';
 

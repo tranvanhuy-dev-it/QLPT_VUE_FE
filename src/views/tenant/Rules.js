@@ -1,5 +1,5 @@
 import { ref, onMounted, computed } from 'vue';
-import PageHeader from '../../components/PageHeader.vue';
+import PageHeader from '../../components/ui/PageHeader.vue';
 import { useContractStore } from '../../stores/contract.js';
 
 export default {
