@@ -7,7 +7,7 @@
       <div class="flex items-center justify-between gap-3 sm:hidden w-full">
         <!-- Title & Icon -->
         <h2 class="text-[0.95rem] font-bold text-text-main flex items-center gap-1.5 truncate">
-          <span v-if="icon" class="w-[18px] h-[18px] text-primary shrink-0 flex items-center justify-center" v-html="icon"></span>
+          <span v-if="icon" class="page-header-icon w-[18px] h-[18px] text-primary shrink-0 flex items-center justify-center" v-html="icon"></span>
           <span class="truncate">{{ title }}</span>
         </h2>
         
@@ -78,7 +78,7 @@
 <script src="./PageHeader.js"></script>
 
 <style scoped>
-:deep(svg) {
+.page-header-icon :deep(svg) {
   width: 100%;
   height: 100%;
 }
