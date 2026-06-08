@@ -214,7 +214,7 @@ export default {
         await fetchAddendums();
       } catch (err) {
         showAlert('Lỗi', err.response?.data?.error || 'Không thể tải thông tin chi tiết hợp đồng', 'danger');
-        router.push({ name: 'Contracts' });
+        router.push({ name: isLandlord.value ? 'Contracts' : 'TenantContracts' });
       }
     };
 
@@ -425,7 +425,7 @@ export default {
       if (window.history.state && window.history.state.back) {
         router.back();
       } else {
-        router.push({ name: 'Contracts' });
+        router.push({ name: isLandlord.value ? 'Contracts' : 'TenantContracts' });
       }
     };
 

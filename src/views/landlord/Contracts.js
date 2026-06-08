@@ -202,8 +202,9 @@ export default {
 
         const createdContract = await contractStore.createContract(payload);
         closeModal();
+        const routeName = isLandlord.value ? 'ContractDetail' : 'TenantContractDetail';
         router.push({
-          name: 'ContractDetail',
+          name: routeName,
           params: { id: createdContract.id }
         });
       } catch (err) {
@@ -233,8 +234,9 @@ export default {
     };
 
     const viewContractDetail = (id, edit = false) => {
+      const routeName = isLandlord.value ? 'ContractDetail' : 'TenantContractDetail';
       router.push({
-        name: 'ContractDetail',
+        name: routeName,
         params: { id },
         query: edit ? { edit: 'true' } : {},
       });

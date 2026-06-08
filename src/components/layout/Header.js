@@ -200,7 +200,7 @@ export default {
         if (authStore.role === 'LANDLORD') {
           router.push('/landlord/contracts');
         } else if (authStore.role === 'TENANT') {
-          router.push('/tenant');
+          router.push('/tenant/contracts');
         }
       }
     };
