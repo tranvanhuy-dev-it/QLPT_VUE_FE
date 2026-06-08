@@ -103,6 +103,35 @@ export default {
       return val;
     };
 
+    // Phân loại header cho giao diện mobile card
+    const mobileBadgeHeader = computed(() => {
+      return props.headers.find(h => h.type === 'badge' || h.key.toLowerCase().includes('status') || h.key.toLowerCase().includes('state'));
+    });
+
+    const mobileActionsHeader = computed(() => {
+      return props.headers.find(h => h.key === 'actions' || h.key.toLowerCase().includes('action') || h.label.toLowerCase().includes('hành động'));
+    });
+
+    const mobileTitleHeader = computed(() => {
+      return props.headers[0] || null;
+    });
+
+    const mobileSubtitleHeader = computed(() => {
+      if (props.headers.length < 2) return null;
+      const second = props.headers[1];
+      if (second === mobileBadgeHeader.value || second === mobileActionsHeader.value) return null;
+      return second;
+    });
+
+    const mobileGridHeaders = computed(() => {
+      return props.headers.filter(h => 
+        h !== mobileTitleHeader.value && 
+        h !== mobileSubtitleHeader.value && 
+        h !== mobileBadgeHeader.value && 
+        h !== mobileActionsHeader.value
+      );
+    });
+
     const onChangePage = (newPage) => {
       emit("change-page", newPage);
     };
@@ -118,6 +147,11 @@ export default {
       getFormattedValue,
       onChangePage,
       onRowClick,
+      mobileBadgeHeader,
+      mobileActionsHeader,
+      mobileTitleHeader,
+      mobileSubtitleHeader,
+      mobileGridHeaders,
     };
   },
 };
