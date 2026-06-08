@@ -139,21 +139,12 @@ export default {
   height: 100%;
 }
 
-.group {
-  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease;
-}
-
-.group:hover {
-  transform: translateY(-3px);
-}
-
 .is-active {
   color: var(--primary-color) !important;
-  transform: translateY(-5px);
 }
 
 .is-active .active-dot {
   opacity: 1;
-  transform: scale(1) translateY(5px);
+  transform: scale(1);
 }
 </style>
