@@ -98,7 +98,7 @@ export default {
 
     const fetchRooms = async () => {
       try {
-        if (selectedHouseId.value) {
+        if (selectedHouseId.value && selectedHouseId.value !== 'null' && selectedHouseId.value !== 'undefined') {
           await roomStore.fetchRoomsByBoardingHouse(selectedHouseId.value, { page: page.value, size: size.value });
         } else {
           await roomStore.fetchRooms({ page: page.value, size: size.value });

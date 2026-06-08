@@ -32,8 +32,9 @@ export default {
       // But standard Vue v-model on select handles this automatically by looking at the option's value binding.
       // Since we bound :value="modelValue" on select, event.target.value will be a string.
       // To correctly match type:
-      // If props.modelValue is a boolean:
-      if (typeof props.modelValue === "boolean") {
+      if (val === "null" || val === "undefined") {
+        val = null;
+      } else if (typeof props.modelValue === "boolean") {
         val = val === "true";
       } else if (typeof props.modelValue === "number") {
         val = val === "" ? null : Number(val);
