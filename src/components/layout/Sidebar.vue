@@ -1,12 +1,5 @@
 <template>
-  <!-- Mobile Sidebar Backdrop Overlay -->
-  <div v-if="isSidebarOpen" class="fixed inset-0 bg-black/40 z-40 lg:hidden transition-opacity" @click="closeSidebar">
-  </div>
-
-  <aside
-    class="w-[260px] bg-card border-r border-border-main flex flex-col h-[100dvh] fixed lg:sticky top-0 inset-y-0 left-0 shrink-0 z-50 transition-transform duration-200 ease-in-out lg:translate-x-0"
-    :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-    style="padding-top: env(safe-area-inset-top);">
+  <aside class="hidden lg:flex w-[260px] bg-card border-r border-border-main flex-col h-[100dvh] sticky top-0 inset-y-0 left-0 shrink-0 z-50">
     <!-- Brand Header -->
     <div class="flex items-center justify-between p-6 pb-5">
       <div class="flex items-center gap-3">
@@ -16,15 +9,6 @@
           <p class="text-xs text-text-sub">Quản lý nhà trọ thông minh</p>
         </div>
       </div>
-      <!-- Close Sidebar button on mobile -->
-      <button @click="closeSidebar"
-        class="lg:hidden p-1 rounded-md text-text-sub hover:bg-slate-100 hover:text-text-main cursor-pointer"
-        title="Đóng menu">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
-          class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-        </svg>
-      </button>
     </div>
 
     <!-- Menu Items based on Role -->

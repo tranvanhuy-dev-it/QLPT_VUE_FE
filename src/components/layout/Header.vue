@@ -4,17 +4,6 @@
     style="padding-top: env(safe-area-inset-top); height: calc(4rem + env(safe-area-inset-top));"
   >
     <div class="flex items-center">
-      <!-- Mobile Sidebar Toggle -->
-      <button 
-        @click="toggleSidebar" 
-        class="lg:hidden p-1.5 rounded-lg text-text-sub hover:bg-slate-100 hover:text-text-main mr-2 cursor-pointer flex items-center justify-center shrink-0"
-        title="Mở menu"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-        </svg>
-      </button>
-      
       <!-- Breadcrumbs (Hidden on mobile/tablet, shown on desktop) -->
       <nav class="hidden lg:flex items-center gap-1.5 sm:gap-2 text-[0.8rem] sm:text-[0.85rem] font-medium truncate">
         <span class="text-text-sub">{{ parentRoute }}</span>
