@@ -17,11 +17,7 @@
     </div>
   </div>
 
-  <!-- Global Loading Indicator for Fetching (GET) -->
-  <div v-if="isApiLoading && !isApiSaving" class="fixed top-4 right-4 z-[9999] bg-card border border-border-main py-2 px-3 rounded-full shadow-lg flex items-center space-x-2.5 transition-all duration-300">
-    <div class="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-    <span class="text-[11px] font-semibold text-text-sub">Đang tải...</span>
-  </div>
+
 
   <!-- Global Glassmorphic Loading Overlay for Saving/Submitting (POST/PUT/DELETE) -->
   <div v-if="isApiSaving" class="fixed inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-[2px] z-[9999] flex flex-col items-center justify-center transition-all duration-300">
@@ -40,7 +36,7 @@ import { computed, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Sidebar from './components/layout/Sidebar.vue';
 import Header from './components/layout/Header.vue';
-import { isApiLoading, isApiSaving } from './services/api';
+import { isApiSaving } from './services/api';
 import { useAuthStore, isTokenExpired } from './stores/auth.js';
 
 export default {
@@ -95,7 +91,6 @@ export default {
 
     return {
       isGuest,
-      isApiLoading,
       isApiSaving,
     };
   },
