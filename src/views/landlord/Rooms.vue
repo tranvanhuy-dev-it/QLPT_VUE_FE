@@ -37,7 +37,16 @@
         clickable
         @change-page="changePage"
         @row-click="goToRoomDetail"
-      />
+      >
+        <template #cell(status)="{ value }">
+          <div class="flex items-center gap-1.5 justify-end lg:justify-start">
+            <span class="w-2.5 h-2.5 rounded-full shrink-0 animate-pulse" :class="value === 'VACANT' ? 'bg-emerald-500' : 'bg-rose-500'" :title="value === 'VACANT' ? 'Còn trống' : 'Đang thuê'"></span>
+            <span class="text-xs font-semibold hidden lg:inline" :class="value === 'VACANT' ? 'text-emerald-600' : 'text-rose-600'">
+              {{ value === 'VACANT' ? 'Còn trống' : 'Đang thuê' }}
+            </span>
+          </div>
+        </template>
+      </DataTable>
     </div>
 
     <!-- Add Room Modal -->

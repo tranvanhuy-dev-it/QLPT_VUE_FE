@@ -147,7 +147,7 @@
               </div>
               <div class="flex justify-between items-center py-1 border-b border-border-main/40">
                 <span class="text-text-sub">Sức chứa:</span>
-                <span class="font-semibold text-text-main">Tối đa {{ room.maxPeople }} người</span>
+                <span class="font-semibold text-text-main">{{ room.maxPeople }} người</span>
               </div>
               <div class="flex justify-between items-center py-1 border-b border-border-main/40">
                 <span class="text-text-sub">Dãy trọ:</span>

@@ -33,7 +33,7 @@ export default {
       { label: 'Giá thuê', key: 'basePrice', type: 'money', cellClass: 'font-semibold text-text-main' },
       { label: 'Chỉ số điện', key: 'currentElectricityIndex', suffix: ' kWh', cellClass: 'text-text-sub' },
       { label: 'Chỉ số nước', key: 'currentWaterIndex', suffix: ' m³', cellClass: 'text-text-sub' },
-      { label: 'Sức chứa', key: 'maxPeople', prefix: 'Tối đa ', suffix: ' người', cellClass: 'text-text-sub' },
+      { label: 'Sức chứa', key: 'maxPeople', suffix: ' người', cellClass: 'text-text-sub' },
       {
         label: 'Trạng thái',
         key: 'status',

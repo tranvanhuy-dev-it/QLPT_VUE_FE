@@ -40,7 +40,7 @@
       </div>
 
       <!-- Mobile Card View (below lg screens) -->
-      <div class="lg:hidden grid grid-cols-2 gap-3">
+      <div class="lg:hidden grid mobile-card-grid grid-cols-2 gap-3">
         <div 
           v-for="(item, index) in items" 
           :key="item.id || index" 
@@ -121,3 +121,11 @@
 </template>
 
 <script src="./DataTable.js"></script>
+
+<style scoped>
+@media (max-width: 380px) {
+  .mobile-card-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+}
+</style>
