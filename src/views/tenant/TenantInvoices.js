@@ -2,7 +2,6 @@ import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import PageHeader from '../../components/ui/PageHeader.vue';
 import DataTable from '../../components/ui/DataTable.vue';
-import FormButton from '../../components/ui/FormButton.vue';
 import { useInvoiceStore } from '../../stores/invoice.js';
 
 export default {
@@ -10,7 +9,6 @@ export default {
   components: {
     PageHeader,
     DataTable,
-    FormButton,
   },
   setup() {
     const router = useRouter();
@@ -50,7 +48,6 @@ export default {
           UNPAID: 'Chưa đóng tiền',
         },
       },
-      { label: 'Hành động', key: 'actions', align: 'right' },
     ];
 
     const invoices = computed(() => invoiceStore.invoices);
@@ -70,8 +67,8 @@ export default {
       }
     };
 
-    const viewDetails = (invoice) => {
-      router.push({ name: 'TenantInvoiceDetail', params: { id: invoice.id } });
+    const viewDetails = (id) => {
+      router.push({ name: 'TenantInvoiceDetail', params: { id } });
     };
 
     const changePage = (newPage) => {
