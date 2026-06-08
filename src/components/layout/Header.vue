@@ -12,12 +12,18 @@
         </svg>
       </button>
       
-      <!-- Breadcrumbs -->
-      <nav class="flex items-center gap-1.5 sm:gap-2 text-[0.8rem] sm:text-[0.85rem] font-medium truncate">
+      <!-- Breadcrumbs (Hidden on mobile/tablet, shown on desktop) -->
+      <nav class="hidden lg:flex items-center gap-1.5 sm:gap-2 text-[0.8rem] sm:text-[0.85rem] font-medium truncate">
         <span class="text-text-sub">{{ parentRoute }}</span>
         <span class="text-border-main">/</span>
         <span class="text-primary font-semibold">{{ currentRoute }}</span>
       </nav>
+
+      <!-- Mobile Brand Logo & Name (Shown on mobile/tablet, hidden on desktop) -->
+      <div class="flex lg:hidden items-center gap-2">
+        <img src="/logo.ico" alt="Logo" class="w-7 h-7 rounded object-contain" />
+        <span class="text-sm font-bold text-primary leading-tight">Nhà Trọ Thông Minh</span>
+      </div>
     </div>
     
     <div class="flex-1 max-w-[300px] md:max-w-[400px] mx-4 hidden md:block">

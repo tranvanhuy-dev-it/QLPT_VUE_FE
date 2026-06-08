@@ -6,7 +6,7 @@
         <FormButton @click="goBack" variant="secondary" class="!p-1.5">
           <AppIcon name="arrow-left" class="text-text-sub !w-4 !h-4" />
         </FormButton>
-        <h2 class="text-xl font-bold text-text-main flex items-center gap-2 flex-wrap">
+        <h2 class="text-base sm:text-xl font-bold text-text-main flex items-center gap-2 flex-wrap">
           <span>Chi Tiết Người Thuê</span>
           <span v-if="tenant" class="text-primary">{{ tenant.fullName }}</span>
           <span v-if="tenant" :class="[

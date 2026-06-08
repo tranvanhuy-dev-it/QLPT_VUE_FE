@@ -7,7 +7,7 @@
         <FormButton @click="goBack" variant="secondary" class="!p-1.5">
           <AppIcon name="arrow-left" class="!w-4 !h-4" />
         </FormButton>
-        <h2 class="text-xl font-bold text-text-main flex items-center gap-2">
+        <h2 class="text-base sm:text-xl font-bold text-text-main flex items-center gap-2">
           <span>Chi Tiết Hóa Đơn</span>
           <span v-if="invoice" :class="[
             'text-[11px] font-semibold px-2.5 py-0.5 rounded border uppercase',
@@ -21,8 +21,8 @@
         </h2>
       </div>
 
-      <!-- Bottom Row: 4 buttons in a horizontal flex row -->
-      <div v-if="invoice" class="flex flex-row items-center justify-between gap-3 w-full flex-wrap sm:flex-nowrap">
+      <!-- Bottom Row: buttons in a horizontal flex row -->
+      <div v-if="invoice" class="flex flex-row items-center justify-between gap-2 w-full flex-nowrap">
         <!-- Tab Switcher -->
         <div class="flex border border-border-main rounded-lg p-0.5 bg-slate-50 dark:bg-slate-900/60 shrink-0">
           <button @click="activeTab = 'summary'"
@@ -36,27 +36,27 @@
         </div>
 
         <!-- Action buttons -->
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex items-center gap-1.5 shrink-0">
           <FormButton v-if="isLandlord" variant="custom"
             class="bg-[#0068ff] hover:bg-[#0052cc] text-white px-2.5 py-1.5 text-xs shadow-xs"
             @click="copyAndShareZalo">
             <AppIcon name="zalo" class="!w-4 !h-4" />
-            <span>Gửi Zalo</span>
+            <span class="hidden sm:inline">Gửi Zalo</span>
           </FormButton>
           <FormButton v-if="activeTab === 'receipt'" variant="primary" size="sm" @click="showPreviewModal = true"
             class="!px-2.5 !py-1.5">
             <AppIcon name="printer" class="!w-4 !h-4" />
-            <span>In hóa đơn</span>
+            <span class="hidden sm:inline">In hóa đơn</span>
           </FormButton>
           <FormButton v-if="isLandlord && invoice.status !== 'PAID' && activeTab === 'summary'" variant="secondary"
             size="sm" @click="openPayModal">
             <AppIcon name="credit-card" class="!w-4 !h-4" />
-            Thu trước
+            <span class="hidden sm:inline">Thu trước</span>
           </FormButton>
           <FormButton v-if="isLandlord && invoice.status !== 'PAID' && activeTab === 'summary'" variant="primary"
             size="sm" @click="quickPayInvoice">
             <AppIcon name="check-circle" class="!w-4 !h-4" />
-            Thu đủ
+            <span class="hidden sm:inline">Thu đủ</span>
           </FormButton>
         </div>
       </div>

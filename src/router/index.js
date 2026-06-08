@@ -21,8 +21,26 @@ const routes = [
   },
   {
     path: '/admin',
-    name: 'AdminDashboard',
-    component: () => import('../views/admin/AdminDashboard.vue'),
+    name: 'AdminStats',
+    component: () => import('../views/admin/AdminStats.vue'),
+    meta: { requiresAuth: true, requiresRole: 'ADMIN' },
+  },
+  {
+    path: '/admin/landlords',
+    name: 'AdminLandlords',
+    component: () => import('../views/admin/AdminLandlords.vue'),
+    meta: { requiresAuth: true, requiresRole: 'ADMIN' },
+  },
+  {
+    path: '/admin/requests',
+    name: 'AdminRequests',
+    component: () => import('../views/admin/AdminRequests.vue'),
+    meta: { requiresAuth: true, requiresRole: 'ADMIN' },
+  },
+  {
+    path: '/admin/settings',
+    name: 'AdminSettings',
+    component: () => import('../views/admin/AdminSettings.vue'),
     meta: { requiresAuth: true, requiresRole: 'ADMIN' },
   },
   // LANDLORD ROUTES
@@ -93,6 +111,12 @@ const routes = [
     component: () => import('../views/landlord/TenantDetail.vue'),
     meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
   },
+  {
+    path: '/landlord/upgrade',
+    name: 'SubscriptionUpgrade',
+    component: () => import('../views/landlord/SubscriptionUpgrade.vue'),
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+  },
   // TENANT ROUTES
   {
     path: '/tenant',
@@ -134,19 +158,24 @@ router.beforeEach((to, from, next) => {
       next({ name: 'Login' });
     } else if (to.meta.requiresRole && authStore.role !== to.meta.requiresRole) {
       // Role không khớp -> chuyển về trang chính tương ứng của role
-      if (authStore.role === 'ADMIN') next({ name: 'AdminDashboard' });
+      if (authStore.role === 'ADMIN') next({ name: 'AdminStats' });
       else if (authStore.role === 'LANDLORD') next({ name: 'LandlordDashboard' });
       else if (authStore.role === 'TENANT') next({ name: 'TenantDashboard' });
       else next({ name: 'Login' });
     } else {
-      next();
+      // Kiểm tra trạng thái hết hạn gói dịch vụ của chủ trọ
+      if (authStore.role === 'LANDLORD' && authStore.user?.isExpired && to.name !== 'SubscriptionUpgrade') {
+        next({ name: 'SubscriptionUpgrade' });
+      } else {
+        next();
+      }
     }
   } 
   // Khách chưa login mới vào được (guestOnly - e.g. Login, Register)
   else if (to.matched.some((record) => record.meta.guestOnly)) {
     if (authStore.isAuthenticated) {
       // Nếu đã login, tự động chuyển về trang Dashboard tương ứng
-      if (authStore.role === 'ADMIN') next({ name: 'AdminDashboard' });
+      if (authStore.role === 'ADMIN') next({ name: 'AdminStats' });
       else if (authStore.role === 'LANDLORD') next({ name: 'LandlordDashboard' });
       else if (authStore.role === 'TENANT') next({ name: 'TenantDashboard' });
       else next();

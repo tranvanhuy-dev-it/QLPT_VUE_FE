@@ -55,8 +55,11 @@ export default {
         case 'Contracts': return 'Hợp đồng thuê';
         case 'Invoices': return 'Hóa đơn & Thanh toán';
         case 'Tenants': return 'Tài khoản khách thuê';
-        case 'AdminDashboard': return 'Danh sách chủ trọ';
+        case 'AdminStats': return 'Tổng quan';
+        case 'AdminLandlords': return 'Quản lý chủ trọ';
+        case 'AdminRequests': return 'Duyệt kích hoạt gói';
         case 'TenantDashboard': return 'Thông tin phòng trọ';
+        case 'SubscriptionUpgrade': return 'Gói dịch vụ & Gia hạn';
         default: return 'Chi tiết';
       }
     });

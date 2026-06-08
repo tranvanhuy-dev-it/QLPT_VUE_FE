@@ -47,10 +47,10 @@ export const useAuthStore = defineStore('auth', {
     async login(username, password) {
       try {
         const response = await api.post('/api/auth/login', { username, password });
-        const { token, id, role } = response.data;
+        const { token, id, role, isExpired } = response.data;
         
         this.token = token;
-        this.user = { id, username, role };
+        this.user = { id, username, role, isExpired };
         
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(this.user));
@@ -58,6 +58,19 @@ export const useAuthStore = defineStore('auth', {
         return this.user;
       } catch (error) {
         throw error.response?.data?.error || 'Đăng nhập thất bại. Vui lòng thử lại!';
+      }
+    },
+    async checkSubscription() {
+      if (this.role !== 'LANDLORD') return false;
+      try {
+        const response = await api.get('/api/subscriptions/active-status');
+        const { isExpired } = response.data;
+        this.user = { ...this.user, isExpired };
+        localStorage.setItem('user', JSON.stringify(this.user));
+        return isExpired;
+      } catch (error) {
+        console.error('Không thể kiểm tra thời hạn gói cước:', error);
+        return false;
       }
     },
     logout() {

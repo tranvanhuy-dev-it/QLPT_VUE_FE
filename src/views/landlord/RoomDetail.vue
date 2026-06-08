@@ -6,7 +6,7 @@
         <FormButton @click="goBack" variant="secondary" class="!p-1.5">
           <AppIcon name="arrow-left" class="text-text-sub !w-4 !h-4" />
         </FormButton>
-        <h2 class="text-xl font-bold text-text-main flex items-center gap-2 flex-wrap">
+        <h2 class="text-base sm:text-xl font-bold text-text-main flex items-center gap-2 flex-wrap">
           <span>Chi Tiết Phòng</span>
           <span v-if="room" class="text-primary">Phòng {{ room.roomNumber }}</span>
           <span v-if="room" :class="[
@@ -20,28 +20,30 @@
         </h2>
       </div>
 
-      <div v-if="room" class="flex flex-row items-center justify-between gap-3 w-full flex-wrap sm:flex-nowrap">
+      <div v-if="room" class="flex flex-row items-center justify-between gap-2 w-full flex-nowrap">
         <!-- Tab Switcher -->
         <div class="flex border border-border-main rounded-lg p-0.5 bg-slate-50 dark:bg-slate-900/60 shrink-0">
           <button @click="activeTab = 'info'"
             :class="['px-3.5 py-1.5 text-xs font-semibold rounded-md transition cursor-pointer', activeTab === 'info' ? 'bg-white dark:bg-slate-800 text-primary shadow-xs' : 'text-text-sub hover:text-text-main']">
-            Thông tin & Chỉnh sửa
+            Thông tin<span class="hidden sm:inline"> & Chỉnh sửa</span>
           </button>
           <button @click="activeTab = 'history'"
             :class="['px-3.5 py-1.5 text-xs font-semibold rounded-md transition cursor-pointer', activeTab === 'history' ? 'bg-white dark:bg-slate-800 text-primary shadow-xs' : 'text-text-sub hover:text-text-main']">
-            Lịch sử thuê phòng
+            Lịch sử<span class="hidden sm:inline"> thuê phòng</span>
           </button>
         </div>
 
         <!-- Action buttons on header -->
-        <div v-if="activeTab === 'info'" class="flex items-center gap-2 shrink-0">
+        <div v-if="activeTab === 'info'" class="flex items-center gap-1.5 shrink-0">
           <FormButton v-if="room.status !== 'OCCUPIED'" type="button" @click="deleteRoom" variant="danger" size="sm"
-            class="!px-3 !py-1.5">
-            Xóa phòng
+            class="!px-2.5 !py-1.5 flex items-center gap-1.5">
+            <AppIcon name="trash" class="!w-4 !h-4" />
+            <span class="hidden sm:inline">Xóa phòng</span>
           </FormButton>
           <FormButton type="button" @click="handleSave" variant="primary" size="sm"
-            class="!px-3 !py-1.5">
-            Lưu thay đổi
+            class="!px-2.5 !py-1.5 flex items-center gap-1.5">
+            <AppIcon name="check-circle" class="!w-4 !h-4" />
+            <span class="hidden sm:inline">Lưu thay đổi</span>
           </FormButton>
         </div>
       </div>

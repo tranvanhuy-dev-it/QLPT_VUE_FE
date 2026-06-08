@@ -64,10 +64,20 @@ export default {
       }
     };
 
-    onMounted(() => {
+    onMounted(async () => {
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
       checkSession();
+      
+      // Nếu là chủ trọ và đã đăng nhập, kiểm tra trạng thái gói dịch vụ để đồng bộ mới nhất
+      if (authStore.isAuthenticated && authStore.role === 'LANDLORD') {
+        try {
+          await authStore.checkSubscription();
+        } catch (err) {
+          console.error('Lỗi khi tự động kiểm tra trạng thái gói dịch vụ:', err);
+        }
+      }
+      
       // Kiểm tra định kỳ mỗi 10 giây xem phiên đăng nhập đã hết hạn chưa
       checkInterval = setInterval(checkSession, 10000);
     });

@@ -65,6 +65,24 @@ api.interceptors.response.use(
       // Chuyển hướng người dùng về trang đăng nhập nếu gặp lỗi 401
       window.location.href = '/login';
     }
+    if (error.response && error.response.status === 402) {
+      // Cập nhật trạng thái hết hạn vào localStorage để router guard hoạt động chính xác
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        try {
+          const user = JSON.parse(userStr);
+          user.isExpired = true;
+          localStorage.setItem('user', JSON.stringify(user));
+        } catch (e) {
+          console.error('Lỗi phân tích thông tin user khi hết hạn:', e);
+        }
+      }
+      
+      // Chuyển hướng đến trang nâng cấp gói cước nếu chưa ở đúng trang
+      if (window.location.pathname !== '/landlord/upgrade') {
+        window.location.href = '/landlord/upgrade';
+      }
+    }
     return Promise.reject(error);
   }
 );

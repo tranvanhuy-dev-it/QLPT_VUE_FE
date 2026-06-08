@@ -7,7 +7,7 @@
         <FormButton @click="goBack" variant="secondary" class="!p-1.5">
           <AppIcon name="arrow-left" class="!w-4 !h-4" />
         </FormButton>
-        <h2 class="text-xl font-bold text-text-main flex items-center gap-2">
+        <h2 class="text-base sm:text-xl font-bold text-text-main flex items-center gap-2">
           <span>Chi Tiết Hợp Đồng</span>
           <span v-if="contract" :class="[
             'text-[11px] font-semibold px-2.5 py-0.5 rounded border',
@@ -20,8 +20,8 @@
         </h2>
       </div>
 
-      <!-- Bottom Row: 4 buttons in a horizontal flex row -->
-      <div v-if="contract" class="flex flex-row items-center justify-between gap-3 w-full flex-wrap sm:flex-nowrap">
+      <!-- Bottom Row: buttons in a horizontal flex row -->
+      <div v-if="contract" class="flex flex-row items-center justify-between gap-2 w-full flex-nowrap">
         <!-- Tab Switcher -->
         <div class="flex border border-border-main rounded-lg p-0.5 bg-slate-50 dark:bg-slate-900/60 shrink-0">
           <button @click="activeTab = 'summary'"
@@ -35,12 +35,12 @@
         </div>
 
         <!-- Action buttons -->
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex items-center gap-1.5 shrink-0">
           <!-- Print Button (visible on contract tab) -->
           <FormButton v-if="activeTab === 'contract'" variant="primary" size="sm" @click="showPreviewModal = true"
             class="!px-2.5 !py-1.5">
             <AppIcon name="printer" class="!w-4 !h-4" />
-            <span>In hợp đồng</span>
+            <span class="hidden sm:inline">In hợp đồng</span>
           </FormButton>
 
           <FormButton v-if="activeTab === 'summary' && contract.status === 'ACTIVE'" variant="danger" size="sm"
