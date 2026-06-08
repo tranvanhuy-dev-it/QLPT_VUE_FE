@@ -86,7 +86,7 @@
               <div>
                 <FormInput
                   type="number"
-                  label="Giá thuê cơ bản (VNĐ)"
+                  label="Giá thuê"
                   v-model="form.basePrice"
                   min="0"
                   required

@@ -30,7 +30,7 @@ export default {
     const tableHeaders = [
       { label: 'Số phòng', key: 'roomNumber', prefix: 'Phòng ', cellClass: 'font-semibold text-primary' },
       { label: 'Dãy trọ', key: 'boardingHouse.name', cellClass: 'text-text-sub' },
-      { label: 'Giá thuê cơ bản', key: 'basePrice', type: 'money', cellClass: 'font-semibold text-text-main' },
+      { label: 'Giá thuê', key: 'basePrice', type: 'money', cellClass: 'font-semibold text-text-main' },
       { label: 'Chỉ số điện', key: 'currentElectricityIndex', suffix: ' kWh', cellClass: 'text-text-sub' },
       { label: 'Chỉ số nước', key: 'currentWaterIndex', suffix: ' m³', cellClass: 'text-text-sub' },
       { label: 'Sức chứa', key: 'maxPeople', prefix: 'Tối đa ', suffix: ' người', cellClass: 'text-text-sub' },
