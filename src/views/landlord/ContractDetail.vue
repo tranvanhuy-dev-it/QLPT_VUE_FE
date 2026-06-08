@@ -52,19 +52,7 @@
             </svg>
             <span>In hợp đồng</span>
           </FormButton>
-          <FormButton v-if="activeTab === 'summary' && contract.status === 'ACTIVE'" variant="secondary" size="sm"
-            @click="toggleEditMode" class="!px-2.5 !py-1.5">
-            <svg v-if="!isEditMode" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-              stroke="currentColor" class="w-4 h-4">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
-            </svg>
-            <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-              stroke="currentColor" class="w-4 h-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-            <span>{{ isEditMode ? 'Hủy' : 'Sửa số người' }}</span>
-          </FormButton>
+
           <FormButton v-if="activeTab === 'summary' && contract.status === 'ACTIVE'" variant="danger" size="sm"
             @click="terminateContract" class="!px-2.5 !py-1.5">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
@@ -174,36 +162,9 @@
         <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
           <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Số người ở & Dịch vụ</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-            <!-- Left Side: Occupants editor -->
             <div class="bg-slate-50 dark:bg-slate-900/30 rounded-lg p-3 border border-border-main/50 text-xs">
               <span class="text-text-sub block mb-2 font-medium">Số người đang ở thực tế:</span>
-
-              <div v-if="!isEditMode" class="flex justify-between items-center py-1">
-                <span class="font-bold text-text-main text-sm">{{ contract.numberOfTenants }} người</span>
-                <button v-if="contract.status === 'ACTIVE'" @click="isEditMode = true"
-                  class="px-2 py-1 text-[11px] font-semibold border border-border-main bg-card hover:bg-slate-100 rounded text-primary cursor-pointer transition">
-                  Chỉnh sửa
-                </button>
-              </div>
-
-              <form v-else @submit.prevent="submitEdit" class="flex flex-col gap-2">
-                <div class="flex gap-2 items-center">
-                  <input type="number"
-                    class="w-16 text-center border border-border-main rounded px-1.5 py-0.5 bg-card text-text-main font-bold outline-none"
-                    v-model.number="numberOfTenants" min="1" :max="contract.room.maxPeople" required />
-                  <span class="text-text-sub font-semibold">/ Tối đa {{ contract.room.maxPeople }}</span>
-                </div>
-                <div class="flex gap-1">
-                  <button type="submit" :disabled="saving"
-                    class="px-2 py-1 bg-primary text-white hover:bg-primary-hover rounded text-[11px] font-bold flex-1 cursor-pointer transition">
-                    Lưu
-                  </button>
-                  <button type="button" @click="toggleEditMode"
-                    class="px-2 py-1 border border-border-main bg-card hover:bg-slate-100 rounded text-[11px] font-bold flex-1 cursor-pointer transition">
-                    Hủy
-                  </button>
-                </div>
-              </form>
+              <span class="font-bold text-text-main text-sm">{{ contract.numberOfTenants }} người</span>
             </div>
 
             <!-- Right Side: Services applied -->

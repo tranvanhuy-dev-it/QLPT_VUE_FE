@@ -25,9 +25,6 @@ export default {
     const contract = computed(() => contractStore.currentContract);
     const extraFees = computed(() => contractStore.currentExtraFees);
     const loading = computed(() => contractStore.loading);
-    const isEditMode = ref(false);
-    const numberOfTenants = ref(1);
-    const saving = ref(false);
     const activeTab = ref('summary'); // 'summary' or 'contract'
     const showPreviewModal = ref(false);
 
@@ -195,14 +192,6 @@ export default {
       try {
         const contractId = route.params.id;
         const res = await contractStore.fetchContractDetail(contractId);
-        numberOfTenants.value = res.contract.numberOfTenants;
-
-        // Automatically toggle edit mode if queried
-        if (route.query.edit === 'true') {
-          isEditMode.value = true;
-          activeTab.value = 'summary';
-        }
-
         // Fetch addendums
         await fetchAddendums();
       } catch (err) {
@@ -408,40 +397,7 @@ export default {
       printWindow.document.close();
     };
 
-    const toggleEditMode = () => {
-      if (isEditMode.value) {
-        // Cancel: reset number of tenants
-        numberOfTenants.value = contract.value.numberOfTenants;
-        isEditMode.value = false;
-      } else {
-        isEditMode.value = true;
-      }
-    };
-
-    const submitEdit = async () => {
-      if (numberOfTenants.value < 1) {
-        alert('Số người ở phải từ 1 người trở lên.');
-        return;
-      }
-
-      if (contract.value && numberOfTenants.value > contract.value.room.maxPeople) {
-        alert(`Số người ở không được vượt quá sức chứa tối đa của phòng (${contract.value.room.maxPeople} người).`);
-        return;
-      }
-
-      saving.value = true;
-      try {
-        await contractStore.updateContract(contract.value.id, {
-          numberOfTenants: numberOfTenants.value
-        });
-        alert('Cập nhật số người ở thành công!');
-        isEditMode.value = false;
-      } catch (err) {
-        alert(err.response?.data?.error || 'Cập nhật số người ở thất bại');
-      } finally {
-        saving.value = false;
-      }
-    };
+    // Removed toggleEditMode and submitEdit - handled by addendums
 
     const goBack = () => {
       if (window.history.state && window.history.state.back) {
@@ -533,15 +489,10 @@ export default {
       contract,
       extraFees,
       loading,
-      isEditMode,
-      numberOfTenants,
-      saving,
       formatMoney,
       formatDate,
       formatWaterBillingType,
       docTienBangChu,
-      toggleEditMode,
-      submitEdit,
       goBack,
       terminateContract,
       printContract,
