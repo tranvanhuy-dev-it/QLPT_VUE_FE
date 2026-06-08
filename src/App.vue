@@ -6,8 +6,13 @@
     <Sidebar />
     <div class="flex flex-col flex-1 min-w-0">
       <Header />
-      <main class="flex-1 p-0 overflow-y-auto">
-        <router-view />
+      <main class="flex-1 p-0 overflow-y-auto flex flex-col justify-between">
+        <div class="flex-grow">
+          <router-view />
+        </div>
+        <footer class="py-3 text-center text-xs text-text-sub border-t border-border-main/50 bg-card/60 backdrop-blur-xs shrink-0">
+          © 2026 Nhà Trọ Thông Minh. Hệ thống đang trong quá trình phát triển & thử nghiệm.
+        </footer>
       </main>
     </div>
   </div>
