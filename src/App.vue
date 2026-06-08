@@ -8,7 +8,7 @@
       <Header />
       <main
         ref="mainRef"
-        class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative"
+        class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative pb-[calc(3.5rem+env(safe-area-inset-bottom))] lg:pb-0"
         @touchstart.passive="onTouchStart"
         @touchmove.passive="onTouchMove"
         @touchend="onTouchEnd"
@@ -47,6 +47,8 @@
     </div>
   </div>
 
+  <BottomBar />
+
   <!-- Global Glassmorphic Loading Overlay for Saving/Submitting (POST/PUT/DELETE) -->
   <div v-if="isApiSaving" class="fixed inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-[2px] z-[9999] flex flex-col items-center justify-center transition-all duration-300">
     <div class="bg-card border border-border-main p-6 rounded-2xl shadow-xl flex flex-col items-center space-y-4 max-w-[280px]">
@@ -64,6 +66,7 @@ import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import Sidebar from './components/layout/Sidebar.vue';
 import Header from './components/layout/Header.vue';
+import BottomBar from './components/layout/BottomBar.vue';
 import { isApiSaving } from './services/api';
 import { useAuthStore, isTokenExpired } from './stores/auth.js';
 
@@ -72,6 +75,7 @@ export default {
   components: {
     Sidebar,
     Header,
+    BottomBar,
   },
   setup() {
     const route = useRoute();
