@@ -66,7 +66,7 @@
         <!-- Dropdown Popover -->
         <div 
           v-if="showNotificationsDropdown" 
-          class="absolute right-0 top-12 w-80 sm:w-96 bg-card border border-border-main rounded-2xl shadow-xl py-3 z-50 text-xs mt-1 animate-in fade-in slide-in-from-top-2 duration-150"
+          class="fixed sm:absolute right-4 sm:right-0 left-4 sm:left-auto top-16 sm:top-12 w-auto sm:w-96 bg-card border border-border-main rounded-2xl shadow-xl py-3 z-50 text-xs mt-1 animate-in fade-in slide-in-from-top-2 duration-150"
         >
           <!-- Header -->
           <div class="px-4 pb-2 border-b border-border-main flex items-center justify-between">
@@ -101,7 +101,7 @@
                 v-for="notif in notifications" 
                 :key="notif.id"
                 @click="handleNotificationClick(notif)"
-                class="px-4 py-3 flex gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors relative"
+                class="px-3 sm:px-4 py-2.5 sm:py-3 flex gap-2.5 sm:gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors relative"
                 :class="{'bg-primary/5 dark:bg-primary/5': !notif.isRead}"
               >
                 <!-- Icon based on type -->

@@ -14,6 +14,7 @@ import { useTenantStore } from '../../stores/tenant.js';
 import contractService from '../../services/contractService.js';
 import { validateDateRange } from '../../utils/validation.js';
 import { useConfirmModal } from '../../composables/useConfirmModal.js';
+import { useAuthStore } from '../../stores/auth.js';
 
 export default {
   name: 'Contracts',
@@ -29,6 +30,8 @@ export default {
   },
   setup() {
     const router = useRouter();
+    const authStore = useAuthStore();
+    const isLandlord = computed(() => authStore.role === 'LANDLORD');
     const { confirmModal, showAlert, showConfirm, onConfirmModal, closeConfirmModal } = useConfirmModal();
     const contractIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`;
     
@@ -239,11 +242,14 @@ export default {
 
     onMounted(() => {
       fetchContracts();
-      fetchVacantRooms();
-      fetchTenants();
+      if (isLandlord.value) {
+        fetchVacantRooms();
+        fetchTenants();
+      }
     });
 
     return {
+      isLandlord,
       contractIcon,
       contracts,
       filteredContracts,

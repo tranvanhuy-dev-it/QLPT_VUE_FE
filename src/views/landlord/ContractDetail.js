@@ -15,6 +15,7 @@ import AddendumPrint from '../../components/document/AddendumPrint.vue';
 import contractService from '../../services/contractService.js';
 import { validateDateRange } from '../../utils/validation.js';
 import { useConfirmModal } from '../../composables/useConfirmModal.js';
+import { useAuthStore } from '../../stores/auth.js';
 
 export default {
   name: 'ContractDetail',
@@ -35,6 +36,8 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const contractStore = useContractStore();
+    const authStore = useAuthStore();
+    const isLandlord = computed(() => authStore.role === 'LANDLORD');
     const { confirmModal, showAlert, showConfirm, onConfirmModal, closeConfirmModal } = useConfirmModal();
 
     const contract = computed(() => contractStore.currentContract);
@@ -510,6 +513,7 @@ export default {
     };
 
     return {
+      isLandlord,
       contract,
       extraFees,
       loading,

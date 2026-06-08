@@ -2,7 +2,7 @@
   <div class="p-4 bg-bg-main min-h-full">
     <PageHeader title="Hợp Đồng Thuê"
       subtitle="Quản lý hợp đồng cho thuê phòng, cấu hình phụ phí dịch vụ riêng biệt cho từng người ở"
-      :icon="contractIcon" :showAdd="true" addText="Thêm"
+      :icon="contractIcon" :showAdd="isLandlord" addText="Thêm"
       :disableAdd="vacantRooms.length === 0 || tenantsList.length === 0"
       searchPlaceholder="Tìm theo phòng, dãy trọ, khách thuê..." v-model="searchQuery" @add-click="openAddModal" />
 
