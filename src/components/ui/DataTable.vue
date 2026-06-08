@@ -44,12 +44,12 @@
         <div 
           v-for="(item, index) in items" 
           :key="item.id || index" 
-          class="bg-card border border-border-main/50 rounded-2xl p-3.5 flex flex-col gap-2.5 shadow-xs hover:border-primary/20 transition-all duration-150 relative min-w-0"
+          class="bg-card border border-border-main/50 rounded-2xl p-3 flex flex-col gap-1.5 shadow-xs hover:border-primary/20 transition-all duration-150 relative min-w-0"
           :class="{'cursor-pointer active:scale-[0.99]': clickable}"
           @click="onRowClick(item)"
         >
           <!-- Top Row: Title, Subtitle and Status Badge -->
-          <div class="flex flex-col gap-1.5 relative">
+          <div class="flex flex-col gap-0.5 relative">
             <div class="flex justify-between items-start gap-2">
               <!-- Primary Title (Header 0) -->
               <h4 v-if="mobileTitleHeader" class="text-xs font-bold text-text-main truncate max-w-[70%]">
@@ -78,7 +78,7 @@
           <div v-if="mobileGridHeaders.length > 0" class="border-t border-border-main/10"></div>
 
           <!-- Stacked details (1 column of key-value rows) -->
-          <div v-if="mobileGridHeaders.length > 0" class="flex flex-col gap-2">
+          <div v-if="mobileGridHeaders.length > 0" class="flex flex-col gap-1">
             <div 
               v-for="header in mobileGridHeaders" 
               :key="header.key" 
