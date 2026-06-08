@@ -1,4 +1,5 @@
 import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import PageHeader from '../../components/PageHeader.vue';
 import DataTable from '../../components/DataTable.vue';
 import Modal from '../../components/Modal.vue';
@@ -17,6 +18,7 @@ export default {
     FormButton,
   },
   setup() {
+    const router = useRouter();
     const tenantIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
     
     const tableHeaders = [
@@ -37,7 +39,7 @@ export default {
           INACTIVE: 'Tạm khóa',
         },
       },
-      { label: 'Thao tác', key: 'actions', align: 'center', cellClass: 'w-[120px]' }
+      { label: 'Thao tác', key: 'actions', align: 'center', cellClass: 'w-[100px]' }
     ];
     const tenantStore = useTenantStore();
 
@@ -134,15 +136,8 @@ export default {
       };
     };
 
-    const toggleTenantStatus = async (tenant) => {
-      const action = tenant.status === 'ACTIVE' ? 'khóa' : 'mở khóa';
-      if (confirm(`Bạn có chắc chắn muốn ${action} tài khoản này?`)) {
-        try {
-          await tenantStore.toggleTenantStatus(tenant.id);
-        } catch (err) {
-          alert(err.response?.data?.error || `Thay đổi trạng thái tài khoản thất bại`);
-        }
-      }
+    const viewDetail = (tenant) => {
+      router.push(`/landlord/tenants/${tenant.id}`);
     };
 
     onMounted(() => {
@@ -164,7 +159,7 @@ export default {
       changePage,
       closeModal,
       tableHeaders,
-      toggleTenantStatus,
+      viewDetail,
     };
   },
 };

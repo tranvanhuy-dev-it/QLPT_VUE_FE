@@ -47,7 +47,7 @@
       <!-- Theme Toggle -->
       <button 
         @click="toggleTheme" 
-        class="bg-transparent border-0 text-text-sub cursor-pointer p-1.5 flex items-center justify-center transition-all duration-150 hover:bg-slate-100 hover:text-text-main rounded-lg"
+        class="bg-transparent border-0 text-text-sub cursor-pointer p-1.5 flex items-center justify-center transition-all duration-150 hover:bg-slate-100 hover:text-text-main rounded-lg cursor-pointer"
         :title="theme === 'dark' ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối'"
       >
         <!-- Sun icon (shown in dark mode) -->
@@ -60,24 +60,130 @@
         </svg>
       </button>
       
-      <!-- Profile & Logout -->
-      <div class="flex items-center gap-2 sm:gap-3 border-l border-border-main pl-2 sm:pl-4">
-        <div class="w-8 h-8 rounded-full bg-sky-100 text-primary flex items-center justify-center font-bold text-[0.85rem] shrink-0 border border-primary/20">
-          <span>{{ userInitial }}</span>
-        </div>
-        <div class="flex flex-col hidden sm:flex max-w-[100px]">
-          <span class="text-[0.85rem] font-semibold text-text-main truncate">{{ username }}</span>
-          <span class="text-[0.7rem] text-text-sub uppercase font-semibold truncate">{{ roleLabel }}</span>
-        </div>
-        <button class="bg-transparent border-0 text-text-sub cursor-pointer p-1.5 flex items-center justify-center transition-all duration-150 hover:bg-red-50 dark:hover:bg-red-950 hover:text-danger rounded-lg" @click="handleLogout" title="Đăng xuất">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-[1.15rem] h-[1.15rem]">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+      <!-- Profile Dropdown Container -->
+      <div class="relative profile-dropdown-container flex items-center border-l border-border-main pl-2 sm:pl-4">
+        <!-- Dropdown trigger -->
+        <div 
+          @click="showDropdown = !showDropdown" 
+          class="flex items-center gap-2 sm:gap-3 cursor-pointer py-1.5 px-2.5 hover:bg-slate-100 dark:hover:bg-slate-800/60 rounded-xl transition-all duration-150 select-none border border-transparent hover:border-border-main/50"
+        >
+          <div class="w-8 h-8 rounded-full bg-sky-100 text-primary flex items-center justify-center font-bold text-[0.85rem] shrink-0 border border-primary/20">
+            <span>{{ userInitial }}</span>
+          </div>
+          <div class="flex flex-col hidden sm:flex max-w-[110px] text-left">
+            <span class="text-[0.825rem] font-semibold text-text-main truncate leading-snug">{{ username }}</span>
+            <span class="text-[0.675rem] text-text-sub uppercase font-bold tracking-wide truncate mt-0.5">{{ roleLabel }}</span>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3 text-text-sub transition-transform duration-200" :class="{'rotate-180': showDropdown}">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
           </svg>
-        </button>
+        </div>
+
+        <!-- Dropdown Card -->
+        <div 
+          v-if="showDropdown" 
+          class="absolute right-0 top-12 w-48 bg-card border border-border-main rounded-xl shadow-lg py-1.5 z-50 text-xs mt-1 animate-in fade-in slide-in-from-top-2 duration-150"
+        >
+          <button @click="openProfileModal" class="w-full text-left px-4 py-2.5 text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-text-sub">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+            </svg>
+            <span class="font-medium">Thông tin cá nhân</span>
+          </button>
+          
+          <button @click="openPasswordModal" class="w-full text-left px-4 py-2.5 text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-text-sub">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+            </svg>
+            <span class="font-medium">Đổi mật khẩu</span>
+          </button>
+          
+          <div class="border-t border-border-main my-1"></div>
+          
+          <button @click="handleLogout" class="w-full text-left px-4 py-2.5 text-danger hover:bg-rose-50 dark:hover:bg-rose-950/20 transition cursor-pointer flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span class="font-bold">Đăng xuất</span>
+          </button>
+        </div>
       </div>
     </div>
+
+    <!-- MODAL 1: THÔNG TIN CÁ NHÂN -->
+    <Modal v-if="showProfileModal" title="Thông Tin Cá Nhân" maxWidth="sm" @close="showProfileModal = false">
+      <form @submit.prevent="saveProfile" class="space-y-4">
+        <div>
+          <FormInput
+            type="text"
+            label="Họ và tên"
+            v-model="profileForm.fullName"
+            placeholder="Nhập họ và tên của bạn"
+            required
+          />
+        </div>
+        <div>
+          <FormInput
+            type="email"
+            label="Địa chỉ Email"
+            v-model="profileForm.email"
+            placeholder="example@domain.com"
+          />
+        </div>
+        <div>
+          <FormInput
+            type="text"
+            label="Số điện thoại"
+            v-model="profileForm.phone"
+            placeholder="Nhập số điện thoại liên hệ"
+          />
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4 border-t border-border-main">
+          <FormButton type="button" variant="secondary" @click="showProfileModal = false">Đóng</FormButton>
+          <FormButton type="submit" variant="primary">Lưu thay đổi</FormButton>
+        </div>
+      </form>
+    </Modal>
+
+    <!-- MODAL 2: ĐỔI MẬT KHẨU -->
+    <Modal v-if="showPasswordModal" title="Đổi Mật Khẩu" maxWidth="sm" @close="showPasswordModal = false">
+      <form @submit.prevent="savePassword" class="space-y-4">
+        <div>
+          <FormInput
+            type="password"
+            label="Mật khẩu hiện tại"
+            v-model="passwordForm.oldPassword"
+            placeholder="Nhập mật khẩu hiện tại"
+            required
+          />
+        </div>
+        <div>
+          <FormInput
+            type="password"
+            label="Mật khẩu mới"
+            v-model="passwordForm.newPassword"
+            placeholder="Tối thiểu 6 ký tự"
+            required
+          />
+        </div>
+        <div>
+          <FormInput
+            type="password"
+            label="Xác nhận mật khẩu mới"
+            v-model="passwordForm.confirmPassword"
+            placeholder="Nhập lại mật khẩu mới"
+            required
+          />
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4 border-t border-border-main">
+          <FormButton type="button" variant="secondary" @click="showPasswordModal = false">Hủy</FormButton>
+          <FormButton type="submit" variant="primary">Đổi mật khẩu</FormButton>
+        </div>
+      </form>
+    </Modal>
   </header>
 </template>
 
 <script src="./Header.js"></script>
-

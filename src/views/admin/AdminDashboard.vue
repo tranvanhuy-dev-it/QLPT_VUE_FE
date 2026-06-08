@@ -41,12 +41,19 @@
                     {{ landlord.status === 'ACTIVE' ? 'Kích hoạt' : (landlord.status === 'PENDING' ? 'Chờ duyệt' : 'Bị Khóa') }}
                   </span>
                 </td>
-                <td class="py-3.5 px-4 text-right">
+                <td class="py-3.5 px-4 text-right flex justify-end gap-2">
                   <button 
                     @click="toggleStatus(landlord.id)" 
                     :class="['inline-flex items-center px-3 py-1 text-xs font-bold rounded-lg cursor-pointer transition-all duration-150', landlord.status === 'ACTIVE' ? 'bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200/30' : 'bg-indigo-600 text-white hover:bg-indigo-700']"
                   >
-                    {{ landlord.status === 'ACTIVE' ? 'Khóa tài khoản' : (landlord.status === 'PENDING' ? 'Duyệt tài khoản' : 'Kích hoạt lại') }}
+                    {{ landlord.status === 'ACTIVE' ? 'Khóa' : (landlord.status === 'PENDING' ? 'Duyệt' : 'Mở khóa') }}
+                  </button>
+                  <button 
+                    @click="resetPassword(landlord)"
+                    class="inline-flex items-center px-3 py-1 text-xs font-bold rounded-lg cursor-pointer transition-all duration-150 bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200/30"
+                    title="Đặt lại mật khẩu về số điện thoại của chủ trọ"
+                  >
+                    Reset MK
                   </button>
                 </td>
               </tr>

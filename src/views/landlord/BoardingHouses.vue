@@ -1,7 +1,7 @@
 <template>
   <div class="p-4 bg-bg-main min-h-full">
     <PageHeader title="Quản Lý Dãy Trọ" subtitle="Thêm mới và thiết lập đơn giá dịch vụ của từng khu nhà trọ"
-      :icon="houseIcon" :showAdd="true" addText="Thêm" :showSearch="false" @add-click="showAddModal = true" />
+      :icon="houseIcon" :showAdd="true" addText="Thêm" :showSearch="false" @add-click="openAddModal" />
 
     <!-- Grid of Boarding Houses -->
     <div v-if="loading" class="flex flex-col items-center justify-center py-12 gap-4 text-text-sub">
@@ -77,14 +77,14 @@
 
           <!-- Card Actions -->
           <div class="flex border-t border-border-main/50">
-            <FormButton variant="custom" @click="editHouse(house)"
+            <FormButton variant="custom" @click="goToDetail(house.id)"
               class="flex-1 py-2.5 text-xs font-semibold text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-150 flex items-center justify-center gap-1.5 border-r border-border-main/50 rounded-none">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                 class="w-3.5 h-3.5">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
               </svg>
-              Sửa
+              Chi tiết
             </FormButton>
             <FormButton variant="custom" @click="deleteHouse(house.id)"
               class="flex-1 py-2.5 text-xs font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all duration-150 flex items-center justify-center gap-1.5 rounded-none">
@@ -244,6 +244,167 @@
                 </svg>
               </FormButton>
             </div>
+          </div>
+        </div>
+
+        <!-- Cấu hình nội quy / quy định của dãy trọ -->
+        <div class="mt-6 pt-4 border-t border-border-main">
+          <div class="flex justify-between items-center mb-3">
+            <h4 class="text-sm font-bold text-text-main m-0">Nội Quy Dãy Trọ</h4>
+            <FormButton type="button" @click="showRuleBuilder = !showRuleBuilder" variant="secondary" size="sm" class="!px-2.5 !py-1 text-xs">
+              {{ showRuleBuilder ? 'Ẩn bộ tạo mẫu' : '🪄 Tạo nhanh theo mẫu' }}
+            </FormButton>
+          </div>
+
+          <!-- Quick rule template builder panel -->
+          <div v-if="showRuleBuilder" class="mb-4 p-4 bg-slate-50 dark:bg-slate-900 border border-border-main rounded-xl space-y-3 text-xs">
+            <div class="font-semibold text-text-main mb-2">Chọn các quy định & thiết lập thông số:</div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Curfew -->
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-2 font-medium text-text-main cursor-pointer">
+                  <input type="checkbox" v-model="ruleTemplate.enabledCurfew" class="rounded border-border-main text-primary focus:ring-primary/25" />
+                  <span>Giờ giới nghiêm (Curfew)</span>
+                </label>
+                <div v-if="ruleTemplate.enabledCurfew" class="flex gap-2 items-center pl-5 text-[11px] text-text-sub">
+                  <span>Khóa cổng từ</span>
+                  <input type="text" v-model="ruleTemplate.curfewStart" class="w-14 px-1.5 py-0.5 border border-border-main bg-card text-text-main rounded text-center" />
+                  <span>đến</span>
+                  <input type="text" v-model="ruleTemplate.curfewEnd" class="w-14 px-1.5 py-0.5 border border-border-main bg-card text-text-main rounded text-center" />
+                </div>
+                <div v-if="ruleTemplate.enabledCurfew" class="pl-5">
+                  <label class="flex items-center gap-1.5 font-normal text-text-sub cursor-pointer text-[11px]">
+                    <input type="checkbox" v-model="ruleTemplate.selfUnlock" class="rounded border-border-main text-primary focus:ring-primary/25" />
+                    <span>Về trễ tự mở khóa (vân tay/khóa riêng)</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Drying area -->
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-2 font-medium text-text-main cursor-pointer">
+                  <input type="checkbox" v-model="ruleTemplate.enabledDryingArea" class="rounded border-border-main text-primary focus:ring-primary/25" />
+                  <span>Sân phơi đồ tự do</span>
+                </label>
+              </div>
+
+              <!-- Quiet hours -->
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-2 font-medium text-text-main cursor-pointer">
+                  <input type="checkbox" v-model="ruleTemplate.enabledNoised" class="rounded border-border-main text-primary focus:ring-primary/25" />
+                  <span>Hạn chế tiếng ồn</span>
+                </label>
+                <div v-if="ruleTemplate.enabledNoised" class="flex gap-2 items-center pl-5 text-[11px] text-text-sub">
+                  <span>Yêu cầu yên lặng sau</span>
+                  <input type="text" v-model="ruleTemplate.noisedStart" class="w-14 px-1.5 py-0.5 border border-border-main bg-card text-text-main rounded text-center" />
+                </div>
+              </div>
+
+              <!-- Overnight guests -->
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-2 font-medium text-text-main cursor-pointer">
+                  <input type="checkbox" v-model="ruleTemplate.enabledOvernight" class="rounded border-border-main text-primary focus:ring-primary/25" />
+                  <span>Khách ở qua đêm</span>
+                </label>
+                <div v-if="ruleTemplate.enabledOvernight" class="flex gap-1.5 items-center pl-5 text-[11px] text-text-sub">
+                  <span>Phí lưu trú</span>
+                  <input type="number" v-model="ruleTemplate.overnightFee" class="w-20 px-1.5 py-0.5 border border-border-main bg-card text-text-main rounded text-right" />
+                  <span>đ/đêm (0đ nếu miễn phí)</span>
+                </div>
+              </div>
+
+              <!-- Trash hours -->
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-2 font-medium text-text-main cursor-pointer">
+                  <input type="checkbox" v-model="ruleTemplate.enabledTrash" class="rounded border-border-main text-primary focus:ring-primary/25" />
+                  <span>Quy định đổ rác</span>
+                </label>
+                <div v-if="ruleTemplate.enabledTrash" class="flex gap-2 items-center pl-5 text-[11px] text-text-sub">
+                  <span>Đổ rác trước</span>
+                  <input type="text" v-model="ruleTemplate.trashTime" class="w-14 px-1.5 py-0.5 border border-border-main bg-card text-text-main rounded text-center" />
+                </div>
+              </div>
+
+              <!-- Pets policy -->
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-2 font-medium text-text-main cursor-pointer">
+                  <input type="checkbox" v-model="ruleTemplate.enabledPets" class="rounded border-border-main text-primary focus:ring-primary/25" />
+                  <span>Chính sách nuôi thú cưng</span>
+                </label>
+                <div v-if="ruleTemplate.enabledPets" class="pl-5 text-[11px]">
+                  <select v-model="ruleTemplate.petsPolicy" class="px-2 py-0.5 border border-border-main bg-card text-text-main rounded outline-none focus:border-primary">
+                    <option value="NO_PETS">Nghiêm cấm hoàn toàn</option>
+                    <option value="ALLOWED_CONDITIONAL">Cho phép (có điều kiện)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- PCCC -->
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-2 font-medium text-text-main cursor-pointer">
+                  <input type="checkbox" v-model="ruleTemplate.enabledPccc" class="rounded border-border-main text-primary focus:ring-primary/25" />
+                  <span>Tuân thủ an toàn PCCC</span>
+                </label>
+              </div>
+
+              <!-- Vehicles -->
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-2 font-medium text-text-main cursor-pointer">
+                  <input type="checkbox" v-model="ruleTemplate.enabledVehicle" class="rounded border-border-main text-primary focus:ring-primary/25" />
+                  <span>Đỗ xe đúng quy định</span>
+                </label>
+              </div>
+
+              <!-- Register temporary residence -->
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-2 font-medium text-text-main cursor-pointer">
+                  <input type="checkbox" v-model="ruleTemplate.enabledRegister" class="rounded border-border-main text-primary focus:ring-primary/25" />
+                  <span>Nghĩa vụ đăng ký tạm trú</span>
+                </label>
+              </div>
+
+              <!-- Illegal activities / Social evils -->
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-2 font-medium text-text-main cursor-pointer">
+                  <input type="checkbox" v-model="ruleTemplate.enabledSocialEvils" class="rounded border-border-main text-primary focus:ring-primary/25" />
+                  <span>Cấm tệ nạn xã hội (ma túy, cờ bạc...)</span>
+                </label>
+              </div>
+
+              <!-- Common hygiene -->
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-2 font-medium text-text-main cursor-pointer">
+                  <input type="checkbox" v-model="ruleTemplate.enabledCommonHygiene" class="rounded border-border-main text-primary focus:ring-primary/25" />
+                  <span>Giữ gìn vệ sinh khu vực chung</span>
+                </label>
+              </div>
+
+              <!-- Room equipments -->
+              <div class="space-y-1.5">
+                <label class="flex items-center gap-2 font-medium text-text-main cursor-pointer">
+                  <input type="checkbox" v-model="ruleTemplate.enabledRoomEquipments" class="rounded border-border-main text-primary focus:ring-primary/25" />
+                  <span>Bảo quản vật dụng trong phòng</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Apply button -->
+            <div class="flex justify-end pt-2 border-t border-border-main/40 mt-3">
+              <FormButton type="button" @click="applyRulesTemplate" variant="primary" size="sm" class="!px-3 !py-1 text-xs">
+                Áp dụng mẫu này
+              </FormButton>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="block text-xs font-semibold text-text-main mb-1.5">Các quy tắc ra vào, vệ sinh, PCCC...</label>
+            <textarea
+              v-model="form.rules"
+              rows="6"
+              placeholder="Nhập nội quy của dãy trọ tại đây..."
+              class="w-full px-3 py-2 text-xs border border-border-main bg-card text-text-main rounded-lg outline-none focus:border-primary focus:ring-1 focus:ring-primary/20"
+            ></textarea>
           </div>
         </div>
 

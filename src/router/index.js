@@ -39,6 +39,12 @@ const routes = [
     meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
   },
   {
+    path: '/landlord/boarding-houses/:id',
+    name: 'BoardingHouseDetail',
+    component: () => import('../views/landlord/BoardingHouseDetail.vue'),
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+  },
+  {
     path: '/landlord/rooms',
     name: 'Rooms',
     component: () => import('../views/landlord/Rooms.vue'),
@@ -81,6 +87,12 @@ const routes = [
     component: () => import('../views/landlord/Tenants.vue'),
     meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
   },
+  {
+    path: '/landlord/tenants/:id',
+    name: 'TenantDetail',
+    component: () => import('../views/landlord/TenantDetail.vue'),
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+  },
   // TENANT ROUTES
   {
     path: '/tenant',
@@ -92,6 +104,12 @@ const routes = [
     path: '/tenant/invoices/:id',
     name: 'TenantInvoiceDetail',
     component: () => import('../views/landlord/InvoiceDetail.vue'),
+    meta: { requiresAuth: true, requiresRole: 'TENANT' },
+  },
+  {
+    path: '/tenant/rules',
+    name: 'TenantRules',
+    component: () => import('../views/tenant/Rules.vue'),
     meta: { requiresAuth: true, requiresRole: 'TENANT' },
   },
 ];

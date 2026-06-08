@@ -23,6 +23,18 @@ export const useBoardingHouseStore = defineStore('boardingHouse', {
         this.loading = false;
       }
     },
+    async fetchBoardingHouseById(id) {
+      this.loading = true;
+      try {
+        const response = await boardingHouseService.getById(id);
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching boarding house by id:', error);
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
     async createBoardingHouse(data) {
       try {
         const response = await boardingHouseService.create(data);
