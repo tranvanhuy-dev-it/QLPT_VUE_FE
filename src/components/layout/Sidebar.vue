@@ -75,25 +75,7 @@
       </template>
     </nav>
 
-    <!-- Footer Profile -->
-    <div class="border-t border-border-main p-5 flex items-center gap-3 bg-slate-50 dark:bg-slate-900">
-      <div class="w-9 h-9 rounded-full bg-sky-100 text-primary flex items-center justify-center font-bold text-sm">
-        <span>{{ userInitial }}</span>
-      </div>
-      <div class="flex flex-col flex-1 min-w-0">
-        <div class="text-[0.85rem] font-semibold text-text-main truncate">{{ username || 'Chủ trọ' }}</div>
-        <div class="text-[0.7rem] text-text-sub uppercase font-semibold">{{ roleLabel }}</div>
-      </div>
-      <button
-        class="bg-transparent border-0 text-text-sub cursor-pointer p-1 rounded-md flex items-center justify-center transition-all duration-150 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-text-main"
-        title="Cài đặt tài khoản">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
-          class="w-[1.1rem] h-[1.1rem]">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
-        </svg>
-      </button>
-    </div>
+
   </aside>
 </template>
 

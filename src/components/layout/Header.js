@@ -238,6 +238,13 @@ export default {
       authStore.toggleSidebar();
     };
 
+    const role = computed(() => authStore.role);
+
+    const navigateToUpgrade = () => {
+      showDropdown.value = false;
+      router.push('/landlord/upgrade');
+    };
+
     const handleDocumentClick = (e) => {
       if (!e.target.closest('.profile-dropdown-container')) {
         showDropdown.value = false;
@@ -271,6 +278,8 @@ export default {
       toggleTheme,
       handleLogout,
       toggleSidebar,
+      role,
+      navigateToUpgrade,
       showDropdown,
       showProfileModal,
       showPasswordModal,
