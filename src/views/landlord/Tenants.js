@@ -5,6 +5,7 @@ import Modal from '../../components/Modal.vue';
 import FormInput from '../../components/FormInput.vue';
 import FormButton from '../../components/FormButton.vue';
 import { useTenantStore } from '../../stores/tenant.js';
+import { validateEmail, validatePhone, validatePastDate } from '../../utils/validation.js';
 
 export default {
   name: 'Tenants',
@@ -86,6 +87,21 @@ export default {
     });
 
     const createTenantAccount = async () => {
+      if (form.value.email && !validateEmail(form.value.email)) {
+        alert('Định dạng Email không hợp lệ.');
+        return;
+      }
+
+      if (form.value.phone && !validatePhone(form.value.phone)) {
+        alert('Định dạng số điện thoại không hợp lệ (yêu cầu từ 9-12 chữ số).');
+        return;
+      }
+
+      if (form.value.idCardIssueDate && !validatePastDate(form.value.idCardIssueDate)) {
+        alert('Ngày cấp CMND/CCCD phải ở trước ngày hiện tại.');
+        return;
+      }
+
       try {
         await tenantStore.createTenantAccount(form.value);
         alert('Tạo tài khoản người ở thành công!');

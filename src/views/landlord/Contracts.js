@@ -11,6 +11,7 @@ import { useContractStore } from '../../stores/contract.js';
 import { useRoomStore } from '../../stores/room.js';
 import { useTenantStore } from '../../stores/tenant.js';
 import contractService from '../../services/contractService.js';
+import { validateDateRange } from '../../utils/validation.js';
 
 export default {
   name: 'Contracts',
@@ -171,6 +172,10 @@ export default {
     };
 
     const saveContract = async () => {
+      if (form.value.endDate && !validateDateRange(form.value.startDate, form.value.endDate)) {
+        alert('Ngày bắt đầu thuê phải trước ngày kết thúc.');
+        return;
+      }
       try {
         const extraFeesPayload = availableExtraFees.value
           .filter(ef => ef.selected)

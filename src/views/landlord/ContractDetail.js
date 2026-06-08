@@ -7,6 +7,7 @@ import FormSelect from '../../components/FormSelect.vue';
 import Checkbox from '../../components/Checkbox.vue';
 import Modal from '../../components/Modal.vue';
 import contractService from '../../services/contractService.js';
+import { validateDateRange } from '../../utils/validation.js';
 
 export default {
   name: 'ContractDetail',
@@ -250,6 +251,10 @@ export default {
     };
 
     const saveAddendum = async () => {
+      if (contract.value && !validateDateRange(contract.value.startDate, addendumForm.value.startDate)) {
+        alert('Ngày hiệu lực của phụ lục không được trước ngày bắt đầu hợp đồng.');
+        return;
+      }
       savingAddendum.value = true;
       try {
         const extraFeesPayload = availableExtraFees.value
