@@ -5,7 +5,7 @@
       :key="tab.label"
       :to="tab.to"
       class="flex flex-col items-center justify-center flex-1 py-1 text-text-sub hover:text-primary transition-all duration-200 relative group min-w-0"
-      active-class="text-primary font-semibold"
+      :class="{ 'is-active text-primary font-semibold': isTabActive(tab) }"
     >
       <span class="w-5 h-5 mb-0.5 transition-transform duration-200 group-active:scale-90" v-html="tab.icon"></span>
       <span class="text-[0.55rem] sm:text-[0.6rem] tracking-tight truncate w-full text-center px-0.5">{{ tab.label }}</span>
@@ -18,11 +18,13 @@
 <script>
 import { computed } from 'vue';
 import { useAuthStore } from '../../stores/auth.js';
+import { useRoute } from 'vue-router';
 
 export default {
   name: 'BottomBar',
   setup() {
     const authStore = useAuthStore();
+    const route = useRoute();
 
     const role = computed(() => authStore.role);
     const isAuthenticated = computed(() => authStore.isAuthenticated);
@@ -113,10 +115,19 @@ export default {
       return [];
     });
 
+    const isTabActive = (tab) => {
+      const currentPath = route.path;
+      if (tab.to === '/landlord') return currentPath === '/landlord';
+      if (tab.to === '/tenant') return currentPath === '/tenant';
+      if (tab.to === '/admin') return currentPath === '/admin';
+      return currentPath.startsWith(tab.to);
+    };
+
     return {
       role,
       isAuthenticated,
-      currentTabs
+      currentTabs,
+      isTabActive
     };
   }
 };
@@ -136,12 +147,12 @@ export default {
   transform: translateY(-3px);
 }
 
-.router-link-active {
+.is-active {
   color: var(--primary-color) !important;
   transform: translateY(-5px);
 }
 
-.router-link-active .active-dot {
+.is-active .active-dot {
   opacity: 1;
   transform: scale(1) translateY(5px);
 }
