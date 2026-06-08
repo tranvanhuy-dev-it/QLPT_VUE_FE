@@ -12,7 +12,7 @@
       </nav>
 
       <!-- Mobile Brand Logo & Name (Shown on mobile/tablet, hidden on desktop) -->
-      <div class="flex lg:hidden items-center gap-2">
+      <div @click="goToOverview" class="flex lg:hidden items-center gap-2 cursor-pointer hover:opacity-90 active:scale-98 transition-all duration-100 select-none">
         <img src="/logo.ico" alt="Logo" class="w-7 h-7 rounded object-contain" />
         <span class="text-sm font-bold text-primary leading-tight">Nhà Trọ Thông Minh</span>
       </div>

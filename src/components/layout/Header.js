@@ -246,6 +246,18 @@ export default {
       router.push('/landlord/upgrade');
     };
 
+    const goToOverview = () => {
+      if (authStore.role === 'ADMIN') {
+        router.push('/admin');
+      } else if (authStore.role === 'LANDLORD') {
+        router.push('/landlord');
+      } else if (authStore.role === 'TENANT') {
+        router.push('/tenant');
+      } else {
+        router.push('/');
+      }
+    };
+
     const handleDocumentClick = (e) => {
       if (!e.target.closest('.profile-dropdown-container')) {
         showDropdown.value = false;
@@ -281,6 +293,7 @@ export default {
       toggleSidebar,
       role,
       navigateToUpgrade,
+      goToOverview,
       showDropdown,
       showProfileModal,
       showPasswordModal,
