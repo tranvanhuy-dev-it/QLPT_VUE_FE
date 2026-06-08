@@ -44,7 +44,7 @@
         <div 
           v-for="(item, index) in items" 
           :key="item.id || index" 
-          class="bg-card border border-border-main/50 rounded-2xl p-3 flex flex-col gap-1.5 shadow-xs hover:border-primary/20 transition-all duration-150 relative min-w-0"
+          class="bg-card border border-border-main/50 rounded-2xl py-2 px-3 flex flex-col gap-1 shadow-xs hover:border-primary/20 transition-all duration-150 relative min-w-0"
           :class="{'cursor-pointer active:scale-[0.99]': clickable}"
           @click="onRowClick(item)"
         >
@@ -52,22 +52,27 @@
           <div class="flex flex-col gap-0.5 relative">
             <div class="flex justify-between items-start gap-2">
               <!-- Primary Title (Header 0) -->
-              <h4 v-if="mobileTitleHeader" class="text-xs font-bold text-text-main truncate max-w-[70%]">
+              <h4 v-if="mobileTitleHeader" class="text-xs font-bold text-text-main truncate max-w-[70%] leading-tight">
                 <slot :name="`cell(${mobileTitleHeader.key.replace(/\./g, '_')})`" :item="item" :value="resolveKeyPath(item, mobileTitleHeader.key)">
                   {{ getFormattedValue(item, mobileTitleHeader) }}
                 </slot>
               </h4>
               <!-- Status Badge (Top Right) -->
-              <div v-if="mobileBadgeHeader" class="shrink-0">
+              <div v-if="mobileBadgeHeader" class="shrink-0 flex items-center">
                 <slot :name="`cell(${mobileBadgeHeader.key.replace(/\./g, '_')})`" :item="item" :value="resolveKeyPath(item, mobileBadgeHeader.key)">
-                  <span :class="['inline-flex items-center px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider', getBadgeClass(mobileBadgeHeader, resolveKeyPath(item, mobileBadgeHeader.key))]">
-                    {{ getBadgeLabel(mobileBadgeHeader, resolveKeyPath(item, mobileBadgeHeader.key)) }}
-                  </span>
+                  <template v-if="resolveKeyPath(item, mobileBadgeHeader.key) === 'VACANT' || resolveKeyPath(item, mobileBadgeHeader.key) === 'OCCUPIED'">
+                    <span class="w-2.5 h-2.5 rounded-full shrink-0 animate-pulse" :class="resolveKeyPath(item, mobileBadgeHeader.key) === 'VACANT' ? 'bg-emerald-500' : 'bg-rose-500'" :title="resolveKeyPath(item, mobileBadgeHeader.key) === 'VACANT' ? 'Còn trống' : 'Đang thuê'"></span>
+                  </template>
+                  <template v-else>
+                    <span :class="['inline-flex items-center px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider', getBadgeClass(mobileBadgeHeader, resolveKeyPath(item, mobileBadgeHeader.key))]">
+                      {{ getBadgeLabel(mobileBadgeHeader, resolveKeyPath(item, mobileBadgeHeader.key)) }}
+                    </span>
+                  </template>
                 </slot>
               </div>
             </div>
             <!-- Secondary Subtitle (Header 1) -->
-            <p v-if="mobileSubtitleHeader" class="text-[0.65rem] text-text-sub truncate font-medium">
+            <p v-if="mobileSubtitleHeader" class="text-[0.65rem] text-text-sub truncate font-medium leading-tight">
               <slot :name="`cell(${mobileSubtitleHeader.key.replace(/\./g, '_')})`" :item="item" :value="resolveKeyPath(item, mobileSubtitleHeader.key)">
                 {{ getFormattedValue(item, mobileSubtitleHeader) }}
               </slot>
@@ -78,11 +83,11 @@
           <div v-if="mobileGridHeaders.length > 0" class="border-t border-border-main/10"></div>
 
           <!-- Stacked details (1 column of key-value rows) -->
-          <div v-if="mobileGridHeaders.length > 0" class="flex flex-col gap-1">
+          <div v-if="mobileGridHeaders.length > 0" class="flex flex-col gap-0.5">
             <div 
               v-for="header in mobileGridHeaders" 
               :key="header.key" 
-              class="flex justify-between items-center gap-2 text-[0.7rem]"
+              class="flex justify-between items-center gap-2 text-[0.7rem] leading-tight py-0.5"
             >
               <span class="text-text-sub font-semibold shrink-0">{{ header.label }}</span>
               <span :class="['text-text-main font-bold truncate max-w-[65%] text-right', header.cellClass]">
