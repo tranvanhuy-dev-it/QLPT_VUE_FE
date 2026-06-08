@@ -39,7 +39,7 @@ export default {
     });
 
     const isLandlord = computed(() => authStore.role === 'LANDLORD');
-    const activeTab = ref('receipt'); // 'summary' or 'receipt'
+    const activeTab = ref('summary'); // 'summary' or 'receipt'
     const showPreviewModal = ref(false);
 
     const vietQrUrl = computed(() => {

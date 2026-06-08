@@ -125,6 +125,12 @@ const routes = [
     meta: { requiresAuth: true, requiresRole: 'TENANT' },
   },
   {
+    path: '/tenant/invoices',
+    name: 'TenantInvoices',
+    component: () => import('../views/tenant/TenantInvoices.vue'),
+    meta: { requiresAuth: true, requiresRole: 'TENANT' },
+  },
+  {
     path: '/tenant/invoices/:id',
     name: 'TenantInvoiceDetail',
     component: () => import('../views/landlord/InvoiceDetail.vue'),

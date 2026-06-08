@@ -194,7 +194,7 @@ export default {
         if (authStore.role === 'LANDLORD') {
           router.push('/landlord/invoices');
         } else if (authStore.role === 'TENANT') {
-          router.push('/tenant');
+          router.push('/tenant/invoices');
         }
       } else if (notif.type === 'CONTRACT_ACTIVE') {
         if (authStore.role === 'LANDLORD') {
