@@ -24,7 +24,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-[1.125rem] h-[1.125rem] text-text-sub" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        <input type="text" class="w-full pl-9 pr-4 py-2 border border-border-main bg-slate-50 dark:bg-slate-900 text-text-main text-[0.85rem] outline-none transition-all duration-150 focus:bg-white focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,102,204,0.08)]" placeholder="Tìm kiếm nhanh..." />
+        <input type="text" class="w-full pl-9 pr-4 py-2 border border-border-main bg-slate-50 dark:bg-slate-900 text-text-main text-[0.85rem] outline-none transition-all duration-150 focus:bg-white focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,102,204,0.08)]" placeholder="Tìm kiếm..." />
       </div>
     </div>
     
