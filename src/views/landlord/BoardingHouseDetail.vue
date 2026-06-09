@@ -68,7 +68,7 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <FormInput type="number" label="Giá điện mặc định (đ/kWh)" v-model="form.defaultElectricityRate" min="0"
                   required />
@@ -81,6 +81,10 @@
                   <option value="BY_INDEX">Tính theo chỉ số đồng hồ (tiêu thụ thực tế)</option>
                   <option value="FIXED_PER_PERSON">Tính cố định theo đầu người (đ/người/tháng)</option>
                 </FormSelect>
+              </div>
+              <div>
+                <FormInput type="number" label="Ngày tính tiền cố định (1-31, để trống nếu tính theo ngày dọn vào)"
+                  v-model="form.fixedBillingDay" min="1" max="31" />
               </div>
             </div>
 
@@ -351,6 +355,12 @@
               <span class="text-text-sub">Đơn giá nước:</span>
               <span class="font-bold text-text-main text-primary">{{ formatMoney(house.defaultWaterRate) }} đ ({{
                 house.waterBillingType === 'BY_INDEX' ? 'Đồng hồ' : 'Đầu người' }})</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-border-main/40">
+              <span class="text-text-sub">Ngày chốt tiền:</span>
+              <span class="font-bold text-text-main text-primary">
+                {{ house.fixedBillingDay ? `Ngày ${house.fixedBillingDay} hàng tháng` : 'Theo ngày dọn vào' }}
+              </span>
             </div>
           </div>
         </div>

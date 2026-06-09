@@ -72,6 +72,7 @@ export default {
       bankAccountNumber: '',
       bankAccountName: '',
       rules: '',
+      fixedBillingDay: null,
       extraFees: [],
     });
 
@@ -131,6 +132,7 @@ export default {
         bankAccountNumber: house.bankAccountNumber || '',
         bankAccountName: house.bankAccountName || '',
         rules: house.rules || '',
+        fixedBillingDay: house.fixedBillingDay || null,
         extraFees: (house.extraFees || []).map(ef => ({
           id: ef.id,
           name: ef.name,
@@ -170,6 +172,7 @@ export default {
         bankAccountNumber: '',
         bankAccountName: '',
         rules: '',
+        fixedBillingDay: null,
         extraFees: [],
       };
     };

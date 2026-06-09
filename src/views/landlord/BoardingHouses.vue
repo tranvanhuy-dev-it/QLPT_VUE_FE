@@ -45,6 +45,14 @@
               </span>
               <span class="font-bold text-text-main">{{ formatMoney(house.defaultWaterRate) }} đ</span>
             </div>
+            <div class="flex items-center justify-between">
+              <span class="text-text-sub flex items-center gap-1.5">
+                Ngày chốt tiền
+              </span>
+              <span class="font-bold text-text-main">
+                {{ house.fixedBillingDay ? `Ngày ${house.fixedBillingDay} hàng tháng` : 'Theo ngày dọn vào' }}
+              </span>
+            </div>
 
             <!-- Extra fees preview -->
             <div v-if="house.extraFees && house.extraFees.length > 0" class="pt-2 border-t border-border-main/40">
@@ -138,6 +146,16 @@
             <option value="BY_INDEX">Tính theo chỉ số đồng hồ (tiêu thụ thực tế)</option>
             <option value="FIXED_PER_PERSON">Tính cố định theo đầu người (đ/người/tháng)</option>
           </FormSelect>
+        </div>
+
+        <div class="mb-4">
+          <FormInput
+            type="number"
+            label="Ngày tính tiền cố định hàng tháng (1-31, để trống nếu tính theo ngày dọn vào)"
+            v-model="form.fixedBillingDay"
+            min="1"
+            max="31"
+          />
         </div>
 
 

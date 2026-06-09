@@ -3,7 +3,16 @@
     <PageHeader title="Hóa Đơn & Thanh Toán"
       subtitle="Ghi chỉ số điện nước, lập hóa đơn phòng hàng tháng và theo dõi nợ" :icon="invoiceIcon" :showAdd="true"
       addText="Thêm" :disableAdd="activeContracts.length === 0"
-      searchPlaceholder="Tìm theo phòng, dãy trọ, khách thuê..." v-model="searchQuery" @add-click="openCreateModal" />
+      searchPlaceholder="Tìm theo phòng, dãy trọ, khách thuê..." v-model="searchQuery" @add-click="openCreateModal">
+      <template #custom-actions>
+        <button @click="openBulkModal" class="inline-flex items-center px-2.5 py-1.5 sm:px-3 sm:py-1.5 text-[10px] sm:text-xs font-bold bg-white dark:bg-slate-900 border border-border-main rounded-lg text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer gap-1.5 transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-text-sub" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6M9 16h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span>Ghi số điện nước</span>
+        </button>
+      </template>
+    </PageHeader>
 
     <!-- Invoices List -->
     <div class="bg-card border border-border-main rounded-2xl p-4 shadow-xs">
@@ -228,6 +237,158 @@
         <div class="flex gap-3 justify-end mt-4">
           <FormButton type="button" @click="closeModal" variant="secondary">Hủy</FormButton>
           <FormButton type="submit">Xác nhận</FormButton>
+        </div>
+      </form>
+    </Modal>
+
+    <!-- Bulk Meter Reading Modal -->
+    <Modal v-if="showBulkModal" title="Ghi Số Điện Nước Hàng Loạt" maxWidth="xl" @close="closeBulkModal">
+      <!-- Filters Section -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5 pb-4 border-b border-border-main">
+        <div>
+          <FormSelect
+            label="Chọn dãy trọ"
+            v-model="selectedBulkBoardingHouseId"
+            @change="onBulkBoardingHouseChange"
+            required
+          >
+            <option v-for="bh in boardingHouses" :key="bh.id" :value="bh.id">
+              {{ bh.name }}
+            </option>
+          </FormSelect>
+        </div>
+        <div>
+          <FormInput
+            type="month"
+            label="Tháng tính tiền"
+            v-model="bulkBillingMonth"
+            @change="adjustBulkDates"
+            required
+          />
+        </div>
+        <div>
+          <FormInput
+            type="date"
+            label="Ngày lập hóa đơn"
+            v-model="bulkInvoiceDate"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Loading / Empty States -->
+      <div v-if="isFetchingBulkStatus" class="flex flex-col items-center justify-center py-12 gap-3">
+        <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <div class="text-text-sub text-xs">Đang tải danh sách phòng...</div>
+      </div>
+
+      <div v-else-if="bulkRooms.length === 0" class="text-center py-12 text-text-sub text-xs italic">
+        Không có phòng nào đang thuê hoạt động trong dãy trọ này.
+      </div>
+
+      <!-- Bulk Reading Form Table -->
+      <form v-else @submit.prevent="saveBulkInvoices">
+        <div class="overflow-x-auto max-h-[50vh] border border-border-main rounded-xl mb-5">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 dark:bg-slate-900/60 border-b border-border-main text-text-sub font-semibold">
+                <th class="p-3">Phòng</th>
+                <th class="p-3">Điện (kWh)</th>
+                <th class="p-3">Nước (m³)</th>
+                <th class="p-3 min-w-[280px]">Kỳ thanh toán</th>
+                <th class="p-3 w-28 text-right">Giảm giá (đ)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-border-main/50">
+              <tr v-for="room in bulkRooms" :key="room.roomId" class="hover:bg-slate-50/40 dark:hover:bg-slate-900/20">
+                <!-- Room & Tenant -->
+                <td class="p-3 align-middle">
+                  <span class="font-bold text-primary block">Phòng {{ room.roomNumber }}</span>
+                  <span class="text-[10px] text-text-sub block max-w-[120px] truncate" :title="room.tenantName">
+                    {{ room.tenantName }}
+                  </span>
+                </td>
+
+                <!-- Electricity Indices -->
+                <td class="p-3 align-middle">
+                  <div class="flex flex-col gap-1">
+                    <span class="text-[10px] text-text-sub">Cũ: <strong class="text-text-main">{{ room.currentElectricityIndex }}</strong></span>
+                    <input
+                      type="number"
+                      v-model.number="room.newElectricityIndex"
+                      min="0"
+                      class="w-24 px-2 py-1 border border-border-main rounded bg-white dark:bg-slate-900 text-text-main outline-none focus:border-primary font-semibold text-xs"
+                      placeholder="Mới"
+                      required
+                    />
+                  </div>
+                </td>
+
+                <!-- Water Indices -->
+                <td class="p-3 align-middle">
+                  <div v-if="room.waterBillingType === 'BY_INDEX'" class="flex flex-col gap-1">
+                    <span class="text-[10px] text-text-sub">Cũ: <strong class="text-text-main">{{ room.currentWaterIndex }}</strong></span>
+                    <input
+                      type="number"
+                      v-model.number="room.newWaterIndex"
+                      min="0"
+                      class="w-24 px-2 py-1 border border-border-main rounded bg-white dark:bg-slate-900 text-text-main outline-none focus:border-primary font-semibold text-xs"
+                      placeholder="Mới"
+                      required
+                    />
+                  </div>
+                  <div v-else class="align-middle">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-text-sub">
+                      Cố định ({{ formatMoney(room.defaultWaterRate) }}đ)
+                    </span>
+                  </div>
+                </td>
+
+                <!-- Billing Period Dates -->
+                <td class="p-3 align-middle">
+                  <div class="flex items-center gap-1.5">
+                    <div class="flex-1">
+                      <input
+                        type="date"
+                        v-model="room.billingPeriodStart"
+                        class="w-full px-2 py-1 border border-border-main rounded bg-white dark:bg-slate-900 text-text-main outline-none focus:border-primary text-xs"
+                        required
+                      />
+                    </div>
+                    <span class="text-text-sub text-[10px]">➜</span>
+                    <div class="flex-1">
+                      <input
+                        type="date"
+                        v-model="room.billingPeriodEnd"
+                        class="w-full px-2 py-1 border border-border-main rounded bg-white dark:bg-slate-900 text-text-main outline-none focus:border-primary text-xs"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <!-- Mini indicator if fixed day is used -->
+                  <div v-if="room.fixedBillingDay" class="text-[9px] text-text-sub mt-1">
+                    💡 Ngày cố định: ngày {{ room.fixedBillingDay }}
+                  </div>
+                </td>
+
+                <!-- Discount -->
+                <td class="p-3 align-middle text-right">
+                  <input
+                    type="number"
+                    v-model.number="room.discount"
+                    min="0"
+                    class="w-24 px-2 py-1 border border-border-main rounded bg-white dark:bg-slate-900 text-text-main outline-none focus:border-primary text-xs text-right font-semibold"
+                    placeholder="Giảm giá"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="flex gap-3 justify-end mt-4">
+          <FormButton type="button" @click="closeBulkModal" variant="secondary" :disabled="isSavingBulk">Hủy</FormButton>
+          <FormButton type="submit" :loading="isSavingBulk">Lập hóa đơn hàng loạt</FormButton>
         </div>
       </form>
     </Modal>

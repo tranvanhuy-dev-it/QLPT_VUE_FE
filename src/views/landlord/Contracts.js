@@ -93,6 +93,7 @@ export default {
       deposit: 0,
       contractedRoomPrice: 0,
       numberOfTenants: 1,
+      fixedBillingDay: null,
     });
 
     const formatMoney = (amount) => {
@@ -152,6 +153,7 @@ export default {
       if (selectedRoom) {
         form.value.contractedRoomPrice = selectedRoom.basePrice;
         form.value.deposit = selectedRoom.basePrice;
+        form.value.fixedBillingDay = selectedRoom.boardingHouse?.fixedBillingDay || null;
         
         try {
           const response = await contractService.getBoardingHouseExtraFees(selectedRoom.boardingHouse.id);
@@ -230,6 +232,7 @@ export default {
         deposit: 0,
         contractedRoomPrice: 0,
         numberOfTenants: 1,
+        fixedBillingDay: null,
       };
     };
 

@@ -130,7 +130,7 @@
         </div>
 
         <!-- Ngày thuê và Chu kỳ tính tiền -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
           <div>
             <FormInput
               type="date"
@@ -145,6 +145,17 @@
               type="date"
               label="Ngày hết hạn (Nếu có)"
               v-model="form.endDate"
+            />
+          </div>
+
+          <div>
+            <FormInput
+              type="number"
+              label="Ngày tính tiền cố định"
+              v-model="form.fixedBillingDay"
+              min="1"
+              max="31"
+              placeholder="Mặc định từ dãy trọ"
             />
           </div>
         </div>

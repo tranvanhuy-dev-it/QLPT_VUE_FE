@@ -15,5 +15,11 @@ export default {
   },
   pay(id, paidAmount) {
     return api.post(`/api/invoices/${id}/pay`, { paidAmount });
+  },
+  getBillingStatus(boardingHouseId) {
+    return api.get(`/api/invoices/boarding-houses/${boardingHouseId}/billing-status`);
+  },
+  createBulk(data) {
+    return api.post('/api/invoices/bulk', data);
   }
 };

@@ -97,6 +97,8 @@
             </DetailField>
             <DetailField label="Kỳ hạn tính tiền:" value="Thanh toán vào cuối tháng" layout="inline"
               value-class="font-semibold" />
+            <DetailField label="Ngày tính tiền cố định:" :value="contract.fixedBillingDay ? `Ngày ${contract.fixedBillingDay} hàng tháng` : 'Tính theo ngày dọn vào'" layout="inline"
+              value-class="font-semibold" />
           </div>
         </div>
 
