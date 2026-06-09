@@ -3,7 +3,7 @@
     <PageHeader title="Hợp Đồng Thuê"
       subtitle="Quản lý hợp đồng cho thuê phòng, cấu hình phụ phí dịch vụ riêng biệt cho từng người ở"
       :icon="contractIcon" :showAdd="isLandlord" addText="Thêm"
-      :disableAdd="vacantRooms.length === 0 || tenantsList.length === 0"
+      :disableAdd="false"
       searchPlaceholder="Tìm theo phòng, dãy trọ, khách thuê..." v-model="searchQuery" @add-click="openAddModal" />
 
     <!-- Contracts List -->
@@ -27,7 +27,33 @@
 
     <!-- Add Contract Modal -->
     <Modal v-if="showAddModal" title="Tạo Hợp Đồng Thuê Mới" maxWidth="lg" @close="closeModal">
-      <form @submit.prevent="saveContract">
+      <!-- Cảnh báo nếu thiếu phòng trống hoặc người thuê -->
+      <div v-if="vacantRooms.length === 0 || tenantsList.length === 0" class="p-6 text-center space-y-4">
+        <div class="w-12 h-12 bg-amber-50 dark:bg-amber-950/20 text-amber-500 border border-amber-200 dark:border-amber-900/50 rounded-full flex items-center justify-center mx-auto mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h3 class="text-sm sm:text-base font-bold text-text-main">Chưa Thể Tạo Hợp Đồng Mới</h3>
+        <p class="text-xs text-text-sub max-w-md mx-auto leading-relaxed">
+          Hợp đồng thuê phòng yêu cầu phải có ít nhất một **phòng trống** và một **tài khoản khách thuê** khả dụng (chưa có hợp đồng hoạt động).
+        </p>
+        <div class="flex flex-col gap-3 pt-2 max-w-sm mx-auto">
+          <div v-if="vacantRooms.length === 0" class="p-3 bg-slate-50 dark:bg-slate-900/40 border border-border-main rounded-xl flex items-center justify-between text-xs">
+            <span class="text-text-sub font-semibold">Không có phòng trống</span>
+            <FormButton @click="goToRooms" size="sm" variant="primary" class="!py-1.5 !px-3">Quản lý phòng</FormButton>
+          </div>
+          <div v-if="tenantsList.length === 0" class="p-3 bg-slate-50 dark:bg-slate-900/40 border border-border-main rounded-xl flex items-center justify-between text-xs">
+            <span class="text-text-sub font-semibold">Không có khách thuê khả dụng</span>
+            <FormButton @click="goToTenants" size="sm" variant="primary" class="!py-1.5 !px-3">Thêm khách thuê</FormButton>
+          </div>
+        </div>
+        <div class="pt-4 border-t border-border-main/50">
+          <FormButton type="button" @click="closeModal" variant="secondary">Quay lại</FormButton>
+        </div>
+      </div>
+
+      <form v-else @submit.prevent="saveContract">
         <!-- Chọn phòng và người ở -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>

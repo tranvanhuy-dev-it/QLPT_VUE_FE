@@ -1,23 +1,23 @@
-import { ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import PageHeader from '../../components/ui/PageHeader.vue';
-import DataTable from '../../components/ui/DataTable.vue';
-import Modal from '../../components/ui/Modal.vue';
-import Checkbox from '../../components/ui/Checkbox.vue';
-import FormInput from '../../components/ui/FormInput.vue';
-import FormSelect from '../../components/ui/FormSelect.vue';
-import FormButton from '../../components/ui/FormButton.vue';
-import ConfirmModal from '../../components/ui/ConfirmModal.vue';
-import { useContractStore } from '../../stores/contract.js';
-import { useRoomStore } from '../../stores/room.js';
-import { useTenantStore } from '../../stores/tenant.js';
-import contractService from '../../services/contractService.js';
-import { validateDateRange } from '../../utils/validation.js';
-import { useConfirmModal } from '../../composables/useConfirmModal.js';
-import { useAuthStore } from '../../stores/auth.js';
+import { ref, onMounted, computed } from "vue";
+import { useRouter } from "vue-router";
+import PageHeader from "../../components/ui/PageHeader.vue";
+import DataTable from "../../components/ui/DataTable.vue";
+import Modal from "../../components/ui/Modal.vue";
+import Checkbox from "../../components/ui/Checkbox.vue";
+import FormInput from "../../components/ui/FormInput.vue";
+import FormSelect from "../../components/ui/FormSelect.vue";
+import FormButton from "../../components/ui/FormButton.vue";
+import ConfirmModal from "../../components/ui/ConfirmModal.vue";
+import { useContractStore } from "../../stores/contract.js";
+import { useRoomStore } from "../../stores/room.js";
+import { useTenantStore } from "../../stores/tenant.js";
+import contractService from "../../services/contractService.js";
+import { validateDateRange } from "../../utils/validation.js";
+import { useConfirmModal } from "../../composables/useConfirmModal.js";
+import { useAuthStore } from "../../stores/auth.js";
 
 export default {
-  name: 'Contracts',
+  name: "Contracts",
   components: {
     PageHeader,
     DataTable,
@@ -31,44 +31,75 @@ export default {
   setup() {
     const router = useRouter();
     const authStore = useAuthStore();
-    const isLandlord = computed(() => authStore.role === 'LANDLORD');
-    const { confirmModal, showAlert, showConfirm, onConfirmModal, closeConfirmModal } = useConfirmModal();
+    const isLandlord = computed(() => authStore.role === "LANDLORD");
+    const {
+      confirmModal,
+      showAlert,
+      showConfirm,
+      onConfirmModal,
+      closeConfirmModal,
+    } = useConfirmModal();
     const contractIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`;
-    
+
     const tableHeaders = [
-      { label: 'Phòng', key: 'room.roomNumber', prefix: 'Phòng ', cellClass: 'font-semibold text-primary' },
-      { label: 'Dãy trọ', key: 'room.boardingHouse.name', cellClass: 'text-text-sub' },
       {
-        label: 'Người thuê',
-        key: 'tenant.fullName',
-        formatter: (item) => `${item.tenant.fullName} (${item.tenant.username})`,
-        cellClass: 'font-medium text-text-main',
+        label: "Phòng",
+        key: "room.roomNumber",
+        prefix: "Phòng ",
+        cellClass: "font-semibold text-primary",
       },
-      { label: 'Ngày bắt đầu', key: 'startDate', type: 'date', cellClass: 'text-text-sub' },
-      { label: 'Tiền cọc', key: 'deposit', type: 'money', cellClass: 'font-semibold text-text-main' },
       {
-        label: 'Trạng thái',
-        key: 'status',
-        type: 'badge',
+        label: "Dãy trọ",
+        key: "room.boardingHouse.name",
+        cellClass: "text-text-sub",
+      },
+      {
+        label: "Người thuê",
+        key: "tenant.fullName",
+        formatter: (item) =>
+          `${item.tenant.fullName} (${item.tenant.username})`,
+        cellClass: "font-medium text-text-main",
+      },
+      {
+        label: "Ngày bắt đầu",
+        key: "startDate",
+        type: "date",
+        cellClass: "text-text-sub",
+      },
+      {
+        label: "Tiền cọc",
+        key: "deposit",
+        type: "money",
+        cellClass: "font-semibold text-text-main",
+      },
+      {
+        label: "Trạng thái",
+        key: "status",
+        type: "badge",
         badgeColors: {
-          ACTIVE: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/35 dark:text-emerald-400',
-          TERMINATED: 'bg-rose-50 text-rose-600 dark:bg-rose-950/35 dark:text-rose-400',
-          EXPIRED: 'bg-rose-50 text-rose-600 dark:bg-rose-950/35 dark:text-rose-400',
+          ACTIVE:
+            "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/35 dark:text-emerald-400",
+          TERMINATED:
+            "bg-rose-50 text-rose-600 dark:bg-rose-950/35 dark:text-rose-400",
+          EXPIRED:
+            "bg-rose-50 text-rose-600 dark:bg-rose-950/35 dark:text-rose-400",
         },
         badgeLabels: {
-          ACTIVE: 'Hoạt Động',
-          TERMINATED: 'Đã Thanh Lý',
-          EXPIRED: 'Hết Hạn',
+          ACTIVE: "Hoạt Động",
+          TERMINATED: "Đã Thanh Lý",
+          EXPIRED: "Hết Hạn",
         },
       },
     ];
-    
+
     const contractStore = useContractStore();
     const roomStore = useRoomStore();
     const tenantStore = useTenantStore();
 
     const contracts = computed(() => contractStore.contracts);
-    const loading = computed(() => contractStore.loading || roomStore.loading || tenantStore.loading);
+    const loading = computed(
+      () => contractStore.loading || roomStore.loading || tenantStore.loading,
+    );
     const totalPages = computed(() => contractStore.totalPages);
     const totalElements = computed(() => contractStore.totalElements);
 
@@ -77,7 +108,7 @@ export default {
     const availableExtraFees = ref([]);
 
     // Search
-    const searchQuery = ref('');
+    const searchQuery = ref("");
 
     // Pagination
     const page = ref(0);
@@ -86,10 +117,10 @@ export default {
     const showAddModal = ref(false);
 
     const form = ref({
-      roomId: '',
-      tenantId: '',
+      roomId: "",
+      tenantId: "",
       startDate: new Date().toISOString().substring(0, 10),
-      endDate: '',
+      endDate: "",
       deposit: 0,
       contractedRoomPrice: 0,
       numberOfTenants: 1,
@@ -97,73 +128,90 @@ export default {
     });
 
     const formatMoney = (amount) => {
-      if (amount === undefined || amount === null) return '0';
-      return Math.round(amount).toLocaleString('vi-VN');
+      if (amount === undefined || amount === null) return "0";
+      return Math.round(amount).toLocaleString("vi-VN");
     };
 
     const formatDate = (dateString) => {
-      if (!dateString) return '-';
+      if (!dateString) return "-";
       const d = new Date(dateString);
-      return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+      return `${d.getDate().toString().padStart(2, "0")}/${(d.getMonth() + 1).toString().padStart(2, "0")}/${d.getFullYear()}`;
     };
 
     const fetchContracts = async () => {
       try {
-        await contractStore.fetchContracts({ page: page.value, size: size.value });
+        await contractStore.fetchContracts({
+          page: page.value,
+          size: size.value,
+        });
       } catch (err) {
-        showAlert('Lỗi', err.response?.data?.error || 'Không thể tải danh sách hợp đồng', 'danger');
+        showAlert(
+          "Lỗi",
+          err.response?.data?.error || "Không thể tải danh sách hợp đồng",
+          "danger",
+        );
       }
     };
 
     const filteredContracts = computed(() => {
       if (!searchQuery.value) return contracts.value;
       const q = searchQuery.value.toLowerCase().trim();
-      return contracts.value.filter(contract => 
-        contract.tenant.fullName.toLowerCase().includes(q) ||
-        contract.tenant.username.toLowerCase().includes(q) ||
-        contract.room.roomNumber.toLowerCase().includes(q) ||
-        contract.room.boardingHouse.name.toLowerCase().includes(q)
+      return contracts.value.filter(
+        (contract) =>
+          contract.tenant.fullName.toLowerCase().includes(q) ||
+          contract.tenant.username.toLowerCase().includes(q) ||
+          contract.room.roomNumber.toLowerCase().includes(q) ||
+          contract.room.boardingHouse.name.toLowerCase().includes(q),
       );
     });
 
     const selectedRoom = computed(() => {
-      return vacantRooms.value.find(r => r.id === form.value.roomId) || null;
+      return vacantRooms.value.find((r) => r.id === form.value.roomId) || null;
     });
 
     const fetchVacantRooms = async () => {
       try {
         const list = await roomStore.fetchRooms({ size: 200 });
-        vacantRooms.value = list.filter(r => r.status === 'VACANT');
+        vacantRooms.value = list.filter((r) => r.status === "VACANT");
       } catch (err) {
-        console.error('Không tải được danh sách phòng trống:', err);
+        console.error("Không tải được danh sách phòng trống:", err);
       }
     };
 
     const fetchTenants = async () => {
       try {
-        const list = await tenantStore.fetchTenants({ size: 200, status: 'ACTIVE', availableOnly: true });
+        const list = await tenantStore.fetchTenants({
+          size: 200,
+          status: "ACTIVE",
+          availableOnly: true,
+        });
         tenantsList.value = list || [];
       } catch (err) {
-        console.error('Không tải được danh sách người thuê:', err);
+        console.error("Không tải được danh sách người thuê:", err);
       }
     };
 
     const onRoomChange = async () => {
-      const selectedRoom = vacantRooms.value.find(r => r.id === form.value.roomId);
+      const selectedRoom = vacantRooms.value.find(
+        (r) => r.id === form.value.roomId,
+      );
       if (selectedRoom) {
         form.value.contractedRoomPrice = selectedRoom.basePrice;
         form.value.deposit = selectedRoom.basePrice;
-        form.value.fixedBillingDay = selectedRoom.boardingHouse?.fixedBillingDay || null;
-        
+        form.value.fixedBillingDay =
+          selectedRoom.boardingHouse?.fixedBillingDay || null;
+
         try {
-          const response = await contractService.getBoardingHouseExtraFees(selectedRoom.boardingHouse.id);
-          availableExtraFees.value = (response.data || []).map(ef => ({
+          const response = await contractService.getBoardingHouseExtraFees(
+            selectedRoom.boardingHouse.id,
+          );
+          availableExtraFees.value = (response.data || []).map((ef) => ({
             ...ef,
             selected: true,
             customPrice: ef.defaultPrice,
           }));
         } catch (err) {
-          console.error('Không tải được dịch vụ dãy trọ:', err);
+          console.error("Không tải được dịch vụ dãy trọ:", err);
         }
       }
     };
@@ -181,14 +229,21 @@ export default {
     };
 
     const saveContract = async () => {
-      if (form.value.endDate && !validateDateRange(form.value.startDate, form.value.endDate)) {
-        showAlert('Lỗi nhập liệu', 'Ngày bắt đầu thuê phải trước ngày kết thúc.', 'warning');
+      if (
+        form.value.endDate &&
+        !validateDateRange(form.value.startDate, form.value.endDate)
+      ) {
+        showAlert(
+          "Lỗi nhập liệu",
+          "Ngày bắt đầu thuê phải trước ngày kết thúc.",
+          "warning",
+        );
         return;
       }
       try {
         const extraFeesPayload = availableExtraFees.value
-          .filter(ef => ef.selected)
-          .map(ef => ({
+          .filter((ef) => ef.selected)
+          .map((ef) => ({
             extraFeeId: ef.id,
             customPrice: ef.customPrice,
           }));
@@ -198,19 +253,25 @@ export default {
           extraFees: extraFeesPayload,
         };
 
-        if (payload.endDate === '') {
+        if (payload.endDate === "") {
           delete payload.endDate;
         }
 
         const createdContract = await contractStore.createContract(payload);
         closeModal();
-        const routeName = isLandlord.value ? 'ContractDetail' : 'TenantContractDetail';
+        const routeName = isLandlord.value
+          ? "ContractDetail"
+          : "TenantContractDetail";
         router.push({
           name: routeName,
-          params: { id: createdContract.id }
+          params: { id: createdContract.id },
         });
       } catch (err) {
-        showAlert('Lỗi', err.response?.data?.error || 'Tạo hợp đồng thất bại', 'danger');
+        showAlert(
+          "Lỗi",
+          err.response?.data?.error || "Tạo hợp đồng thất bại",
+          "danger",
+        );
       }
     };
 
@@ -225,10 +286,10 @@ export default {
       showAddModal.value = false;
       availableExtraFees.value = [];
       form.value = {
-        roomId: '',
-        tenantId: '',
+        roomId: "",
+        tenantId: "",
         startDate: new Date().toISOString().substring(0, 10),
-        endDate: '',
+        endDate: "",
         deposit: 0,
         contractedRoomPrice: 0,
         numberOfTenants: 1,
@@ -237,11 +298,13 @@ export default {
     };
 
     const viewContractDetail = (id, edit = false) => {
-      const routeName = isLandlord.value ? 'ContractDetail' : 'TenantContractDetail';
+      const routeName = isLandlord.value
+        ? "ContractDetail"
+        : "TenantContractDetail";
       router.push({
         name: routeName,
         params: { id },
-        query: edit ? { edit: 'true' } : {},
+        query: edit ? { edit: "true" } : {},
       });
     };
 

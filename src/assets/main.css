@@ -15,6 +15,12 @@
   --color-border-main: var(--border-color);
   --color-text-main: var(--text-primary);
   --color-text-sub: var(--text-secondary);
+  
+  --spacing-3: 0.625rem;
+  --spacing-4: 0.8125rem;
+  --spacing-5: 1.0625rem;
+  --spacing-6: 1.25rem;
+  --spacing-8: 1.75rem;
 }
 
 :root {
@@ -129,9 +135,9 @@
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: 1rem;
+  padding: 0.75rem;
   box-shadow: var(--shadow);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.375rem;
 }
 .card-title {
   font-size: 1.125rem;
@@ -142,7 +148,7 @@
 
 /* Forms */
 .form-group {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.375rem;
 }
 .form-label {
   display: block;
@@ -239,7 +245,7 @@
   border-bottom: 1px solid var(--border-color);
 }
 .table td {
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--border-color);
   font-size: 0.875rem;
   color: var(--text-primary);
@@ -466,4 +472,22 @@
 .dashboard-page .detail-card:first-child {
   border-right: 1px solid var(--border-color) !important;
 }
+
+/* Global Responsive Spacing Overrides to reduce spacing on mobile and desktop */
+.bg-bg-main {
+  padding: 0.625rem !important; /* 10px on mobile */
+}
+.bg-bg-main .bg-card {
+  padding: 0.75rem !important; /* 12px on mobile */
+}
+
+@media (min-width: 640px) {
+  .bg-bg-main {
+    padding: 1rem !important; /* 16px on desktop/tablet */
+  }
+  .bg-bg-main .bg-card {
+    padding: 1rem !important; /* 16px on desktop/tablet */
+  }
+}
+
 
