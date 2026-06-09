@@ -9,7 +9,7 @@
       <div 
         class="lg:hidden w-full shrink-0 transition-colors duration-150" 
         :class="hideHeaderOnMobile ? 'bg-bg-main' : 'bg-card border-b border-border-main/20'"
-        style="height: env(safe-area-inset-top, 20px);"
+        :style="{ height: hideHeaderOnMobile ? 'calc(env(safe-area-inset-top, 20px) + 12px)' : 'env(safe-area-inset-top, 20px)' }"
       ></div>
       <Header />
       <main
@@ -92,7 +92,7 @@ export default {
     const authStore = useAuthStore();
 
     const isGuest = computed(() => {
-      return !!(route.meta && route.meta.guestOnly);
+      return !authStore.isAuthenticated || !!(route.meta && route.meta.guestOnly);
     });
 
     const hideHeaderOnMobile = computed(() => {

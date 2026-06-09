@@ -172,6 +172,17 @@ const routes = [
     component: () => import('../views/tenant/Cameras.vue'),
     meta: { requiresAuth: true, requiresRole: 'TENANT' },
   },
+  {
+    path: '/contact',
+    name: 'Contact',
+    component: () => import('../views/Contact.vue'),
+    meta: { guestOnly: false },
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('../views/NotFound.vue'),
+  }
 ];
 
 const router = createRouter({
@@ -193,11 +204,8 @@ router.beforeEach((to, from) => {
     if (!authStore.isAuthenticated) {
       return { name: 'Login' };
     } else if (to.meta.requiresRole && authStore.role !== to.meta.requiresRole) {
-      // Role không khớp -> chuyển về trang chính tương ứng của role
-      if (authStore.role === 'ADMIN') return { name: 'AdminStats' };
-      else if (authStore.role === 'LANDLORD') return { name: 'LandlordDashboard' };
-      else if (authStore.role === 'TENANT') return { name: 'TenantDashboard' };
-      else return { name: 'Login' };
+      // Role không khớp -> chuyển về trang 404 (NotFound) để bảo mật phân quyền
+      return { name: 'NotFound' };
     } else {
       // Kiểm tra trạng thái hết hạn gói dịch vụ của chủ trọ
       if (authStore.role === 'LANDLORD' && authStore.user?.isExpired && to.name !== 'SubscriptionUpgrade') {

@@ -238,15 +238,14 @@
             <span>Hỗ trợ trực tiếp</span>
           </h4>
           <p class="text-[11px] leading-relaxed text-text-sub m-0">
-            Nếu có bất kỳ thắc mắc hoặc gặp sự cố về vấn đề thanh toán, vui lòng liên hệ Admin qua số điện thoại <strong>{{ adminBankInfo?.phone || '0365943254' }}</strong> hoặc chat Zalo để nhận trợ giúp nhanh nhất.
+            Nếu có bất kỳ thắc mắc hoặc gặp sự cố về vấn đề thanh toán, vui lòng gửi yêu cầu hỗ trợ trực tiếp đến bộ phận kỹ thuật thông qua trang liên hệ của chúng tôi.
           </p>
-          <a 
-            :href="'https://zalo.me/' + (adminBankInfo?.phone || '0365943254')" 
-            target="_blank"
+          <router-link 
+            to="/contact" 
             class="text-[11px] font-bold text-primary hover:underline flex items-center gap-1 mt-1"
           >
-            Liên hệ Zalo hỗ trợ &rarr;
-          </a>
+            Gửi yêu cầu liên hệ hỗ trợ &rarr;
+          </router-link>
         </div>
       </div>
     </div>

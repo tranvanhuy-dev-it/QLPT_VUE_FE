@@ -36,10 +36,11 @@
         <div style="font-weight: 700; color: var(--primary-color); text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.25rem; margin-bottom: 0.15rem;">
           <span>⚙️ THÔNG BÁO HỆ THỐNG</span>
         </div>
-        <span>Hệ thống hiện đang trong quá trình phát triển tích cực. Nếu gặp bất kỳ sự cố kỹ thuật nào hoặc muốn đóng góp ý kiến để hoàn thiện dịch vụ, xin vui lòng liên hệ qua:</span>
-        <div style="display: flex; justify-content: space-around; font-weight: 600; margin-top: 0.25rem; color: var(--primary-color);">
-          <a href="https://zalo.me/0365943254" target="_blank" style="text-decoration: none; display: flex; align-items: center; gap: 0.15rem;">💬 Zalo: 0365943254</a>
-          <a href="mailto:admin@gmail.com" style="text-decoration: none; display: flex; align-items: center; gap: 0.15rem;">✉️ Email: admin@gmail.com</a>
+        <span>Hệ thống hiện đang trong quá trình phát triển tích cực. Nếu gặp bất kỳ sự cố kỹ thuật nào hoặc muốn đóng góp ý kiến để hoàn thiện dịch vụ, xin vui lòng:</span>
+        <div style="text-align: center; font-weight: 700; margin-top: 0.35rem;">
+          <router-link to="/contact" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; color: var(--primary-color); padding: 0.25rem 0.75rem; border: 1px solid var(--primary-color); border-radius: 8px; background-color: var(--card-bg); transition: all 0.15s ease;">
+            ✉️ Liên hệ Hỗ trợ & Đóng góp ý kiến
+          </router-link>
         </div>
       </div>
     </div>
