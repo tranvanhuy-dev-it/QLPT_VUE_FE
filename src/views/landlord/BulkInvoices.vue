@@ -66,7 +66,8 @@
 
     <!-- Bulk Reading Form -->
     <form v-else @submit.prevent="saveBulkInvoices">
-      <div class="bg-card border border-border-main rounded-2xl p-4 shadow-xs mb-4">
+      <!-- Desktop Table View (hidden on mobile) -->
+      <div class="hidden md:block bg-card border border-border-main rounded-2xl p-4 shadow-xs mb-4">
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse text-xs">
             <thead>
@@ -163,6 +164,102 @@
               </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- Mobile Card List View (hidden on desktop) -->
+      <div class="md:hidden flex flex-col gap-4 mb-4">
+        <div v-for="room in visibleRooms" :key="room.roomId" class="bg-card border border-border-main rounded-2xl p-4 shadow-xs">
+          <!-- Room Info Header -->
+          <div class="flex justify-between items-center border-b border-border-main pb-2.5 mb-3">
+            <div>
+              <span class="font-extrabold text-sm text-primary">Phòng {{ room.roomNumber }}</span>
+              <span class="text-[11px] text-text-sub block mt-0.5">{{ room.tenantName }}</span>
+            </div>
+            <div v-if="room.fixedBillingDay" class="text-[10px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-0.5 rounded-md border border-amber-200/40 font-medium">
+              💡 Ngày cố định: {{ room.fixedBillingDay }}
+            </div>
+          </div>
+
+          <!-- Utility Readings & Inputs -->
+          <div class="grid grid-cols-2 gap-3 mb-3">
+            <!-- Electricity Input -->
+            <div class="bg-slate-50 dark:bg-slate-900/35 border border-border-main/40 rounded-xl p-2.5">
+              <span class="text-[10px] font-bold text-primary block mb-1">ĐIỆN (kWh)</span>
+              <div class="flex flex-col gap-1.5">
+                <span class="text-[10px] text-text-sub">Cũ: <strong class="text-text-main">{{ room.currentElectricityIndex }}</strong></span>
+                <input
+                  type="number"
+                  v-model.number="room.newElectricityIndex"
+                  min="0"
+                  class="w-full px-2 py-1.5 border border-border-main rounded-lg bg-white dark:bg-slate-900 text-text-main outline-none focus:border-primary font-bold text-xs"
+                  placeholder="Chỉ số mới"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Water Input -->
+            <div class="bg-slate-50 dark:bg-slate-900/35 border border-border-main/40 rounded-xl p-2.5">
+              <span class="text-[10px] font-bold text-blue-600 block mb-1">NƯỚC (m³)</span>
+              <div v-if="room.waterBillingType === 'BY_INDEX'" class="flex flex-col gap-1.5">
+                <span class="text-[10px] text-text-sub">Chỉ số cũ: <strong class="text-text-main">{{ room.currentWaterIndex }}</strong></span>
+                <input
+                  type="number"
+                  v-model.number="room.newWaterIndex"
+                  min="0"
+                  class="w-full px-2 py-1.5 border border-border-main rounded-lg bg-white dark:bg-slate-900 text-text-main outline-none focus:border-primary font-bold text-xs"
+                  placeholder="Chỉ số mới"
+                  required
+                />
+              </div>
+              <div v-else class="flex flex-col justify-center h-full pt-1">
+                <span class="inline-flex items-center px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-semibold text-text-sub">
+                  Cố định ({{ formatMoney(room.defaultWaterRate) }}đ)
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Billing Period & Discount -->
+          <div class="space-y-3 pt-2 border-t border-dashed border-border-main/50">
+            <!-- Period Inputs -->
+            <div>
+              <span class="text-[10px] font-bold text-text-sub uppercase tracking-wider block mb-1.5">Kỳ thanh toán</span>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="flex flex-col gap-1">
+                  <span class="text-[9px] text-text-sub">Từ ngày</span>
+                  <input
+                    type="date"
+                    v-model="room.billingPeriodStart"
+                    class="w-full px-2 py-1.5 border border-border-main rounded-lg bg-white dark:bg-slate-900 text-text-main outline-none focus:border-primary text-xs"
+                    required
+                  />
+                </div>
+                <div class="flex flex-col gap-1">
+                  <span class="text-[9px] text-text-sub">Đến ngày</span>
+                  <input
+                    type="date"
+                    v-model="room.billingPeriodEnd"
+                    class="w-full px-2 py-1.5 border border-border-main rounded-lg bg-white dark:bg-slate-900 text-text-main outline-none focus:border-primary text-xs"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Discount Input -->
+            <div class="flex items-center justify-between gap-4 pt-1">
+              <span class="text-[10px] font-bold text-text-sub uppercase tracking-wider">Số tiền giảm giá (đ)</span>
+              <input
+                type="number"
+                v-model.number="room.discount"
+                min="0"
+                class="w-32 px-2 py-1.5 border border-border-main rounded-lg bg-white dark:bg-slate-900 text-text-main outline-none focus:border-primary text-xs text-right font-bold"
+                placeholder="Giảm giá"
+              />
+            </div>
+          </div>
         </div>
       </div>
 
