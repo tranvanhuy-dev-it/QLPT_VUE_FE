@@ -1,4 +1,4 @@
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import PageHeader from "../../components/ui/PageHeader.vue";
 import DataTable from "../../components/ui/DataTable.vue";
@@ -188,63 +188,8 @@ export default {
             form.value.billingPeriodStart = selectedContract.value.startDate;
           }
 
-          // Calculate billingPeriodEnd based on fixedBillingDay or 1 month duration
-          const billingDay = selectedContract.value.fixedBillingDay;
-          if (billingDay && billingDay >= 1 && billingDay <= 31) {
-            const nextStart = new Date(form.value.billingPeriodStart);
-            
-            const today = new Date();
-            let endYear = today.getFullYear();
-            let endMonth = today.getMonth() + 1; // 1-12
-
-            const daysInMonth = new Date(endYear, endMonth, 0).getDate();
-            const targetDay = Math.min(billingDay, daysInMonth);
-            const billingDayCurrentMonth = new Date(endYear, endMonth - 1, targetDay);
-
-            // Set times to midnight to compare date only
-            billingDayCurrentMonth.setHours(0, 0, 0, 0);
-            const todayMidnight = new Date();
-            todayMidnight.setHours(0, 0, 0, 0);
-
-            if (todayMidnight > billingDayCurrentMonth) {
-              endMonth++;
-              if (endMonth > 12) {
-                endMonth = 1;
-                endYear++;
-              }
-            }
-
-            const daysInEndMonth = new Date(endYear, endMonth, 0).getDate();
-            const finalDay = Math.min(billingDay, daysInEndMonth);
-            let candidateEnd = new Date(endYear, endMonth - 1, finalDay);
-            candidateEnd.setHours(0, 0, 0, 0);
-
-            const nextStartMidnight = new Date(nextStart);
-            nextStartMidnight.setHours(0, 0, 0, 0);
-
-            // Ensure candidateEnd > nextStartMidnight
-            while (candidateEnd <= nextStartMidnight) {
-              endMonth++;
-              if (endMonth > 12) {
-                endMonth = 1;
-                endYear++;
-              }
-              const dInMonth = new Date(endYear, endMonth, 0).getDate();
-              const fDay = Math.min(billingDay, dInMonth);
-              candidateEnd = new Date(endYear, endMonth - 1, fDay);
-              candidateEnd.setHours(0, 0, 0, 0);
-            }
-
-            form.value.billingPeriodEnd = candidateEnd.toISOString().substring(0, 10);
-          } else {
-            const start = new Date(form.value.billingPeriodStart);
-            start.setMonth(start.getMonth() + 1);
-            start.setDate(start.getDate() - 1);
-            form.value.billingPeriodEnd = start.toISOString().substring(0, 10);
-          }
-
-          // Always set invoiceDate to billingPeriodEnd (end-of-month billing)
-          form.value.invoiceDate = form.value.billingPeriodEnd;
+          // Calculate billingPeriodEnd: "den ngay hien tai lap hoa don"
+          form.value.billingPeriodEnd = form.value.invoiceDate;
           form.value.newElectricityIndex = room.currentElectricityIndex;
           form.value.newWaterIndex = room.currentWaterIndex;
         }
@@ -469,6 +414,13 @@ export default {
         paidAmount: 0,
       };
     };
+
+    watch(
+      () => form.value.invoiceDate,
+      (newVal) => {
+        form.value.billingPeriodEnd = newVal;
+      }
+    );
 
     onMounted(async () => {
       fetchInvoices();

@@ -1,4 +1,4 @@
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import FormInput from "../../components/ui/FormInput.vue";
 import FormSelect from "../../components/ui/FormSelect.vue";
@@ -63,10 +63,9 @@ export default {
             newElectricityIndex: room.currentElectricityIndex,
             newWaterIndex: room.currentWaterIndex,
             billingPeriodStart: room.nextBillingPeriodStart,
-            billingPeriodEnd: room.nextBillingPeriodEnd,
+            billingPeriodEnd: bulkInvoiceDate.value,
             discount: 0,
           }));
-        adjustBulkDates();
       } catch (err) {
         showAlert('Lỗi', err.response?.data?.error || "Không thể tải trạng thái phòng của dãy trọ", 'danger');
       } finally {
@@ -75,42 +74,37 @@ export default {
     };
 
     const adjustBulkDates = () => {
-      if (!bulkBillingMonth.value || bulkRooms.value.length === 0) return;
-      const [yearStr, monthStr] = bulkBillingMonth.value.split('-');
-      const year = parseInt(yearStr);
-      const month = parseInt(monthStr);
-      const daysInMonth = new Date(year, month, 0).getDate();
-
+      if (bulkRooms.value.length === 0) return;
       bulkRooms.value.forEach(room => {
-        if (room.fixedBillingDay) {
-          const targetDay = Math.min(room.fixedBillingDay, daysInMonth);
-          const targetDateStr = `${year}-${monthStr}-${targetDay.toString().padStart(2, '0')}`;
-          
-          if (new Date(targetDateStr) > new Date(room.billingPeriodStart)) {
-            room.billingPeriodEnd = targetDateStr;
-          }
-        }
+        room.billingPeriodEnd = bulkInvoiceDate.value;
       });
     };
 
     const visibleRooms = computed(() => {
       if (!bulkRooms.value || bulkRooms.value.length === 0) return [];
       if (!bulkBillingMonth.value) return [];
-      
-      const [yearStr, monthStr] = bulkBillingMonth.value.split('-');
-      const year = parseInt(yearStr);
-      const month = parseInt(monthStr);
-      const lastDay = new Date(year, month, 0).getDate();
-      const endOfMonthStr = `${yearStr}-${monthStr}-${lastDay.toString().padStart(2, '0')}`;
 
       return bulkRooms.value.filter(room => {
-        // Condition 1: Not billed yet in this month (billingPeriodStart <= endOfMonthStr)
-        const isNotBilledYet = room.billingPeriodStart <= endOfMonthStr;
-        
-        // Condition 2: Billing period end (invoice date) is the current selected date
-        const isInvoiceDateCurrent = room.billingPeriodEnd === bulkInvoiceDate.value;
+        // Ensure the billing period start date is not in the future relative to the invoice date
+        const isNotFutureBilling = room.billingPeriodStart <= bulkInvoiceDate.value;
+        if (!isNotFutureBilling) return false;
 
-        return isNotBilledYet && isInvoiceDateCurrent;
+        // If contractStartDate matches nextBillingPeriodStart, never billed yet (always show)
+        if (room.contractStartDate && room.billingPeriodStart === room.contractStartDate) {
+          return true;
+        }
+
+        // If there was a previous invoice, its end date is billingPeriodStart - 1 day
+        const start = new Date(room.billingPeriodStart);
+        const lastEnd = new Date(start);
+        lastEnd.setDate(lastEnd.getDate() - 1);
+        
+        const lastEndYear = lastEnd.getFullYear();
+        const lastEndMonth = (lastEnd.getMonth() + 1).toString().padStart(2, '0');
+        const lastEndYearMonth = `${lastEndYear}-${lastEndMonth}`;
+        
+        const hasBilledInSelectedMonth = lastEndYearMonth === bulkBillingMonth.value;
+        return !hasBilledInSelectedMonth;
       });
     });
 
@@ -185,6 +179,10 @@ export default {
     const goBack = () => {
       router.push({ name: "Invoices" });
     };
+
+    watch(bulkInvoiceDate, () => {
+      adjustBulkDates();
+    });
 
     onMounted(async () => {
       await fetchBoardingHouses();
