@@ -56,7 +56,6 @@ export default {
 
     const invoiceStore = useInvoiceStore();
     const contractStore = useContractStore();
-    const boardingHouseStore = useBoardingHouseStore();
 
     const invoices = computed(() => invoiceStore.invoices);
     const loading = computed(
