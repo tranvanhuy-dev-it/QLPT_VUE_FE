@@ -35,6 +35,18 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9.75h4.875a2.625 2.625 0 010 5.25H12M8.25 9.75v5.25m0-5.25h-1.5m1.5 5.25h-1.5m1.5 0h8.25m-11.25-10.5h15a2.25 2.25 0 012.25 2.25v13.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V5.25A2.25 2.25 0 015.25 3z" />
         </svg>
       </button>
+      <!-- Mobile Camera Button (Hidden on desktop, shown on mobile for Landlord/Tenant) -->
+      <router-link 
+        v-if="role === 'LANDLORD' || role === 'TENANT'"
+        :to="role === 'LANDLORD' ? '/landlord/cameras' : '/tenant/cameras'"
+        class="lg:hidden text-text-sub cursor-pointer p-1.5 relative flex items-center justify-center transition-all duration-150 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-text-main rounded-lg" 
+        title="Hệ thống Camera"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        </svg>
+      </router-link>
+
       <!-- Notifications Dropdown Container -->
       <div class="relative notifications-dropdown-container flex items-center">
         <!-- Notification bell button -->

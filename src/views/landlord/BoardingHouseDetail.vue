@@ -24,31 +24,20 @@
             :class="['px-3.5 py-1.5 text-xs font-semibold rounded-md transition cursor-pointer', activeTab === 'rules' ? 'bg-white dark:bg-slate-800 text-primary shadow-xs' : 'text-text-sub hover:text-text-main']">
             Nội quy<span class="hidden sm:inline"> dãy trọ</span>
           </button>
-          <button type="button" @click="activeTab = 'camera'"
-            :class="['px-3.5 py-1.5 text-xs font-semibold rounded-md transition cursor-pointer', activeTab === 'camera' ? 'bg-white dark:bg-slate-800 text-primary shadow-xs' : 'text-text-sub hover:text-text-main']">
-            Camera IP
-          </button>
         </div>
 
         <!-- Action buttons on header -->
         <div class="flex items-center gap-1.5 shrink-0">
-          <FormButton v-if="activeTab === 'camera'" type="button" @click="openAddCameraModal" variant="primary" size="sm"
+          <FormButton type="button" @click="handleDelete" variant="danger" size="sm"
             class="!px-2.5 !py-1.5 flex items-center gap-1.5">
-            <AppIcon name="plus" class="!w-4 !h-4" />
-            <span>Thêm Camera</span>
+            <AppIcon name="trash" class="!w-4 !h-4" />
+            <span class="hidden sm:inline">Xóa dãy trọ</span>
           </FormButton>
-          <template v-else>
-            <FormButton type="button" @click="handleDelete" variant="danger" size="sm"
-              class="!px-2.5 !py-1.5 flex items-center gap-1.5">
-              <AppIcon name="trash" class="!w-4 !h-4" />
-              <span class="hidden sm:inline">Xóa dãy trọ</span>
-            </FormButton>
-            <FormButton type="button" @click="handleSave" variant="primary" size="sm"
-              class="!px-2.5 !py-1.5 flex items-center gap-1.5">
-              <AppIcon name="check-circle" class="!w-4 !h-4" />
-              <span class="hidden sm:inline">Lưu thay đổi</span>
-            </FormButton>
-          </template>
+          <FormButton type="button" @click="handleSave" variant="primary" size="sm"
+            class="!px-2.5 !py-1.5 flex items-center gap-1.5">
+            <AppIcon name="check-circle" class="!w-4 !h-4" />
+            <span class="hidden sm:inline">Lưu thay đổi</span>
+          </FormButton>
         </div>
       </div>
     </div>
@@ -59,7 +48,7 @@
     <!-- Main Content Area -->
     <div v-else-if="house">
       <!-- Info & Rules Tab Layout -->
-      <div v-if="activeTab !== 'camera'" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Left: Form Wrapper -->
       <div class="bg-card border border-border-main rounded-2xl p-6 shadow-xs lg:col-span-2">
         <form @submit.prevent="handleSave" class="flex flex-col gap-5">
@@ -392,89 +381,7 @@
         </div>
       </div>
       </div> <!-- Closes Info & Rules Tab Layout -->
-
-      <!-- Camera Tab Layout -->
-      <div v-else class="w-full">
-        <div v-if="loadingCameras" class="text-center py-12 text-text-sub text-xs">
-          <div class="w-6 h-6 border-3 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-          Đang tải danh sách camera...
-        </div>
-        
-        <div v-else-if="cameras.length === 0" class="text-center py-16 border border-dashed border-border-main rounded-2xl bg-card text-text-sub text-xs italic flex flex-col items-center justify-center gap-3">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-slate-300 dark:text-slate-700">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
-          </svg>
-          <span>Chưa có camera nào được cấu hình cho dãy trọ này.</span>
-          <FormButton type="button" @click="openAddCameraModal" variant="primary" size="sm">
-            + Thêm camera ngay
-          </FormButton>
-        </div>
-        
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <CameraPlayer v-for="cam in cameras" :key="cam.id" :camera="cam">
-            <template #actions>
-              <FormButton type="button" @click="openEditCameraModal(cam)" variant="primary" size="sm" class="!px-3 !py-1.5 !text-[11px] flex items-center gap-1">
-                <AppIcon name="edit" class="!w-3 !h-3" />
-                <span>Sửa</span>
-              </FormButton>
-              <FormButton type="button" @click="deleteCamera(cam)" variant="danger" size="sm" class="!px-3 !py-1.5 !text-[11px] flex items-center gap-1">
-                <AppIcon name="trash" class="!w-3 !h-3" />
-                <span>Xóa</span>
-              </FormButton>
-            </template>
-          </CameraPlayer>
-        </div>
-      </div>
-    </div>
-
-    <!-- CAMERA CONFIG MODAL -->
-    <Modal v-if="showCameraModal" :title="editingCamera ? 'Cập nhật Camera' : 'Thêm Camera mới'" maxWidth="md" @close="showCameraModal = false">
-      <form @submit.prevent="saveCamera" class="space-y-4">
-        <div>
-          <FormInput
-            type="text"
-            label="Tên vị trí Camera"
-            v-model="cameraForm.name"
-            placeholder="Ví dụ: Cổng chính, Nhà xe, Hành lang..."
-            required
-          />
-        </div>
-        <div>
-          <FormInput
-            type="text"
-            label="Đường dẫn luồng phát (HLS .m3u8 hoặc MJPEG .mjpg/.cgi)"
-            v-model="cameraForm.streamUrl"
-            placeholder="Ví dụ: http://192.168.1.50/stream.mjpg hoặc link cloud"
-            required
-          />
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <FormInput
-              type="text"
-              label="Tài khoản truy cập (nếu có)"
-              v-model="cameraForm.username"
-              placeholder="Username"
-            />
-          </div>
-          <div>
-            <FormInput
-              type="password"
-              label="Mật khẩu truy cập (nếu có)"
-              v-model="cameraForm.password"
-              placeholder="Password"
-            />
-          </div>
-        </div>
-
-        <div class="flex justify-end gap-3 pt-4 border-t border-border-main">
-          <FormButton type="button" variant="secondary" @click="showCameraModal = false">Hủy</FormButton>
-          <FormButton type="submit" :disabled="savingCamera">
-            {{ savingCamera ? 'Đang lưu...' : 'Xác nhận' }}
-          </FormButton>
-        </div>
-      </form>
-    </Modal>
+    </div> <!-- Closes house container -->
 
     <!-- CONFIRM MODAL -->
     <ConfirmModal :show="confirmModal.show" :title="confirmModal.title" :message="confirmModal.message"

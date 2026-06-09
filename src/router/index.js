@@ -63,6 +63,12 @@ const routes = [
     meta: { requiresAuth: true, requiresRole: 'LANDLORD', hideHeaderOnMobile: true },
   },
   {
+    path: '/landlord/cameras',
+    name: 'Cameras',
+    component: () => import('../views/landlord/Cameras.vue'),
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+  },
+  {
     path: '/landlord/rooms',
     name: 'Rooms',
     component: () => import('../views/landlord/Rooms.vue'),
@@ -160,6 +166,12 @@ const routes = [
     component: () => import('../views/tenant/Rules.vue'),
     meta: { requiresAuth: true, requiresRole: 'TENANT' },
   },
+  {
+    path: '/tenant/cameras',
+    name: 'TenantCameras',
+    component: () => import('../views/tenant/Cameras.vue'),
+    meta: { requiresAuth: true, requiresRole: 'TENANT' },
+  },
 ];
 
 const router = createRouter({
@@ -168,7 +180,7 @@ const router = createRouter({
 });
 
 // Navigation Guards: Bảo mật trang theo vai trò (Role-based Authorization)
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
   const authStore = useAuthStore();
 
   // Tự động đăng xuất nếu token đã hết hạn
@@ -179,19 +191,19 @@ router.beforeEach((to, from, next) => {
   // Route yêu cầu xác thực
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!authStore.isAuthenticated) {
-      next({ name: 'Login' });
+      return { name: 'Login' };
     } else if (to.meta.requiresRole && authStore.role !== to.meta.requiresRole) {
       // Role không khớp -> chuyển về trang chính tương ứng của role
-      if (authStore.role === 'ADMIN') next({ name: 'AdminStats' });
-      else if (authStore.role === 'LANDLORD') next({ name: 'LandlordDashboard' });
-      else if (authStore.role === 'TENANT') next({ name: 'TenantDashboard' });
-      else next({ name: 'Login' });
+      if (authStore.role === 'ADMIN') return { name: 'AdminStats' };
+      else if (authStore.role === 'LANDLORD') return { name: 'LandlordDashboard' };
+      else if (authStore.role === 'TENANT') return { name: 'TenantDashboard' };
+      else return { name: 'Login' };
     } else {
       // Kiểm tra trạng thái hết hạn gói dịch vụ của chủ trọ
       if (authStore.role === 'LANDLORD' && authStore.user?.isExpired && to.name !== 'SubscriptionUpgrade') {
-        next({ name: 'SubscriptionUpgrade' });
+        return { name: 'SubscriptionUpgrade' };
       } else {
-        next();
+        return true;
       }
     }
   } 
@@ -199,15 +211,15 @@ router.beforeEach((to, from, next) => {
   else if (to.matched.some((record) => record.meta.guestOnly)) {
     if (authStore.isAuthenticated) {
       // Nếu đã login, tự động chuyển về trang Dashboard tương ứng
-      if (authStore.role === 'ADMIN') next({ name: 'AdminStats' });
-      else if (authStore.role === 'LANDLORD') next({ name: 'LandlordDashboard' });
-      else if (authStore.role === 'TENANT') next({ name: 'TenantDashboard' });
-      else next();
+      if (authStore.role === 'ADMIN') return { name: 'AdminStats' };
+      else if (authStore.role === 'LANDLORD') return { name: 'LandlordDashboard' };
+      else if (authStore.role === 'TENANT') return { name: 'TenantDashboard' };
+      else return true;
     } else {
-      next();
+      return true;
     }
   } else {
-    next();
+    return true;
   }
 });
 

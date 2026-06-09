@@ -60,6 +60,8 @@ export default {
         case 'AdminRequests': return 'Duyệt kích hoạt gói';
         case 'TenantDashboard': return 'Thông tin phòng trọ';
         case 'SubscriptionUpgrade': return 'Gói dịch vụ & Gia hạn';
+        case 'Cameras': return 'Hệ thống Camera';
+        case 'TenantCameras': return 'Camera giám sát';
         default: return 'Chi tiết';
       }
     });
