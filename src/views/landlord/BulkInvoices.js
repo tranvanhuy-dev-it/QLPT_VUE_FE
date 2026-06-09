@@ -22,9 +22,22 @@ export default {
 
     const boardingHouseStore = useBoardingHouseStore();
 
+    const toLocalYYYYMMDD = (date) => {
+      const y = date.getFullYear();
+      const m = (date.getMonth() + 1).toString().padStart(2, '0');
+      const d = date.getDate().toString().padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    };
+
+    const parseLocalYYYYMMDD = (dateStr) => {
+      if (!dateStr) return new Date();
+      const [y, m, d] = dateStr.split("-").map(Number);
+      return new Date(y, m - 1, d);
+    };
+
     const boardingHouses = ref([]);
     const selectedBulkBoardingHouseId = ref("");
-    const bulkInvoiceDate = ref(new Date().toISOString().substring(0, 10));
+    const bulkInvoiceDate = ref(toLocalYYYYMMDD(new Date()));
     
     const now = new Date();
     const currentYearMonth = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
@@ -82,20 +95,37 @@ export default {
 
     const visibleRooms = computed(() => {
       if (!bulkRooms.value || bulkRooms.value.length === 0) return [];
-      if (!bulkBillingMonth.value) return [];
+      if (!bulkBillingMonth.value || !bulkInvoiceDate.value) return [];
+
+      const [year, month, day] = bulkInvoiceDate.value.split("-").map(Number);
+      const lastDay = new Date(year, month, 0).getDate();
 
       return bulkRooms.value.filter(room => {
-        // Ensure the billing period start date is not in the future relative to the invoice date
-        const isNotFutureBilling = room.billingPeriodStart <= bulkInvoiceDate.value;
-        if (!isNotFutureBilling) return false;
+        // Calculate contract's billing day
+        const contractStartDateObj = parseLocalYYYYMMDD(room.contractStartDate);
+        const contractStartDay = contractStartDateObj.getDate();
+        const targetBillingDay = room.fixedBillingDay != null ? room.fixedBillingDay : contractStartDay;
+        const actualBillingDay = Math.min(targetBillingDay, lastDay);
+        
+        // Full billing date of selected month/year
+        const billingDateOfSelectedMonth = `${year}-${month.toString().padStart(2, '0')}-${actualBillingDay.toString().padStart(2, '0')}`;
+        
+        // 1. Only show if selected date is on or after the billing date (tới ngày thanh toán cố định hoặc quá hạn thanh toán)
+        if (bulkInvoiceDate.value < billingDateOfSelectedMonth) {
+          return false;
+        }
 
-        // If contractStartDate matches nextBillingPeriodStart, never billed yet (always show)
+        // 2. Ensure billing period start date is not in the future relative to bulkInvoiceDate
+        if (room.billingPeriodStart > bulkInvoiceDate.value) {
+          return false;
+        }
+
+        // 3. Ensure they haven't already been billed in the selected month
         if (room.contractStartDate && room.billingPeriodStart === room.contractStartDate) {
           return true;
         }
 
-        // If there was a previous invoice, its end date is billingPeriodStart - 1 day
-        const start = new Date(room.billingPeriodStart);
+        const start = parseLocalYYYYMMDD(room.billingPeriodStart);
         const lastEnd = new Date(start);
         lastEnd.setDate(lastEnd.getDate() - 1);
         
@@ -180,8 +210,26 @@ export default {
       router.push({ name: "Invoices" });
     };
 
-    watch(bulkInvoiceDate, () => {
-      adjustBulkDates();
+    watch(bulkInvoiceDate, (newVal) => {
+      if (!newVal) return;
+      const [year, month, day] = newVal.split("-");
+      bulkBillingMonth.value = `${year}-${month}`;
+
+      if (bulkRooms.value.length > 0) {
+        bulkRooms.value.forEach(room => {
+          room.billingPeriodEnd = newVal;
+        });
+      }
+    });
+
+    watch(bulkBillingMonth, (newVal) => {
+      if (!newVal) return;
+      const [year, month] = newVal.split("-");
+      const currentDateObj = new Date(bulkInvoiceDate.value);
+      const currentDay = currentDateObj.getDate();
+      const lastDay = new Date(year, month, 0).getDate();
+      const targetDay = Math.min(currentDay, lastDay);
+      bulkInvoiceDate.value = `${year}-${month.padStart(2, '0')}-${targetDay.toString().padStart(2, '0')}`;
     });
 
     onMounted(async () => {

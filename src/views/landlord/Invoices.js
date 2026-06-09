@@ -41,6 +41,19 @@ export default {
       return `${d.getDate().toString().padStart(2, "0")}/${(d.getMonth() + 1).toString().padStart(2, "0")}/${d.getFullYear()}`;
     };
 
+    const toLocalYYYYMMDD = (date) => {
+      const y = date.getFullYear();
+      const m = (date.getMonth() + 1).toString().padStart(2, '0');
+      const d = date.getDate().toString().padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    };
+
+    const parseLocalYYYYMMDD = (dateStr) => {
+      if (!dateStr) return new Date();
+      const [y, m, d] = dateStr.split("-").map(Number);
+      return new Date(y, m - 1, d);
+    };
+
     const tableHeaders = [
       { label: "Phòng", key: "contract.room.roomNumber", prefix: "Phòng ", cellClass: "font-semibold text-primary" },
       { label: "Khách thuê", key: "contract.tenant.fullName", cellClass: "font-medium text-text-main" },
@@ -89,7 +102,7 @@ export default {
 
     const form = ref({
       contractId: "",
-      invoiceDate: new Date().toISOString().substring(0, 10),
+      invoiceDate: toLocalYYYYMMDD(new Date()),
       billingPeriodStart: "",
       billingPeriodEnd: "",
       newElectricityIndex: 0,
@@ -181,9 +194,9 @@ export default {
           // Calculate billingPeriodStart
           if (contractInvoices.length > 0) {
             const lastInvoice = contractInvoices[0];
-            const lastEnd = new Date(lastInvoice.billingPeriodEnd);
+            const lastEnd = parseLocalYYYYMMDD(lastInvoice.billingPeriodEnd);
             lastEnd.setDate(lastEnd.getDate() + 1);
-            form.value.billingPeriodStart = lastEnd.toISOString().substring(0, 10);
+            form.value.billingPeriodStart = toLocalYYYYMMDD(lastEnd);
           } else {
             form.value.billingPeriodStart = selectedContract.value.startDate;
           }
@@ -400,7 +413,7 @@ export default {
       contractExtraFees.value = [];
       form.value = {
         contractId: "",
-        invoiceDate: new Date().toISOString().substring(0, 10),
+        invoiceDate: toLocalYYYYMMDD(new Date()),
         billingPeriodStart: "",
         billingPeriodEnd: "",
         newElectricityIndex: 0,
