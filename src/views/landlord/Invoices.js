@@ -178,19 +178,42 @@ export default {
                 new Date(b.billingPeriodEnd) - new Date(a.billingPeriodEnd),
             );
 
+          // Calculate billingPeriodStart
           if (contractInvoices.length > 0) {
             const lastInvoice = contractInvoices[0];
-            form.value.billingPeriodStart = lastInvoice.billingPeriodEnd;
-
-            const start = new Date(lastInvoice.billingPeriodEnd);
-            start.setMonth(start.getMonth() + 1);
-            form.value.billingPeriodEnd = start.toISOString().substring(0, 10);
+            const lastEnd = new Date(lastInvoice.billingPeriodEnd);
+            lastEnd.setDate(lastEnd.getDate() + 1);
+            form.value.billingPeriodStart = lastEnd.toISOString().substring(0, 10);
           } else {
-            // First invoice ever
             form.value.billingPeriodStart = selectedContract.value.startDate;
+          }
 
-            const start = new Date(selectedContract.value.startDate);
+          // Calculate billingPeriodEnd based on fixedBillingDay or 1 month duration
+          const billingDay = selectedContract.value.fixedBillingDay;
+          if (billingDay && billingDay >= 1 && billingDay <= 31) {
+            const nextStart = new Date(form.value.billingPeriodStart);
+            let year = nextStart.getFullYear();
+            let month = nextStart.getMonth() + 1; // 1-12
+
+            const daysInMonth = new Date(year, month, 0).getDate();
+            const targetDay = Math.min(billingDay, daysInMonth);
+            let candidateEnd = new Date(year, month - 1, targetDay);
+
+            if (candidateEnd <= nextStart) {
+              month++;
+              if (month > 12) {
+                month = 1;
+                year++;
+              }
+              const daysInNextMonth = new Date(year, month, 0).getDate();
+              const nextTargetDay = Math.min(billingDay, daysInNextMonth);
+              candidateEnd = new Date(year, month - 1, nextTargetDay);
+            }
+            form.value.billingPeriodEnd = candidateEnd.toISOString().substring(0, 10);
+          } else {
+            const start = new Date(form.value.billingPeriodStart);
             start.setMonth(start.getMonth() + 1);
+            start.setDate(start.getDate() - 1);
             form.value.billingPeriodEnd = start.toISOString().substring(0, 10);
           }
 
