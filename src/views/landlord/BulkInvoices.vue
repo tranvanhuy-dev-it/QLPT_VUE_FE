@@ -60,6 +60,10 @@
       Không có phòng nào đang thuê hoạt động trong dãy trọ này.
     </div>
 
+    <div v-else-if="visibleRooms.length === 0" class="bg-card border border-border-main rounded-2xl p-12 text-center text-text-sub text-xs italic">
+      Không có phòng nào cần lập hóa đơn trong ngày được chọn (hoặc các phòng đã được lập hóa đơn/chưa đến hạn).
+    </div>
+
     <!-- Bulk Reading Form -->
     <form v-else @submit.prevent="saveBulkInvoices">
       <div class="bg-card border border-border-main rounded-2xl p-4 shadow-xs mb-4">
@@ -75,7 +79,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-border-main/50">
-              <tr v-for="room in bulkRooms" :key="room.roomId" class="hover:bg-slate-50/40 dark:hover:bg-slate-900/20">
+              <tr v-for="room in visibleRooms" :key="room.roomId" class="hover:bg-slate-50/40 dark:hover:bg-slate-900/20">
                 <!-- Room & Tenant -->
                 <td class="p-3 align-middle">
                   <span class="font-bold text-primary block">Phòng {{ room.roomNumber }}</span>

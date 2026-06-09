@@ -1,4 +1,4 @@
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import FormInput from "../../components/ui/FormInput.vue";
 import FormSelect from "../../components/ui/FormSelect.vue";
@@ -93,10 +93,37 @@ export default {
       });
     };
 
+    const visibleRooms = computed(() => {
+      if (!bulkRooms.value || bulkRooms.value.length === 0) return [];
+      if (!bulkBillingMonth.value) return [];
+      
+      const [yearStr, monthStr] = bulkBillingMonth.value.split('-');
+      const year = parseInt(yearStr);
+      const month = parseInt(monthStr);
+      const lastDay = new Date(year, month, 0).getDate();
+      const endOfMonthStr = `${yearStr}-${monthStr}-${lastDay.toString().padStart(2, '0')}`;
+
+      return bulkRooms.value.filter(room => {
+        // Condition 1: Not billed yet in this month (billingPeriodStart <= endOfMonthStr)
+        const isNotBilledYet = room.billingPeriodStart <= endOfMonthStr;
+        
+        // Condition 2: Billing period end (invoice date) is the current selected date
+        const isInvoiceDateCurrent = room.billingPeriodEnd === bulkInvoiceDate.value;
+
+        return isNotBilledYet && isInvoiceDateCurrent;
+      });
+    });
+
     const saveBulkInvoices = async () => {
       if (isSavingBulk.value) return;
       
-      for (const room of bulkRooms.value) {
+      const roomsToSave = visibleRooms.value;
+      if (roomsToSave.length === 0) {
+        showAlert('Thông báo', "Không có phòng nào cần lập hóa đơn.", 'warning');
+        return;
+      }
+      
+      for (const room of roomsToSave) {
         if (room.newElectricityIndex < room.currentElectricityIndex) {
           showAlert(
             'Lỗi nhập liệu', 
@@ -135,7 +162,7 @@ export default {
       try {
         const payload = {
           invoiceDate: bulkInvoiceDate.value,
-          readings: bulkRooms.value.map(room => ({
+          readings: roomsToSave.map(room => ({
             roomId: room.roomId,
             contractId: room.contractId,
             billingPeriodStart: room.billingPeriodStart,
@@ -173,6 +200,7 @@ export default {
       bulkInvoiceDate,
       bulkBillingMonth,
       bulkRooms,
+      visibleRooms,
       isFetchingBulkStatus,
       isSavingBulk,
       onBulkBoardingHouseChange,

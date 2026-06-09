@@ -8,7 +8,7 @@
           <AppIcon name="arrow-left" class="!w-4 !h-4" />
         </FormButton>
         <h2 class="text-base sm:text-xl font-bold text-text-main flex items-center gap-2">
-          <span>Hóa Đơn {{ invoice.invoiceCode }}</span>
+          <span>Hóa Đơn #{{ invoice ? invoice.id.substring(0, 8) : '...' }}</span>
           <span v-if="invoice" :class="[
             'text-[11px] font-semibold px-2.5 py-0.5 rounded border uppercase',
             invoice.status === 'PAID'
