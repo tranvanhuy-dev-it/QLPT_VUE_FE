@@ -184,6 +184,12 @@ export default {
       router.push(path);
     };
 
+    const parseLocalYYYYMMDD = (dateStr) => {
+      if (!dateStr) return new Date();
+      const [y, m, d] = dateStr.split("-").map(Number);
+      return new Date(y, m - 1, d);
+    };
+
     const loadDashboardData = async () => {
       loading.value = true;
       try {
@@ -225,41 +231,44 @@ export default {
 
         for (const contract of activeContractsList) {
           const contractInvoices = invoices.filter(i => i.contract?.id === contract.id);
-          const timing = contract.room?.boardingHouse?.billingTiming || 'PREPAID';
-          
-          let dueDate;
+          const contractStartDateObj = parseLocalYYYYMMDD(contract.startDate);
+          const contractStartDay = contractStartDateObj.getDate();
+          const billingDay = contract.fixedBillingDay != null ? contract.fixedBillingDay : contractStartDay;
 
+          let nextStart;
           if (contractInvoices.length > 0) {
-            // Sắp xếp hóa đơn theo ngày kết thúc kỳ thanh toán giảm dần
-            const sortedInvoices = [...contractInvoices].sort((a, b) => new Date(b.billingPeriodEnd) - new Date(a.billingPeriodEnd));
-            const lastEnd = new Date(sortedInvoices[0].billingPeriodEnd);
-            
-            if (timing === 'PREPAID') {
-              dueDate = new Date(lastEnd);
-            } else {
-              const end = new Date(lastEnd);
-              end.setMonth(end.getMonth() + 1);
-              dueDate = end;
-            }
+            // Sắp xếp hóa đơn theo ngày lập hóa đơn giảm dần
+            const sortedInvoices = [...contractInvoices].sort((a, b) => new Date(b.invoiceDate) - new Date(a.invoiceDate));
+            const lastInvoiceDate = parseLocalYYYYMMDD(sortedInvoices[0].invoiceDate);
+            lastInvoiceDate.setDate(lastInvoiceDate.getDate() + 1);
+            nextStart = lastInvoiceDate;
           } else {
-            // Chưa từng lập hóa đơn nào
-            const start = new Date(contract.startDate);
-            if (timing === 'PREPAID') {
-              dueDate = start;
-            } else {
-              const end = new Date(start);
-              end.setMonth(end.getMonth() + 1);
-              dueDate = end;
-            }
+            nextStart = contractStartDateObj;
           }
 
+          // Tính ngày đến hạn (ngày lập hóa đơn mặc định tiếp theo dựa trên ngày tính tiền cố định)
+          let targetYear = nextStart.getFullYear();
+          let targetMonth = nextStart.getMonth() + 1;
+          let lastDay = new Date(targetYear, targetMonth, 0).getDate();
+          let candidate = new Date(targetYear, targetMonth - 1, Math.min(billingDay, lastDay));
+
+          if (candidate.getTime() <= nextStart.getTime()) {
+            targetMonth++;
+            if (targetMonth > 12) {
+              targetMonth = 1;
+              targetYear++;
+            }
+            lastDay = new Date(targetYear, targetMonth, 0).getDate();
+            candidate = new Date(targetYear, targetMonth - 1, Math.min(billingDay, lastDay));
+          }
+          const dueDate = candidate;
           dueDate.setHours(0, 0, 0, 0);
           
           const diffTime = dueDate - today;
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-          // Hợp đồng quá hạn nếu ngày đến hạn đã qua (quá hạn)
-          if (diffDays < 0) {
+          // Hợp đồng quá hạn hoặc đến hạn lập hóa đơn hôm nay
+          if (diffDays <= 0) {
             upcoming.push({
               id: contract.id,
               roomNumber: contract.room?.roomNumber,

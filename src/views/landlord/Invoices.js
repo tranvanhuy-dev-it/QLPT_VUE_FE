@@ -183,26 +183,30 @@ export default {
 
           const room = selectedContract.value.room;
 
-          // Filter and sort invoices for this contract by billingPeriodEnd descending
+          // Filter and sort invoices for this contract by invoiceDate descending
           const contractInvoices = allInvoices.value
             .filter((inv) => inv.contract.id === form.value.contractId)
             .sort(
               (a, b) =>
-                new Date(b.billingPeriodEnd) - new Date(a.billingPeriodEnd),
+                new Date(b.invoiceDate) - new Date(a.invoiceDate),
             );
 
           // Calculate billingPeriodStart
           if (contractInvoices.length > 0) {
             const lastInvoice = contractInvoices[0];
-            const lastEnd = parseLocalYYYYMMDD(lastInvoice.billingPeriodEnd);
-            lastEnd.setDate(lastEnd.getDate() + 1);
-            form.value.billingPeriodStart = toLocalYYYYMMDD(lastEnd);
+            const lastInvoiceDate = parseLocalYYYYMMDD(lastInvoice.invoiceDate);
+            lastInvoiceDate.setDate(lastInvoiceDate.getDate() + 1);
+            form.value.billingPeriodStart = toLocalYYYYMMDD(lastInvoiceDate);
           } else {
             form.value.billingPeriodStart = selectedContract.value.startDate;
           }
 
-          // Calculate billingPeriodEnd: "den ngay hien tai lap hoa don"
-          form.value.billingPeriodEnd = form.value.invoiceDate;
+          // Calculate billingPeriodEnd: "den ngay hien tai lap hoa don" but not before billingPeriodStart
+          if (form.value.billingPeriodStart && form.value.invoiceDate < form.value.billingPeriodStart) {
+            form.value.billingPeriodEnd = form.value.billingPeriodStart;
+          } else {
+            form.value.billingPeriodEnd = form.value.invoiceDate;
+          }
           form.value.newElectricityIndex = room.currentElectricityIndex;
           form.value.newWaterIndex = room.currentWaterIndex;
         }
@@ -224,17 +228,8 @@ export default {
       const diffTime = endDate - startDate;
       const stayedDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
       
-      const startYear = startDate.getFullYear();
-      const startMonth = startDate.getMonth() + 1;
-      const daysInMonth = new Date(startYear, startMonth, 0).getDate();
-      
-      const isFullMonth = stayedDays >= daysInMonth - 1;
-      if (isFullMonth) {
-        return basePrice;
-      } else {
-        const dailyRate = basePrice / daysInMonth;
-        return Math.round(dailyRate * stayedDays);
-      }
+      const dailyRate = basePrice / 30.0;
+      return Math.round(dailyRate * stayedDays);
     });
 
     const computedElectricityUsage = computed(() => {
@@ -431,7 +426,20 @@ export default {
     watch(
       () => form.value.invoiceDate,
       (newVal) => {
-        form.value.billingPeriodEnd = newVal;
+        if (form.value.billingPeriodStart && newVal < form.value.billingPeriodStart) {
+          form.value.billingPeriodEnd = form.value.billingPeriodStart;
+        } else {
+          form.value.billingPeriodEnd = newVal;
+        }
+      }
+    );
+
+    watch(
+      () => form.value.billingPeriodStart,
+      (newVal) => {
+        if (newVal && form.value.billingPeriodEnd && newVal > form.value.billingPeriodEnd) {
+          form.value.billingPeriodEnd = newVal;
+        }
       }
     );
 
