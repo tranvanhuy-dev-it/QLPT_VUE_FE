@@ -9,7 +9,7 @@
       <main
         ref="mainRef"
         class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative pb-0 lg:pb-0"
-        :style="hideHeaderOnMobile ? 'padding-top: calc(0.5rem + env(safe-area-inset-top, 24px));' : ''"
+        :style="hideHeaderOnMobile ? 'padding-top: env(safe-area-inset-top, 20px);' : ''"
         @touchstart.passive="onTouchStart"
         @touchmove.passive="onTouchMove"
         @touchend="onTouchEnd"
