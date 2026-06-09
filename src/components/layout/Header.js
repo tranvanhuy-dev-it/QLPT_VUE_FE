@@ -267,6 +267,10 @@ export default {
       }
     };
 
+    const hideOnMobile = computed(() => {
+      return !!route.meta.hideHeaderOnMobile;
+    });
+
     onMounted(() => {
       document.documentElement.setAttribute('data-theme', theme.value);
       if (authStore.isAuthenticated) {
@@ -282,6 +286,7 @@ export default {
     });
 
     return {
+      hideOnMobile,
       username,
       userInitial,
       roleLabel,

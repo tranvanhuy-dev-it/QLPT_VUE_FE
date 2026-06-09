@@ -60,7 +60,7 @@ const routes = [
     path: '/landlord/boarding-houses/:id',
     name: 'BoardingHouseDetail',
     component: () => import('../views/landlord/BoardingHouseDetail.vue'),
-    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD', hideHeaderOnMobile: true },
   },
   {
     path: '/landlord/rooms',
@@ -72,7 +72,7 @@ const routes = [
     path: '/landlord/rooms/:id',
     name: 'RoomDetail',
     component: () => import('../views/landlord/RoomDetail.vue'),
-    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD', hideHeaderOnMobile: true },
   },
   {
     path: '/landlord/contracts',
@@ -84,7 +84,7 @@ const routes = [
     path: '/landlord/contracts/:id',
     name: 'ContractDetail',
     component: () => import('../views/landlord/ContractDetail.vue'),
-    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD', hideHeaderOnMobile: true },
   },
   {
     path: '/landlord/invoices',
@@ -96,13 +96,13 @@ const routes = [
     path: '/landlord/invoices/bulk',
     name: 'BulkInvoices',
     component: () => import('../views/landlord/BulkInvoices.vue'),
-    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD', hideHeaderOnMobile: true },
   },
   {
     path: '/landlord/invoices/:id',
     name: 'InvoiceDetail',
     component: () => import('../views/landlord/InvoiceDetail.vue'),
-    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD', hideHeaderOnMobile: true },
   },
   {
     key: 'tenants',
@@ -115,7 +115,7 @@ const routes = [
     path: '/landlord/tenants/:id',
     name: 'TenantDetail',
     component: () => import('../views/landlord/TenantDetail.vue'),
-    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD', hideHeaderOnMobile: true },
   },
   {
     path: '/landlord/upgrade',
@@ -140,7 +140,7 @@ const routes = [
     path: '/tenant/invoices/:id',
     name: 'TenantInvoiceDetail',
     component: () => import('../views/landlord/InvoiceDetail.vue'),
-    meta: { requiresAuth: true, requiresRole: 'TENANT' },
+    meta: { requiresAuth: true, requiresRole: 'TENANT', hideHeaderOnMobile: true },
   },
   {
     path: '/tenant/contracts',
@@ -152,7 +152,7 @@ const routes = [
     path: '/tenant/contracts/:id',
     name: 'TenantContractDetail',
     component: () => import('../views/landlord/ContractDetail.vue'),
-    meta: { requiresAuth: true, requiresRole: 'TENANT' },
+    meta: { requiresAuth: true, requiresRole: 'TENANT', hideHeaderOnMobile: true },
   },
   {
     path: '/tenant/rules',
