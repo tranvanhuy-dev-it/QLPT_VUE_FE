@@ -8,7 +8,8 @@
       <Header />
       <main
         ref="mainRef"
-        class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative pb-[calc(3.5rem+env(safe-area-inset-bottom))] lg:pb-0"
+        class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative pb-0 lg:pb-0"
+        :style="hideHeaderOnMobile ? 'padding-top: calc(0.5rem + env(safe-area-inset-top, 24px));' : ''"
         @touchstart.passive="onTouchStart"
         @touchmove.passive="onTouchMove"
         @touchend="onTouchEnd"
@@ -40,7 +41,10 @@
         <div class="flex-grow">
           <router-view :key="routerViewKey" />
         </div>
-        <footer class="py-3 text-center text-xs text-text-sub border-t border-border-main/50 bg-card/60 backdrop-blur-xs shrink-0">
+        <footer 
+          class="py-3 text-center text-xs text-text-sub border-t border-border-main/50 bg-card/60 backdrop-blur-xs shrink-0 lg:!mb-0"
+          style="margin-bottom: calc(3.5rem + env(safe-area-inset-bottom));"
+        >
           © 2026 Nhà Trọ Thông Minh. Hệ thống đang trong quá trình phát triển &amp; thử nghiệm.
         </footer>
       </main>
@@ -84,6 +88,10 @@ export default {
 
     const isGuest = computed(() => {
       return !!(route.meta && route.meta.guestOnly);
+    });
+
+    const hideHeaderOnMobile = computed(() => {
+      return !!(route.meta && route.meta.hideHeaderOnMobile);
     });
 
     // ==================== Pull to Refresh ====================
@@ -175,6 +183,7 @@ export default {
 
     return {
       isGuest,
+      hideHeaderOnMobile,
       isApiSaving,
       // Pull to refresh
       mainRef,
