@@ -12,7 +12,6 @@ import AppIcon from "../../components/ui/icons/AppIcon.vue";
 import ConfirmModal from "../../components/ui/ConfirmModal.vue";
 import { useInvoiceStore } from "../../stores/invoice.js";
 import { useContractStore } from "../../stores/contract.js";
-import { useBoardingHouseStore } from "../../stores/boardingHouse.js";
 import invoiceService from "../../services/invoiceService.js";
 import { useConfirmModal } from "../../composables/useConfirmModal.js";
 
@@ -81,13 +80,10 @@ export default {
     const showCreateModal = ref(false);
     const showPayModal = ref(false);
     const showDetailModal = ref(false);
-    const showBulkModal = ref(false);
     const isLoadingDetails = ref(false);
     const isSaving = ref(false);
-    const isSavingBulk = ref(false);
     const isTableLoading = ref(false);
     const isLoadingModalData = ref(false);
-    const isFetchingBulkStatus = ref(false);
 
     const invoiceDetails = ref(null);
     const selectedContract = ref(null);
@@ -109,16 +105,9 @@ export default {
       paidAmount: 0,
     });
 
-    // Bulk billing state
-    const boardingHouses = ref([]);
-    const selectedBulkBoardingHouseId = ref("");
-    const bulkInvoiceDate = ref(new Date().toISOString().substring(0, 10));
-    
-    const now = new Date();
-    const currentYearMonth = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}`;
-    const bulkBillingMonth = ref(currentYearMonth);
-    
-    const bulkRooms = ref([]);
+    const goToBulkPage = () => {
+      router.push({ name: "BulkInvoices" });
+    };
 
     const formatMoney = (amount) => {
       if (amount === undefined || amount === null) return "0";
@@ -378,141 +367,7 @@ export default {
 
 
 
-    const fetchBoardingHouses = async () => {
-      try {
-        await boardingHouseStore.fetchBoardingHouses();
-        boardingHouses.value = boardingHouseStore.boardingHouses;
-      } catch (err) {
-        console.error("Không tải được danh sách dãy trọ:", err);
-      }
-    };
 
-    const openBulkModal = async () => {
-      showBulkModal.value = true;
-      selectedBulkBoardingHouseId.value = "";
-      bulkRooms.value = [];
-      await fetchBoardingHouses();
-      if (boardingHouses.value.length > 0) {
-        selectedBulkBoardingHouseId.value = boardingHouses.value[0].id;
-        await onBulkBoardingHouseChange();
-      }
-    };
-
-    const onBulkBoardingHouseChange = async () => {
-      if (!selectedBulkBoardingHouseId.value) {
-        bulkRooms.value = [];
-        return;
-      }
-      isFetchingBulkStatus.value = true;
-      try {
-        const response = await invoiceService.getBillingStatus(selectedBulkBoardingHouseId.value);
-        bulkRooms.value = (response.data || [])
-          .filter(room => room.hasActiveContract)
-          .map(room => ({
-            ...room,
-            newElectricityIndex: room.currentElectricityIndex,
-            newWaterIndex: room.currentWaterIndex,
-            billingPeriodStart: room.nextBillingPeriodStart,
-            billingPeriodEnd: room.nextBillingPeriodEnd,
-            discount: 0,
-          }));
-        adjustBulkDates();
-      } catch (err) {
-        showAlert('Lỗi', err.response?.data?.error || "Không thể tải trạng thái phòng của dãy trọ", 'danger');
-      } finally {
-        isFetchingBulkStatus.value = false;
-      }
-    };
-
-    const adjustBulkDates = () => {
-      if (!bulkBillingMonth.value || bulkRooms.value.length === 0) return;
-      const [yearStr, monthStr] = bulkBillingMonth.value.split('-');
-      const year = parseInt(yearStr);
-      const month = parseInt(monthStr);
-      const daysInMonth = new Date(year, month, 0).getDate();
-
-      bulkRooms.value.forEach(room => {
-        if (room.fixedBillingDay) {
-          const targetDay = Math.min(room.fixedBillingDay, daysInMonth);
-          const targetDateStr = `${year}-${monthStr}-${targetDay.toString().padStart(2, '0')}`;
-          
-          if (new Date(targetDateStr) > new Date(room.billingPeriodStart)) {
-            room.billingPeriodEnd = targetDateStr;
-          }
-        }
-      });
-    };
-
-    const saveBulkInvoices = async () => {
-      if (isSavingBulk.value) return;
-      
-      for (const room of bulkRooms.value) {
-        if (room.newElectricityIndex < room.currentElectricityIndex) {
-          showAlert(
-            'Lỗi nhập liệu', 
-            `Chỉ số điện mới của phòng ${room.roomNumber} (${room.newElectricityIndex}) không được nhỏ hơn chỉ số cũ (${room.currentElectricityIndex})`, 
-            'warning'
-          );
-          return;
-        }
-        if (room.waterBillingType === 'BY_INDEX' && room.newWaterIndex < room.currentWaterIndex) {
-          showAlert(
-            'Lỗi nhập liệu', 
-            `Chỉ số nước mới của phòng ${room.roomNumber} (${room.newWaterIndex}) không được nhỏ hơn chỉ số cũ (${room.currentWaterIndex})`, 
-            'warning'
-          );
-          return;
-        }
-        if (!room.billingPeriodStart || !room.billingPeriodEnd) {
-          showAlert(
-            'Lỗi nhập liệu',
-            `Phòng ${room.roomNumber} thiếu thông tin kỳ thanh toán`,
-            'warning'
-          );
-          return;
-        }
-        if (new Date(room.billingPeriodStart) >= new Date(room.billingPeriodEnd)) {
-          showAlert(
-            'Lỗi nhập liệu',
-            `Kỳ thanh toán phòng ${room.roomNumber} không hợp lệ (Ngày bắt đầu phải trước ngày kết thúc)`,
-            'warning'
-          );
-          return;
-        }
-      }
-
-      isSavingBulk.value = true;
-      try {
-        const payload = {
-          invoiceDate: bulkInvoiceDate.value,
-          readings: bulkRooms.value.map(room => ({
-            roomId: room.roomId,
-            contractId: room.contractId,
-            billingPeriodStart: room.billingPeriodStart,
-            billingPeriodEnd: room.billingPeriodEnd,
-            newElectricityIndex: Number(room.newElectricityIndex),
-            newWaterIndex: Number(room.newWaterIndex),
-            discount: Number(room.discount) || 0,
-          }))
-        };
-        await invoiceService.createBulk(payload);
-        showAlert('Thành công', "Lập hóa đơn hàng loạt thành công!", 'success');
-        closeBulkModal();
-        fetchInvoices();
-      } catch (err) {
-        showAlert('Lỗi', err.response?.data?.error || "Lập hóa đơn hàng loạt thất bại", 'danger');
-      } finally {
-        isSavingBulk.value = false;
-      }
-    };
-
-    const closeBulkModal = () => {
-      showBulkModal.value = false;
-      bulkRooms.value = [];
-      selectedBulkBoardingHouseId.value = "";
-      bulkInvoiceDate.value = new Date().toISOString().substring(0, 10);
-      bulkBillingMonth.value = currentYearMonth;
-    };
 
     const changePage = (newPage) => {
       if (newPage >= 0 && newPage < totalPages.value) {
@@ -582,7 +437,6 @@ export default {
       showCreateModal,
       showPayModal,
       showDetailModal,
-      showBulkModal,
       isLoadingDetails,
       invoiceDetails,
       invoiceItems,
@@ -597,20 +451,7 @@ export default {
       viewDetails,
       payInvoiceFromDetails,
       quickPayInvoice,
-
-      // Bulk billing exports
-      boardingHouses,
-      selectedBulkBoardingHouseId,
-      bulkInvoiceDate,
-      bulkBillingMonth,
-      bulkRooms,
-      isFetchingBulkStatus,
-      isSavingBulk,
-      openBulkModal,
-      onBulkBoardingHouseChange,
-      adjustBulkDates,
-      saveBulkInvoices,
-      closeBulkModal,
+      goToBulkPage,
 
       changePage,
       closeModal,
