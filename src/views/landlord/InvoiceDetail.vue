@@ -136,6 +136,19 @@
               </div>
             </div>
 
+            <!-- Room Rent Card -->
+            <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
+              <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Tiền thuê phòng</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 text-xs">
+                <DetailField label="Đơn giá thuê gốc:" layout="inline" value-class="font-semibold">
+                  {{ formatMoney(invoice.contractedRoomPrice) }} đ/tháng
+                </DetailField>
+                <DetailField label="Tiền phòng tính thực tế:" layout="inline" value-class="font-bold text-primary">
+                  {{ formatMoney(invoice.roomPrice) }} đ
+                </DetailField>
+              </div>
+            </div>
+
             <!-- Electricity & Water Usage Card -->
             <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
               <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Chỉ số sử dụng điện
