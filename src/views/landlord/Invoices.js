@@ -192,23 +192,49 @@ export default {
           const billingDay = selectedContract.value.fixedBillingDay;
           if (billingDay && billingDay >= 1 && billingDay <= 31) {
             const nextStart = new Date(form.value.billingPeriodStart);
-            let year = nextStart.getFullYear();
-            let month = nextStart.getMonth() + 1; // 1-12
+            
+            const today = new Date();
+            let endYear = today.getFullYear();
+            let endMonth = today.getMonth() + 1; // 1-12
 
-            const daysInMonth = new Date(year, month, 0).getDate();
+            const daysInMonth = new Date(endYear, endMonth, 0).getDate();
             const targetDay = Math.min(billingDay, daysInMonth);
-            let candidateEnd = new Date(year, month - 1, targetDay);
+            const billingDayCurrentMonth = new Date(endYear, endMonth - 1, targetDay);
 
-            if (candidateEnd <= nextStart) {
-              month++;
-              if (month > 12) {
-                month = 1;
-                year++;
+            // Set times to midnight to compare date only
+            billingDayCurrentMonth.setHours(0, 0, 0, 0);
+            const todayMidnight = new Date();
+            todayMidnight.setHours(0, 0, 0, 0);
+
+            if (todayMidnight > billingDayCurrentMonth) {
+              endMonth++;
+              if (endMonth > 12) {
+                endMonth = 1;
+                endYear++;
               }
-              const daysInNextMonth = new Date(year, month, 0).getDate();
-              const nextTargetDay = Math.min(billingDay, daysInNextMonth);
-              candidateEnd = new Date(year, month - 1, nextTargetDay);
             }
+
+            const daysInEndMonth = new Date(endYear, endMonth, 0).getDate();
+            const finalDay = Math.min(billingDay, daysInEndMonth);
+            let candidateEnd = new Date(endYear, endMonth - 1, finalDay);
+            candidateEnd.setHours(0, 0, 0, 0);
+
+            const nextStartMidnight = new Date(nextStart);
+            nextStartMidnight.setHours(0, 0, 0, 0);
+
+            // Ensure candidateEnd > nextStartMidnight
+            while (candidateEnd <= nextStartMidnight) {
+              endMonth++;
+              if (endMonth > 12) {
+                endMonth = 1;
+                endYear++;
+              }
+              const dInMonth = new Date(endYear, endMonth, 0).getDate();
+              const fDay = Math.min(billingDay, dInMonth);
+              candidateEnd = new Date(endYear, endMonth - 1, fDay);
+              candidateEnd.setHours(0, 0, 0, 0);
+            }
+
             form.value.billingPeriodEnd = candidateEnd.toISOString().substring(0, 10);
           } else {
             const start = new Date(form.value.billingPeriodStart);
@@ -229,7 +255,28 @@ export default {
 
     const computedRoomPrice = computed(() => {
       if (!selectedContract.value) return 0;
-      return selectedContract.value.contractedRoomPrice || 0;
+      const basePrice = selectedContract.value.contractedRoomPrice || 0;
+      const startStr = form.value.billingPeriodStart;
+      const endStr = form.value.billingPeriodEnd;
+      if (!startStr || !endStr) return basePrice;
+
+      const startDate = new Date(startStr);
+      const endDate = new Date(endStr);
+      
+      const diffTime = endDate - startDate;
+      const stayedDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+      
+      const startYear = startDate.getFullYear();
+      const startMonth = startDate.getMonth() + 1;
+      const daysInMonth = new Date(startYear, startMonth, 0).getDate();
+      
+      const isFullMonth = stayedDays >= daysInMonth - 1;
+      if (isFullMonth) {
+        return basePrice;
+      } else {
+        const dailyRate = basePrice / daysInMonth;
+        return Math.round(dailyRate * stayedDays);
+      }
     });
 
     const computedElectricityUsage = computed(() => {
