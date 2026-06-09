@@ -258,8 +258,8 @@ export default {
           const diffTime = dueDate - today;
           const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-          // Hợp đồng đến hạn nếu ngày đến hạn đã qua (quá hạn) hoặc trong vòng 7 ngày tới
-          if (diffDays <= 7) {
+          // Hợp đồng quá hạn nếu ngày đến hạn đã qua (quá hạn)
+          if (diffDays < 0) {
             upcoming.push({
               id: contract.id,
               roomNumber: contract.room?.roomNumber,
@@ -271,7 +271,7 @@ export default {
           }
         }
 
-        // Sắp xếp các hợp đồng đến hạn: quá hạn nhiều nhất lên trước, rồi đến hạn gần nhất
+        // Sắp xếp các hợp đồng quá hạn: quá hạn nhiều nhất lên trước
         upcomingBillingContracts.value = upcoming.sort((a, b) => a.diffDays - b.diffDays);
 
       } catch (err) {

@@ -345,16 +345,16 @@
         </div>
       </div>
 
-      <!-- Upcoming Invoices Section -->
+      <!-- Overdue Invoices Section -->
       <div
         class="bg-card border border-border-main rounded-2xl shadow-xs hover:shadow-md transition-all duration-200 p-4 mb-4">
         <div class="flex justify-between items-center mb-4 border-b border-border-main pb-3">
           <div class="flex items-center gap-2">
-            <AppIcon name="clock" class="text-amber-500 !w-[18px] !h-[18px]" />
-            <h3 class="text-[1.05rem] font-bold text-text-main">Hợp đồng đến hạn lập hóa đơn</h3>
+            <AppIcon name="clock" class="text-rose-500 !w-[18px] !h-[18px]" />
+            <h3 class="text-[1.05rem] font-bold text-text-main">Hợp đồng đã quá hạn lập hóa đơn</h3>
           </div>
           <span
-            class="inline-flex items-center justify-center min-w-6 h-6 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-950/30 text-amber-600 px-2">{{
+            class="inline-flex items-center justify-center min-w-6 h-6 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-950/30 text-rose-600 px-2">{{
               upcomingBillingContracts.length }}</span>
         </div>
         <div class="overflow-x-auto">
@@ -383,7 +383,7 @@
               </tr>
               <tr v-if="upcomingBillingContracts.length === 0">
                 <td colspan="6" class="text-center text-text-sub py-8">
-                  Không có hợp đồng nào đến hạn lập hóa đơn trong 7 ngày tới.
+                  Không có hợp đồng nào bị quá hạn lập hóa đơn.
                 </td>
               </tr>
             </tbody>
