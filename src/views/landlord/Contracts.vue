@@ -1,13 +1,13 @@
 <template>
-  <div class="p-4 bg-bg-main min-h-full">
-    <PageHeader title="Hợp Đồng Thuê"
+  <div class="contracts-page p-4 bg-bg-main min-h-full">
+    <PageHeader class="page-toolbar" title="Hợp Đồng Thuê"
       subtitle="Quản lý hợp đồng cho thuê phòng, cấu hình phụ phí dịch vụ riêng biệt cho từng người ở"
       :icon="contractIcon" :showAdd="isLandlord" addText="Thêm"
       :disableAdd="false"
       searchPlaceholder="Tìm theo phòng, dãy trọ, khách thuê..." v-model="searchQuery" @add-click="openAddModal" />
 
     <!-- Contracts List -->
-    <div class="bg-card border border-border-main rounded-2xl p-4 shadow-xs">
+    <div class="card bg-card border border-border-main rounded-2xl p-4 shadow-xs">
       <DataTable
         :headers="tableHeaders"
         :items="filteredContracts"
