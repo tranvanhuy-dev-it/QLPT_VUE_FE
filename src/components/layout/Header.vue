@@ -1,8 +1,7 @@
 <template>
   <header 
-    class="sticky top-0 bg-card border-b border-border-main flex items-center justify-between px-4 sm:px-6 md:px-8 z-30 shadow-xs shrink-0 h-[calc(3rem+env(safe-area-inset-top))] lg:h-[calc(4rem+env(safe-area-inset-top))]"
+    class="sticky top-0 bg-card border-b border-border-main flex items-center justify-between px-4 sm:px-6 md:px-8 z-30 shadow-xs shrink-0 h-14 lg:h-16"
     :class="{ 'hidden lg:flex': hideOnMobile }"
-    style="padding-top: env(safe-area-inset-top);"
   >
     <div class="flex items-center">
       <!-- Breadcrumbs (Hidden on mobile/tablet, shown on desktop) -->

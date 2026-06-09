@@ -5,11 +5,16 @@
   <div v-else class="flex h-screen h-[100dvh] overflow-hidden bg-bg-main">
     <Sidebar />
     <div class="flex flex-col flex-1 min-w-0">
+      <!-- Status Bar Spacer on Mobile -->
+      <div 
+        class="lg:hidden w-full shrink-0 transition-colors duration-150" 
+        :class="hideHeaderOnMobile ? 'bg-bg-main' : 'bg-card border-b border-border-main/20'"
+        style="height: env(safe-area-inset-top, 24px);"
+      ></div>
       <Header />
       <main
         ref="mainRef"
         class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative pb-0 lg:pb-0"
-        :style="hideHeaderOnMobile ? 'padding-top: env(safe-area-inset-top, 20px);' : ''"
         @touchstart.passive="onTouchStart"
         @touchmove.passive="onTouchMove"
         @touchend="onTouchEnd"
