@@ -8,7 +8,7 @@
         </FormButton>
         <h2 class="text-base sm:text-xl font-bold text-text-main flex items-center gap-2 flex-wrap">
           <span></span>
-          <span v-if="tenant" class="text-primary text-black">{{ tenant.fullName }}</span>
+          <span v-if="tenant" class="text-primary">{{ tenant.fullName }}</span>
           <span v-if="tenant" :class="[
             'text-[11px] font-semibold px-2.5 py-0.5 rounded border',
             tenant.status === 'ACTIVE'

@@ -1,4 +1,4 @@
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useBoardingHouseStore } from '../../stores/boardingHouse.js';
 import FormInput from '../../components/ui/FormInput.vue';
@@ -7,6 +7,9 @@ import FormButton from '../../components/ui/FormButton.vue';
 import ConfirmModal from '../../components/ui/ConfirmModal.vue';
 import AppIcon from '../../components/ui/icons/AppIcon.vue';
 import LoadingState from '../../components/ui/LoadingState.vue';
+import Modal from '../../components/ui/Modal.vue';
+import CameraPlayer from '../../components/ui/CameraPlayer.vue';
+import cameraService from '../../services/boardingHouseCameraService.js';
 import { useConfirmModal } from '../../composables/useConfirmModal.js';
 
 export default {
@@ -18,6 +21,8 @@ export default {
     ConfirmModal,
     AppIcon,
     LoadingState,
+    Modal,
+    CameraPlayer,
   },
   setup() {
     const route = useRoute();
@@ -234,8 +239,101 @@ export default {
       router.push({ name: 'BoardingHouses' });
     };
 
+    // Camera variables
+    const cameras = ref([]);
+    const loadingCameras = ref(false);
+    const showCameraModal = ref(false);
+    const editingCamera = ref(null);
+    const cameraForm = ref({
+      name: '',
+      streamUrl: '',
+      username: '',
+      password: '',
+    });
+    const savingCamera = ref(false);
+
+    const loadCameras = async () => {
+      loadingCameras.value = true;
+      try {
+        const response = await cameraService.getCameras(houseId);
+        cameras.value = response.data;
+      } catch (err) {
+        console.error('Lỗi khi tải danh sách camera:', err);
+        showAlert('Lỗi', 'Không thể tải danh sách camera', 'danger');
+      } finally {
+        loadingCameras.value = false;
+      }
+    };
+
+    const openAddCameraModal = () => {
+      editingCamera.value = null;
+      cameraForm.value = {
+        name: '',
+        streamUrl: '',
+        username: '',
+        password: '',
+      };
+      showCameraModal.value = true;
+    };
+
+    const openEditCameraModal = (camera) => {
+      editingCamera.value = camera;
+      cameraForm.value = {
+        name: camera.name,
+        streamUrl: camera.streamUrl,
+        username: camera.username || '',
+        password: camera.password || '',
+      };
+      showCameraModal.value = true;
+    };
+
+    const saveCamera = async () => {
+      savingCamera.value = true;
+      try {
+        if (editingCamera.value) {
+          await cameraService.updateCamera(editingCamera.value.id, cameraForm.value);
+          showAlert('Thành công', 'Cập nhật camera thành công!', 'success');
+        } else {
+          await cameraService.addCamera(houseId, cameraForm.value);
+          showAlert('Thành công', 'Thêm camera thành công!', 'success');
+        }
+        showCameraModal.value = false;
+        loadCameras();
+      } catch (err) {
+        console.error('Lỗi khi lưu camera:', err);
+        showAlert('Lỗi', err.response?.data?.error || 'Lưu camera thất bại', 'danger');
+      } finally {
+        savingCamera.value = false;
+      }
+    };
+
+    const deleteCamera = (camera) => {
+      showConfirm(
+        'Xóa camera',
+        `Bạn có chắc chắn muốn xóa camera "${camera.name}"?`,
+        'danger',
+        async () => {
+          try {
+            await cameraService.deleteCamera(camera.id);
+            showAlert('Thành công', 'Xóa camera thành công!', 'success');
+            loadCameras();
+          } catch (err) {
+            console.error('Lỗi khi xóa camera:', err);
+            showAlert('Lỗi', err.response?.data?.error || 'Xóa camera thất bại', 'danger');
+          }
+        }
+      );
+    };
+
     onMounted(() => {
       loadHouseDetails();
+      loadCameras();
+    });
+
+    watch(activeTab, (newTab) => {
+      if (newTab === 'camera') {
+        loadCameras();
+      }
     });
 
     return {
@@ -256,6 +354,18 @@ export default {
       confirmModal,
       onConfirmModal,
       closeConfirmModal,
+      // Camera exports
+      cameras,
+      loadingCameras,
+      showCameraModal,
+      editingCamera,
+      cameraForm,
+      savingCamera,
+      openAddCameraModal,
+      openEditCameraModal,
+      saveCamera,
+      deleteCamera,
+      loadCameras,
     };
   },
 };

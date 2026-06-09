@@ -1,0 +1,16 @@
+import api from './api';
+
+export default {
+  getCameras(houseId) {
+    return api.get(`/api/boarding-houses/${houseId}/cameras`);
+  },
+  addCamera(houseId, data) {
+    return api.post(`/api/boarding-houses/${houseId}/cameras`, data);
+  },
+  updateCamera(cameraId, data) {
+    return api.put(`/api/boarding-houses/cameras/${cameraId}`, data);
+  },
+  deleteCamera(cameraId) {
+    return api.delete(`/api/boarding-houses/cameras/${cameraId}`);
+  }
+};

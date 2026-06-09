@@ -9,7 +9,7 @@
       <div 
         class="lg:hidden w-full shrink-0 transition-colors duration-150" 
         :class="hideHeaderOnMobile ? 'bg-bg-main' : 'bg-card border-b border-border-main/20'"
-        style="height: env(safe-area-inset-top, 24px);"
+        style="height: env(safe-area-inset-top, 20px);"
       ></div>
       <Header />
       <main
