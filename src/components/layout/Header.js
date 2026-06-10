@@ -3,9 +3,6 @@ import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '../../stores/auth.js';
 import { useNotificationStore } from '../../stores/notification.js';
 import userService from '../../services/userService.js';
-import Modal from '../ui/Modal.vue';
-import FormInput from '../ui/FormInput.vue';
-import FormButton from '../ui/FormButton.vue';
 import { useConfirmModal } from '../../composables/useConfirmModal.js';
 
 import ConfirmModal from '../ui/ConfirmModal.vue';
@@ -13,9 +10,6 @@ import ConfirmModal from '../ui/ConfirmModal.vue';
 export default {
   name: 'Header',
   components: {
-    Modal,
-    FormInput,
-    FormButton,
     ConfirmModal,
   },
   setup() {
@@ -66,32 +60,8 @@ export default {
       }
     });
 
-    const theme = ref(localStorage.getItem('theme') || 'light');
-
-    const toggleTheme = () => {
-      const newTheme = theme.value === 'dark' ? 'light' : 'dark';
-      theme.value = newTheme;
-      localStorage.setItem('theme', newTheme);
-      document.documentElement.setAttribute('data-theme', newTheme);
-      showDropdown.value = false; // Đóng dropdown sau khi đổi theme
-    };
-
-    // Dropdown and Profile/Password Modals State
+    // Dropdown State
     const showDropdown = ref(false);
-    const showProfileModal = ref(false);
-    const showPasswordModal = ref(false);
-
-    const profileForm = ref({
-      fullName: '',
-      email: '',
-      phone: '',
-    });
-
-    const passwordForm = ref({
-      oldPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-    });
 
     const {
       confirmModal,
@@ -109,55 +79,9 @@ export default {
       }
     };
 
-    const openProfileModal = async () => {
+    const navigateToSettings = () => {
       showDropdown.value = false;
-      await fetchUserProfile();
-      if (profileUser.value) {
-        profileForm.value = {
-          fullName: profileUser.value.fullName || '',
-          email: profileUser.value.email || '',
-          phone: profileUser.value.phone || '',
-        };
-      }
-      showProfileModal.value = true;
-    };
-
-    const saveProfile = async () => {
-      try {
-        const res = await userService.updateProfile(profileForm.value);
-        profileUser.value = res.data;
-        showAlert('Thành công', 'Cập nhật thông tin cá nhân thành công!', 'success');
-        showProfileModal.value = false;
-      } catch (err) {
-        showAlert('Lỗi', err.response?.data?.error || 'Cập nhật thông tin thất bại', 'danger');
-      }
-    };
-
-    const openPasswordModal = () => {
-      showDropdown.value = false;
-      passwordForm.value = {
-        oldPassword: '',
-        newPassword: '',
-        confirmPassword: '',
-      };
-      showPasswordModal.value = true;
-    };
-
-    const savePassword = async () => {
-      if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
-        showAlert('Cảnh báo', 'Mật khẩu mới và xác nhận mật khẩu không trùng khớp!', 'warning');
-        return;
-      }
-      try {
-        await userService.changePassword({
-          oldPassword: passwordForm.value.oldPassword,
-          newPassword: passwordForm.value.newPassword,
-        });
-        showAlert('Thành công', 'Đổi mật khẩu thành công!', 'success');
-        showPasswordModal.value = false;
-      } catch (err) {
-        showAlert('Lỗi', err.response?.data?.error || 'Đổi mật khẩu thất bại', 'danger');
-      }
+      router.push('/settings');
     };
 
     const notificationStore = useNotificationStore();
@@ -274,7 +198,8 @@ export default {
     });
 
     onMounted(() => {
-      document.documentElement.setAttribute('data-theme', theme.value);
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
       if (authStore.isAuthenticated) {
         fetchUserProfile();
         notificationStore.startPolling();
@@ -294,22 +219,13 @@ export default {
       roleLabel,
       parentRoute,
       currentRoute,
-      theme,
-      toggleTheme,
+      navigateToSettings,
       handleLogout,
       toggleSidebar,
       role,
       navigateToUpgrade,
       goToOverview,
       showDropdown,
-      showProfileModal,
-      showPasswordModal,
-      profileForm,
-      passwordForm,
-      openProfileModal,
-      saveProfile,
-      openPasswordModal,
-      savePassword,
       confirmModal,
       onConfirmModal,
       closeConfirmModal,

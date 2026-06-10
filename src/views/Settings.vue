@@ -1,0 +1,238 @@
+<template>
+  <div class="p-4 bg-bg-main min-h-full">
+    <!-- Header Block -->
+    <div class="mb-6 pb-4 border-b border-border-main flex flex-col gap-4">
+      <div class="flex items-center gap-2">
+        <FormButton @click="goBack" variant="secondary" class="!p-1.5">
+          <AppIcon name="arrow-left" class="text-text-sub !w-4 !h-4" />
+        </FormButton>
+        <h2 class="text-base sm:text-xl font-bold text-text-main flex items-center gap-2 flex-wrap">
+          <AppIcon name="cog" class="text-primary !w-5 !h-5" />
+          <span>Cài Đặt Hệ Thống</span>
+        </h2>
+      </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <!-- Left Column: Tab Menu Selector -->
+      <div class="md:col-span-1">
+        <div class="bg-card border border-border-main rounded-2xl p-3 shadow-xs flex flex-col gap-1.5">
+          <button 
+            @click="activeTab = 'profile'"
+            :class="['w-full text-left px-4 py-3 rounded-xl font-semibold text-xs transition-all duration-150 flex items-center gap-2.5 cursor-pointer',
+              activeTab === 'profile' ? 'bg-primary text-white shadow-sm' : 'text-text-main hover:bg-slate-50 dark:hover:bg-slate-800']"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+            </svg>
+            <span>Thông tin cá nhân</span>
+          </button>
+
+          <button 
+            @click="activeTab = 'security'"
+            :class="['w-full text-left px-4 py-3 rounded-xl font-semibold text-xs transition-all duration-150 flex items-center gap-2.5 cursor-pointer',
+              activeTab === 'security' ? 'bg-primary text-white shadow-sm' : 'text-text-main hover:bg-slate-50 dark:hover:bg-slate-800']"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+            </svg>
+            <span>Đổi mật khẩu</span>
+          </button>
+
+          <button 
+            @click="activeTab = 'preferences'"
+            :class="['w-full text-left px-4 py-3 rounded-xl font-semibold text-xs transition-all duration-150 flex items-center gap-2.5 cursor-pointer',
+              activeTab === 'preferences' ? 'bg-primary text-white shadow-sm' : 'text-text-main hover:bg-slate-50 dark:hover:bg-slate-800']"
+          >
+            <!-- Sun/Moon icon in menu -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m0 13.5V21M4.978 4.978l1.59 1.59m10.864 10.864l1.59 1.59m-18 0l1.59-1.59m10.864-10.864l1.59-1.59M3 12h2.25m13.5 0H21M12 7.5a4.5 4.5 0 110 9 4.5 4.5 0 010-9z" />
+            </svg>
+            <span>Tùy chọn hiển thị</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Column: Settings Forms -->
+      <div class="md:col-span-3">
+        <!-- 1. TAB: PROFILE SETTINGS -->
+        <div v-if="activeTab === 'profile'" class="bg-card border border-border-main rounded-2xl p-5 shadow-xs animate-in fade-in duration-200">
+          <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-3 mb-5 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-primary">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+            </svg>
+            <span>Cập nhật Thông tin cá nhân</span>
+          </h3>
+
+          <div v-if="loadingProfile" class="flex justify-center items-center py-12">
+            <div class="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
+          </div>
+
+          <form v-else @submit.prevent="saveProfile" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormInput
+                type="text"
+                label="Họ và tên"
+                v-model="profileForm.fullName"
+                placeholder="Nhập họ và tên đầy đủ"
+                required
+              />
+              <FormInput
+                type="text"
+                label="Tên tài khoản (Không thể sửa)"
+                v-model="profileForm.username"
+                disabled
+              />
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormInput
+                type="email"
+                label="Địa chỉ Email"
+                v-model="profileForm.email"
+                placeholder="example@domain.com"
+              />
+              <FormInput
+                type="text"
+                label="Số điện thoại"
+                v-model="profileForm.phone"
+                placeholder="Nhập số điện thoại"
+              />
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <FormInput
+                type="text"
+                label="Số CCCD / CMND"
+                v-model="profileForm.identityCard"
+                placeholder="Nhập số CCCD"
+              />
+              <FormInput
+                type="date"
+                label="Ngày cấp"
+                v-model="profileForm.idCardIssueDate"
+              />
+              <FormInput
+                type="text"
+                label="Nơi cấp"
+                v-model="profileForm.idCardIssuePlace"
+                placeholder="Nơi cấp CCCD"
+              />
+            </div>
+
+            <FormInput
+              type="text"
+              label="Địa chỉ thường trú"
+              v-model="profileForm.permanentAddress"
+              placeholder="Nhập địa chỉ thường trú"
+            />
+
+            <div class="flex justify-end gap-3 pt-4 border-t border-border-main/50">
+              <FormButton type="button" variant="secondary" @click="resetProfileForm">Đặt lại</FormButton>
+              <FormButton type="submit" :loading="savingProfile" variant="primary">Lưu thông tin</FormButton>
+            </div>
+          </form>
+        </div>
+
+        <!-- 2. TAB: SECURITY SETTINGS -->
+        <div v-if="activeTab === 'security'" class="bg-card border border-border-main rounded-2xl p-5 shadow-xs animate-in fade-in duration-200">
+          <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-3 mb-5 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-primary">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+            </svg>
+            <span>Thay đổi Mật khẩu bảo mật</span>
+          </h3>
+
+          <form @submit.prevent="savePassword" class="space-y-4 max-w-lg">
+            <FormInput
+              type="password"
+              label="Mật khẩu hiện tại"
+              v-model="passwordForm.oldPassword"
+              placeholder="Nhập mật khẩu hiện tại để xác thực"
+              required
+            />
+            <FormInput
+              type="password"
+              label="Mật khẩu mới"
+              v-model="passwordForm.newPassword"
+              placeholder="Tối thiểu 6 ký tự"
+              required
+            />
+            <FormInput
+              type="password"
+              label="Xác nhận mật khẩu mới"
+              v-model="passwordForm.confirmPassword"
+              placeholder="Nhập lại mật khẩu mới"
+              required
+            />
+
+            <div class="flex justify-end gap-3 pt-4 border-t border-border-main/50">
+              <FormButton type="submit" :loading="savingPassword" variant="primary">Cập nhật mật khẩu</FormButton>
+            </div>
+          </form>
+        </div>
+
+        <!-- 3. TAB: DISPLAY PREFERENCES -->
+        <div v-if="activeTab === 'preferences'" class="bg-card border border-border-main rounded-2xl p-5 shadow-xs animate-in fade-in duration-200">
+          <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-3 mb-5 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-primary">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 0 0-2.22 4.582l1.252 1.254a3 3 0 0 0 4.242 0l1.252-1.254a3 3 0 0 0-2.22-4.582V2.25a.75.75 0 0 0-1.5 0v13.872Z" />
+            </svg>
+            <span>Tùy chọn Giao diện hiển thị</span>
+          </h3>
+
+          <div class="space-y-6 max-w-lg">
+            <div class="flex flex-col gap-2">
+              <span class="text-xs font-semibold text-text-main">Chế độ giao diện (Theme Mode)</span>
+              <p class="text-[10px] text-text-sub leading-normal m-0">
+                Lựa chọn giữa giao diện sáng tinh gọn hoặc tối dịu mắt để phù hợp hơn với điều kiện ánh sáng xung quanh của bạn.
+              </p>
+              
+              <div class="grid grid-cols-2 gap-4 mt-3">
+                <!-- Light Mode Option Card -->
+                <div 
+                  @click="setTheme('light')"
+                  :class="['border rounded-2xl p-4 cursor-pointer text-center transition-all duration-150 flex flex-col items-center justify-center gap-2.5 min-h-[100px]',
+                    theme === 'light' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-border-main hover:bg-slate-50 dark:hover:bg-slate-800']"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-amber-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m0 13.5V21M4.978 4.978l1.59 1.59m10.864 10.864l1.59 1.59m-18 0l1.59-1.59m10.864-10.864l1.59-1.59M3 12h2.25m13.5 0H21M12 7.5a4.5 4.5 0 110 9 4.5 4.5 0 010-9z" />
+                  </svg>
+                  <span class="font-bold text-xs text-text-main">Giao diện Sáng</span>
+                </div>
+
+                <!-- Dark Mode Option Card -->
+                <div 
+                  @click="setTheme('dark')"
+                  :class="['border rounded-2xl p-4 cursor-pointer text-center transition-all duration-150 flex flex-col items-center justify-center gap-2.5 min-h-[100px]',
+                    theme === 'dark' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-border-main hover:bg-slate-50 dark:hover:bg-slate-800']"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-sky-400">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+                  </svg>
+                  <span class="font-bold text-xs text-text-main">Giao diện Tối</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFIRM MODAL -->
+    <ConfirmModal
+      :show="confirmModal.show"
+      :title="confirmModal.title"
+      :message="confirmModal.message"
+      :type="confirmModal.type"
+      :confirm-text="confirmModal.confirmText"
+      :cancel-text="confirmModal.cancelText"
+      :show-cancel="confirmModal.showCancel"
+      @confirm="onConfirmModal"
+      @cancel="closeConfirmModal"
+    />
+  </div>
+</template>
+
+<script src="./Settings.js"></script>

@@ -173,6 +173,12 @@ const routes = [
     meta: { requiresAuth: true, requiresRole: 'TENANT' },
   },
   {
+    path: '/settings',
+    name: 'Settings',
+    component: () => import('../views/Settings.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/contact',
     name: 'Contact',
     component: () => import('../views/Contact.vue'),
