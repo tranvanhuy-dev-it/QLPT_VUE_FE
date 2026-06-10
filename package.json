@@ -12,6 +12,7 @@
     "@capacitor/android": "^8.4.0",
     "@capacitor/cli": "^8.4.0",
     "@capacitor/core": "^8.4.0",
+    "@codetrix-studio/capacitor-google-auth": "^3.3.6",
     "axios": "^1.17.0",
     "hls.js": "^1.6.16",
     "html2canvas-pro": "^2.0.4",

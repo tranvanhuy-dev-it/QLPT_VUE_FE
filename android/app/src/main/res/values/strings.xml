@@ -4,4 +4,5 @@
     <string name="title_activity_main">Nha Tro Thong Minh</string>
     <string name="package_name">com.qlpt.app</string>
     <string name="custom_url_scheme">com.qlpt.app</string>
+    <string name="server_client_id">480688489128-lahmuc6pf1ecek89of6j2ll3ceuik6ed.apps.googleusercontent.com</string>
 </resources>

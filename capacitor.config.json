@@ -1,5 +1,12 @@
 {
   "appId": "com.qlpt.app",
   "appName": "Nha Tro Thong Minh",
-  "webDir": "dist"
+  "webDir": "dist",
+  "plugins": {
+    "GoogleAuth": {
+      "scopes": ["profile", "email"],
+      "clientId": "480688489128-lahmuc6pf1ecek89of6j2ll3ceuik6ed.apps.googleusercontent.com",
+      "forceCodeForRefreshToken": true
+    }
+  }
 }
