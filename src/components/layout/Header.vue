@@ -17,21 +17,6 @@
         <span class="text-sm font-bold text-primary leading-tight">Nhà Trọ Thông Minh</span>
       </div>
     </div>
-
-    <div class="flex-1 max-w-[300px] md:max-w-[400px] mx-4 hidden md:block">
-      <!-- Global Search -->
-      <div class="relative w-full">
-        <svg xmlns="http://www.w3.org/2000/svg"
-          class="absolute left-3 top-1/2 -translate-y-1/2 w-[1.125rem] h-[1.125rem] text-text-sub" fill="none"
-          viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-        <input type="text"
-          class="w-full pl-9 pr-4 py-2 border border-border-main bg-slate-50 dark:bg-slate-900 text-text-main text-[0.85rem] outline-none transition-all duration-150 focus:bg-white dark:focus:bg-slate-900 focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,102,204,0.08)]"
-          placeholder="Tìm kiếm..." />
-      </div>
-    </div>
-
     <div class="flex items-center gap-2 sm:gap-4 shrink-0">
       <!-- Icon Utilities -->
       <button
@@ -174,7 +159,7 @@
           <div class="flex flex-col hidden sm:flex max-w-[110px] text-left">
             <span class="text-[0.825rem] font-semibold text-text-main truncate leading-snug">{{ username }}</span>
             <span class="text-[0.675rem] text-text-sub uppercase font-bold tracking-wide truncate mt-0.5">{{ roleLabel
-              }}</span>
+            }}</span>
           </div>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
             stroke="currentColor" class="w-3 h-3 text-text-sub transition-transform duration-200"

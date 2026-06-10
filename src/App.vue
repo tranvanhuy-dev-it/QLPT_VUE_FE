@@ -14,7 +14,8 @@
       <Header />
       <main
         ref="mainRef"
-        class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative pb-0 lg:pb-0"
+        class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative lg:!pb-0"
+        style="padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));"
         @touchstart.passive="onTouchStart"
         @touchmove.passive="onTouchMove"
         @touchend="onTouchEnd"
@@ -47,8 +48,7 @@
           <router-view :key="routerViewKey" />
         </div>
         <footer 
-          class="py-3 text-center text-xs text-text-sub border-t border-border-main/50 bg-card/60 backdrop-blur-xs shrink-0 lg:!mb-0"
-          style="margin-bottom: calc(3.5rem + env(safe-area-inset-bottom));"
+          class="py-3 text-center text-xs text-text-sub border-t border-border-main/50 bg-card/60 backdrop-blur-xs shrink-0"
         >
           © 2026 Nhà Trọ Thông Minh. Hệ thống đang trong quá trình phát triển &amp; thử nghiệm.
         </footer>
