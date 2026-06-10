@@ -13,6 +13,9 @@ export default {
     const error = ref('');
     const loading = ref(false);
 
+    const showPassword = ref(false);
+    const showSystemNotice = ref(false);
+
     const handleLogin = async () => {
       error.value = '';
       loading.value = true;
@@ -62,7 +65,7 @@ export default {
       const btnContainer = document.getElementById('google-signin-btn');
       if (btnContainer) {
         btnContainer.innerHTML = `
-          <button type="button" class="btn btn-outline" style="width: 340px; display: flex; align-items: center; justify-content: center; gap: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; padding: 0.6rem 1rem; background: var(--card-bg); font-family: inherit; font-size: 0.9rem; font-weight: 500; cursor: pointer; color: var(--text-primary); transition: all 0.15s ease;">
+          <button type="button" class="btn btn-outline" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; padding: 0.6rem 1rem; background: var(--card-bg); font-family: inherit; font-size: 0.9rem; font-weight: 500; cursor: pointer; color: var(--text-primary); transition: all 0.15s ease;">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M17.64 9.20455C17.64 8.56636 17.5827 7.95273 17.4764 7.36364H9V10.845H13.8436C13.635 11.97 13.0009 12.9232 12.0477 13.5614V15.8195H14.9564C16.6582 14.2527 17.64 11.9455 17.64 9.20455Z" fill="#4285F4"/>
               <path d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8195L12.0477 13.5614C11.2418 14.1014 10.2109 14.4205 9 14.4205C6.65591 14.4205 4.67182 12.8373 3.96409 10.71H0.957275V13.0418C2.43818 15.9832 5.48182 18 9 18Z" fill="#34A853"/>
@@ -94,12 +97,17 @@ export default {
           auto_select: false
         });
 
+        const btnContainer = document.getElementById('google-signin-btn');
+        let calculatedWidth = btnContainer ? btnContainer.offsetWidth : 340;
+        if (calculatedWidth < 250) calculatedWidth = 250;
+        if (calculatedWidth > 400) calculatedWidth = 400;
+
         google.accounts.id.renderButton(
-          document.getElementById('google-signin-btn'),
+          btnContainer,
           {
             theme: 'outline',
             size: 'large',
-            width: '340',
+            width: calculatedWidth.toString(),
             text: 'signin_with',
             shape: 'rectangular',
             logo_alignment: 'left'
@@ -121,6 +129,8 @@ export default {
       error,
       loading,
       handleLogin,
+      showPassword,
+      showSystemNotice,
     };
   },
 };
