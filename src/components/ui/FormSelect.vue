@@ -10,7 +10,7 @@
       v-bind="$attrs"
       @change="onChange"
       :class="[
-        'w-full border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main outline-none focus:bg-white focus:border-primary transition-all duration-150',
+        'w-full border border-border-main rounded-lg bg-slate-50 dark:bg-slate-900 text-text-main outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-primary transition-all duration-150',
         size === 'sm' ? 'px-2 py-1.5 text-xs' : 'px-3 py-2 text-sm',
         disabled ? 'opacity-60 cursor-not-allowed bg-slate-100 dark:bg-slate-800' : ''
       ]"

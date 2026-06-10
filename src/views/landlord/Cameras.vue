@@ -13,7 +13,7 @@
       <template #filter-addons>
         <select 
           v-model="selectedHouseId" 
-          class="px-2.5 py-1.5 sm:px-3 sm:py-2 border border-border-main rounded-xl bg-slate-50 dark:bg-slate-900 text-text-main text-[11px] sm:text-xs font-semibold outline-none transition focus:bg-white focus:border-primary cursor-pointer max-w-[150px] sm:max-w-[200px]"
+          class="px-2.5 py-1.5 sm:px-3 sm:py-2 border border-border-main rounded-xl bg-slate-50 dark:bg-slate-900 text-text-main text-[11px] sm:text-xs font-semibold outline-none transition focus:bg-white dark:focus:bg-slate-900 focus:border-primary cursor-pointer max-w-[150px] sm:max-w-[200px]"
         >
           <option value="">Tất cả dãy trọ</option>
           <option v-for="house in boardingHouses" :key="house.id" :value="house.id">
@@ -94,7 +94,7 @@
             v-model="form.boardingHouseId" 
             required
             :disabled="editingCamera !== null"
-            class="w-full px-3.5 py-2.5 border border-border-main rounded-xl bg-slate-50 dark:bg-slate-900 text-text-main text-xs font-medium outline-none transition focus:bg-white focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,102,204,0.08)] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+            class="w-full px-3.5 py-2.5 border border-border-main rounded-xl bg-slate-50 dark:bg-slate-900 text-text-main text-xs font-medium outline-none transition focus:bg-white dark:focus:bg-slate-900 focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,102,204,0.08)] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <option value="" disabled>-- Chọn dãy nhà trọ --</option>
             <option v-for="house in boardingHouses" :key="house.id" :value="house.id">
