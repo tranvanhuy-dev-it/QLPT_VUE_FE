@@ -14,7 +14,7 @@
       <div @click="goToOverview"
         class="flex lg:hidden items-center gap-2 cursor-pointer hover:opacity-90 active:scale-98 transition-all duration-100 select-none">
         <img src="/logo.ico" alt="Logo" class="w-7 h-7 rounded object-contain" />
-        <span class="text-sm font-bold text-primary leading-tight">Nhà Trọ Thông Minh</span>
+        <span class="text-sm font-bold text-primary leading-tight">SMART RENT</span>
       </div>
     </div>
     <div class="flex items-center gap-2 sm:gap-4 shrink-0">

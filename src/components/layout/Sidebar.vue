@@ -1,11 +1,12 @@
 <template>
-  <aside class="hidden lg:flex w-[260px] bg-card border-r border-border-main flex-col h-[100dvh] sticky top-0 inset-y-0 left-0 shrink-0 z-50 rounded-2xl">
+  <aside
+    class="hidden lg:flex w-[260px] bg-card border-r border-border-main flex-col h-[100dvh] sticky top-0 inset-y-0 left-0 shrink-0 z-50 rounded-2xl">
     <!-- Brand Header -->
     <div class="flex items-center justify-between p-6 pb-5">
       <div class="flex items-center gap-3">
         <img src="/logo.ico" alt="Logo" class="w-[38px] h-[38px] rounded-lg object-contain" />
         <div class="flex flex-col">
-          <h3 class="text-[1rem] font-bold text-primary leading-tight">Nhà Trọ Thông Minh</h3>
+          <h3 class="text-[1rem] font-bold text-primary leading-tight">SMART RENT</h3>
           <p class="text-xs text-text-sub">Quản lý nhà trọ thông minh</p>
         </div>
       </div>

@@ -1,6 +1,6 @@
 {
   "appId": "com.qlpt.app",
-  "appName": "Nha Tro Thong Minh",
+  "appName": "SMART RENT - Nhà trọ thông minh",
   "webDir": "dist",
   "plugins": {
     "GoogleAuth": {

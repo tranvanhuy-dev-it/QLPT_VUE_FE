@@ -1,9 +1,20 @@
 <template>
   <div class="auth-wrapper">
     <div class="auth-card">
-      <h2 style="text-align: center; margin-bottom: 0.5rem; font-weight: 700; color: var(--primary-color);">NHÀ TRỌ
-        THÔNG MINH</h2>
-      <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.9rem;">Đăng nhập để
+      <h1 style="
+        text-align: center;
+        margin-bottom: 0rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        font-size: 2rem;
+      ">
+        SMART RENT
+      </h1>
+      <h2 style="text-align: center; margin-bottom: 0.5rem; font-weight: 700; color: var(--primary-color);">
+        Quản lý trọ thông minh
+      </h2>
+      <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.9rem;">Đăng nhập
+        để
         quản lý và xem thông tin trọ</p>
 
       <div v-if="error" class="badge badge-danger"
@@ -76,7 +87,8 @@
             style="font-weight: 700; color: var(--primary-color); text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.25rem; margin-bottom: 0.15rem;">
             <span>⚙️ THÔNG BÁO HỆ THỐNG</span>
           </div>
-          <span>Hệ thống hiện đang trong quá trình phát triển tích cực. Nếu gặp bất kỳ sự cố kỹ thuật nào hoặc muốn đóng
+          <span>Hệ thống hiện đang trong quá trình phát triển tích cực. Nếu gặp bất kỳ sự cố kỹ thuật nào hoặc muốn
+            đóng
             góp ý kiến để hoàn thiện dịch vụ, xin vui lòng:</span>
           <div style="text-align: center; font-weight: 700; margin-top: 0.35rem;">
             <router-link to="/contact"

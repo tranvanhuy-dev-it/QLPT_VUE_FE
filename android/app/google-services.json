@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "930981481407",
+    "project_id": "qlpt-d2249",
+    "storage_bucket": "qlpt-d2249.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930981481407:android:7aa6b1982f764d1d982f0a",
+        "android_client_info": {
+          "package_name": "com.qlpt.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiK51gxWdrcKoSMEP7mvNQzvSumQ37dys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

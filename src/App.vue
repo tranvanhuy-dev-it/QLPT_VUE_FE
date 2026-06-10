@@ -65,14 +65,16 @@
         <div class="absolute inset-0 border-4 border-slate-100 dark:border-slate-800 rounded-full"></div>
         <div class="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
-      <p class="text-sm font-semibold text-text-main text-center animate-pulse">Đang xử lý dữ liệu...</p>
+      <p class="text-sm font-semibold text-text-main text-center animate-pulse">{{ savingMessage }}</p>
     </div>
   </div>
 </template>
 
 <script>
-import { computed, ref, onMounted, onUnmounted } from 'vue';
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { Capacitor } from '@capacitor/core';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import Sidebar from './components/layout/Sidebar.vue';
 import Header from './components/layout/Header.vue';
 import BottomBar from './components/layout/BottomBar.vue';
@@ -105,6 +107,10 @@ export default {
       if (path.includes('/detail') || path.includes('/add') || path.includes('/create') || path.includes('/new') || route.params.id) return true;
       if (authStore.isBottomBarHidden) return true;
       return false;
+    });
+
+    const savingMessage = computed(() => {
+      return route.path === '/login' ? 'Đang xác thực và tạo phiên làm việc...' : 'Đang xử lý dữ liệu...';
     });
 
     // ==================== Pull to Refresh ====================
@@ -158,8 +164,40 @@ export default {
       pullDistance.value = 0;
     };
 
+    // ==================== Status Bar Configuration ====================
+    const updateStatusBar = async () => {
+      if (!Capacitor.isNativePlatform()) return;
+
+      try {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        const isDark = currentTheme === 'dark';
+
+        // Set status bar style (text/icons color)
+        await StatusBar.setStyle({
+          style: isDark ? Style.Dark : Style.Light,
+        });
+
+        // Set background color on Android
+        let hexColor = '#ffffff';
+        if (isDark) {
+          hexColor = hideHeaderOnMobile.value ? '#0f172a' : '#1e293b';
+        } else {
+          hexColor = hideHeaderOnMobile.value ? '#f4f6f9' : '#ffffff';
+        }
+
+        await StatusBar.setBackgroundColor({ color: hexColor });
+      } catch (err) {
+        console.error('Lỗi khi cập nhật Status Bar:', err);
+      }
+    };
+
+    watch(hideHeaderOnMobile, () => {
+      updateStatusBar();
+    });
+
     // ==================== Session Check ====================
     let checkInterval = null;
+    let themeObserver = null;
 
     const checkSession = () => {
       if (authStore.token && isTokenExpired(authStore.token)) {
@@ -174,6 +212,18 @@ export default {
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
       checkSession();
+
+      // Khởi tạo và đồng bộ hóa Status Bar cho Capacitor
+      if (Capacitor.isNativePlatform()) {
+        updateStatusBar();
+        themeObserver = new MutationObserver(() => {
+          updateStatusBar();
+        });
+        themeObserver.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['data-theme'],
+        });
+      }
       
       // Nếu là chủ trọ và đã đăng nhập, kiểm tra trạng thái gói dịch vụ để đồng bộ mới nhất
       if (authStore.isAuthenticated && authStore.role === 'LANDLORD') {
@@ -192,6 +242,9 @@ export default {
       if (checkInterval) {
         clearInterval(checkInterval);
       }
+      if (themeObserver) {
+        themeObserver.disconnect();
+      }
     });
 
     return {
@@ -199,6 +252,7 @@ export default {
       hideHeaderOnMobile,
       isApiSaving,
       isBottomBarHidden,
+      savingMessage,
       // Pull to refresh
       mainRef,
       pullDistance,
