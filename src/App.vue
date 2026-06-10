@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isGuest" class="h-full h-[100dvh] w-screen overflow-y-auto bg-bg-main">
+  <div v-if="isGuest" class="h-[100dvh] w-screen overflow-y-auto bg-bg-main">
     <router-view />
   </div>
   <div v-else class="flex h-screen h-[100dvh] overflow-hidden bg-bg-main">

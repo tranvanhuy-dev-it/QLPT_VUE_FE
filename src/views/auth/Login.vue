@@ -27,6 +27,16 @@
         </button>
       </form>
 
+      <div style="margin-top: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+        <div style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.75rem; color: var(--text-secondary); font-size: 0.8rem;">
+          <div style="flex: 1; height: 1px; background-color: var(--border-color);"></div>
+          <span>Hoặc đăng nhập bằng</span>
+          <div style="flex: 1; height: 1px; background-color: var(--border-color);"></div>
+        </div>
+        
+        <div id="google-signin-btn" style="width: 100%; display: flex; justify-content: center; min-height: 40px;"></div>
+      </div>
+
       <div style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem;">
         <span style="color: var(--text-secondary);">Bạn là chủ trọ mới? </span>
         <router-link to="/register">Đăng ký tại đây</router-link>

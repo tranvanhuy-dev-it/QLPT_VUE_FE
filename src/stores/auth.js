@@ -60,6 +60,22 @@ export const useAuthStore = defineStore('auth', {
         throw error.response?.data?.error || 'Đăng nhập thất bại. Vui lòng thử lại!';
       }
     },
+    async loginWithGoogle(credential) {
+      try {
+        const response = await api.post('/api/auth/google', { credential });
+        const { token, id, role, isExpired } = response.data;
+        
+        this.token = token;
+        this.user = { id, username: response.data.username, role, isExpired };
+        
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(this.user));
+        
+        return this.user;
+      } catch (error) {
+        throw error.response?.data?.error || 'Đăng nhập bằng Google thất bại. Vui lòng thử lại!';
+      }
+    },
     async checkSubscription() {
       if (this.role !== 'LANDLORD') return false;
       try {

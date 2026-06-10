@@ -60,7 +60,8 @@
 
 @layer base {
   html,
-  body {
+  body,
+  #app {
     height: 100%;
     overflow: hidden;
     margin: 0;
