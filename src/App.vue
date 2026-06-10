@@ -15,7 +15,7 @@
       <main
         ref="mainRef"
         class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative lg:!pb-0 rounded-2xl"
-        style="padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));"
+        :style="{ paddingBottom: isBottomBarHidden ? '0px' : 'calc(4.5rem + env(safe-area-inset-bottom))' }"
         @touchstart.passive="onTouchStart"
         @touchmove.passive="onTouchMove"
         @touchend="onTouchEnd"
@@ -56,7 +56,7 @@
     </div>
   </div>
 
-  <BottomBar />
+  <BottomBar :hidden="isBottomBarHidden" />
 
   <!-- Global Glassmorphic Loading Overlay for Saving/Submitting (POST/PUT/DELETE) -->
   <div v-if="isApiSaving" class="fixed inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-[2px] z-[9999] flex flex-col items-center justify-center transition-all duration-300">
@@ -97,6 +97,14 @@ export default {
 
     const hideHeaderOnMobile = computed(() => {
       return !!(route.meta && route.meta.hideHeaderOnMobile);
+    });
+
+    const isBottomBarHidden = computed(() => {
+      if (route.meta && (route.meta.hideBottomBar || route.meta.hideHeaderOnMobile)) return true;
+      const path = route.path.toLowerCase();
+      if (path.includes('/detail') || path.includes('/add') || path.includes('/create') || path.includes('/new') || route.params.id) return true;
+      if (authStore.isBottomBarHidden) return true;
+      return false;
     });
 
     // ==================== Pull to Refresh ====================
@@ -190,6 +198,7 @@ export default {
       isGuest,
       hideHeaderOnMobile,
       isApiSaving,
+      isBottomBarHidden,
       // Pull to refresh
       mainRef,
       pullDistance,

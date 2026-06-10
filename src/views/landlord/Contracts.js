@@ -1,4 +1,4 @@
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import PageHeader from "../../components/ui/PageHeader.vue";
 import DataTable from "../../components/ui/DataTable.vue";
@@ -217,6 +217,7 @@ export default {
     };
 
     const openAddModal = async () => {
+      authStore.setBottomBarHidden(true);
       await Promise.all([fetchVacantRooms(), fetchTenants()]);
       if (vacantRooms.value.length > 0) {
         form.value.roomId = vacantRooms.value[0].id;
@@ -283,6 +284,7 @@ export default {
     };
 
     const closeModal = () => {
+      authStore.setBottomBarHidden(false);
       showAddModal.value = false;
       availableExtraFees.value = [];
       form.value = {
@@ -314,6 +316,10 @@ export default {
         fetchVacantRooms();
         fetchTenants();
       }
+    });
+
+    onUnmounted(() => {
+      authStore.setBottomBarHidden(false);
     });
 
     return {

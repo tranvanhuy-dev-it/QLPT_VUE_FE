@@ -1,5 +1,5 @@
 <template>
-  <div v-if="role && isAuthenticated" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card/90 backdrop-blur-md border-t border-border-main/50 shadow-lg px-1 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] flex items-center justify-around">
+  <div v-if="role && isAuthenticated && !hidden" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card/90 backdrop-blur-md border-t border-border-main/50 shadow-lg px-1 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] flex items-center justify-around">
     <router-link
       v-for="tab in currentTabs"
       :key="tab.label"
@@ -22,7 +22,13 @@ import { useRoute } from 'vue-router';
 
 export default {
   name: 'BottomBar',
-  setup() {
+  props: {
+    hidden: {
+      type: Boolean,
+      default: false
+    }
+  },
+  setup(props) {
     const authStore = useAuthStore();
     const route = useRoute();
 
