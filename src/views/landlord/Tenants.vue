@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 bg-bg-main min-h-full">
+  <div class="p-4 bg-bg-main min-h-full tenants-page">
     <PageHeader title="Tài Khoản Người Thuê"
       subtitle="Cấp tài khoản đăng nhập để người ở có thể tự xem hóa đơn và chỉ số phòng mình" :icon="tenantIcon"
       :showAdd="true" addText="Thêm" searchPlaceholder="Tìm theo tên, liên hệ..." v-model="searchQuery"

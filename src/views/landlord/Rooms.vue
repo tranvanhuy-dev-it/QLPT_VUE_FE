@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 bg-bg-main min-h-full">
+  <div class="p-4 bg-bg-main min-h-full rooms-page">
     <PageHeader title="Quản Lý Phòng Trọ" subtitle="Thêm mới, sửa thông tin phòng trọ và theo dõi trạng thái phòng"
       :icon="roomIcon" :showAdd="true" addText="Thêm" :disableAdd="boardingHouses.length === 0"
       searchPlaceholder="Tìm theo số phòng..." v-model="searchQuery" @add-click="openAddModal">

@@ -1,5 +1,5 @@
 <template>
-  <aside class="hidden lg:flex w-[260px] bg-card border-r border-border-main flex-col h-[100dvh] sticky top-0 inset-y-0 left-0 shrink-0 z-50">
+  <aside class="hidden lg:flex w-[260px] bg-card border-r border-border-main flex-col h-[100dvh] sticky top-0 inset-y-0 left-0 shrink-0 z-50 rounded-2xl">
     <!-- Brand Header -->
     <div class="flex items-center justify-between p-6 pb-5">
       <div class="flex items-center gap-3">

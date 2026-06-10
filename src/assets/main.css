@@ -21,6 +21,10 @@
   --spacing-5: 1.0625rem;
   --spacing-6: 1.25rem;
   --spacing-8: 1.75rem;
+
+  --radius-xl: 2px;
+  --radius-2xl: 2px;
+  --radius-3xl: 2px;
 }
 
 :root {
@@ -135,7 +139,7 @@
 .card {
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 10px;
+  border-radius: 2px;
   padding: 0.75rem;
   box-shadow: var(--shadow);
   margin-bottom: 0.375rem;
@@ -226,7 +230,7 @@
   width: 100%;
   overflow-x: auto;
   background-color: var(--card-bg);
-  border-radius: 10px;
+  border-radius: 2px;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow);
 }
@@ -300,7 +304,7 @@
   padding: 2.5rem;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
+  border-radius: 2px;
   box-shadow: var(--shadow-lg);
 }
 
@@ -395,9 +399,9 @@
   .rooms-page > .card,
   .boarding-houses-page > .card,
   .tenants-page > .card {
-    border-radius: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
+    border-radius: 2px !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: var(--shadow) !important;
     padding: 2rem !important;
     margin-bottom: 0 !important;
     flex: 1;
@@ -410,7 +414,7 @@
   .rooms-page .table-responsive,
   .boarding-houses-page .table-responsive,
   .tenants-page .table-responsive {
-    border-radius: 8px !important;
+    border-radius: 2px !important;
     border: 1px solid var(--border-color) !important;
     box-shadow: none !important;
   }
@@ -428,7 +432,7 @@
     background-color: var(--card-bg);
   }
   .dashboard-page .welcome-banner {
-    border-radius: 0 !important;
+    border-radius: 2px !important;
     margin-bottom: 0 !important;
     padding: 2rem 2.5rem !important;
     box-shadow: none !important;
@@ -439,7 +443,7 @@
     border-bottom: 1px solid var(--border-color);
   }
   .dashboard-page .stat-card {
-    border-radius: 0 !important;
+    border-radius: 2px !important;
     border: none !important;
     border-right: 1px solid var(--border-color) !important;
     box-shadow: none !important;
@@ -454,7 +458,7 @@
     border-bottom: 1px solid var(--border-color);
   }
   .dashboard-page .middle-card {
-    border-radius: 0 !important;
+    border-radius: 2px !important;
     border: none !important;
     box-shadow: none !important;
     padding: 2rem !important;
@@ -466,7 +470,7 @@
     gap: 0 !important;
   }
   .dashboard-page .detail-card {
-    border-radius: 0 !important;
+    border-radius: 2px !important;
     border: none !important;
     box-shadow: none !important;
     padding: 2rem !important;
@@ -478,19 +482,42 @@
 
 /* Global Responsive Spacing Overrides to reduce spacing on mobile and desktop */
 main .bg-bg-main {
-  padding: 0.625rem !important; /* 10px on mobile */
+  padding: 0.3125rem !important; /* 5px on mobile - 1/2 of 10px */
 }
 main .bg-bg-main .bg-card {
-  padding: 0.75rem !important; /* 12px on mobile */
+  padding: 0.75rem !important; /* Keep unchanged */
 }
 
 @media (min-width: 640px) {
   main .bg-bg-main {
-    padding: 1rem !important; /* 16px on desktop/tablet */
+    padding: 0.5rem !important; /* 8px on desktop - 1/2 of 16px */
   }
   main .bg-bg-main .bg-card {
-    padding: 1rem !important; /* 16px on desktop/tablet */
+    padding: 1rem !important; /* Keep unchanged */
   }
+}
+
+/* Reduce margins and gaps between large blocks/sections by half */
+main .bg-bg-main > div,
+main .bg-bg-main > form,
+main .bg-bg-main > section {
+  margin-bottom: 0.5rem !important; /* Reduced from mb-4 (1rem) or mb-6 (1.5rem) */
+}
+main .bg-bg-main > div:last-child,
+main .bg-bg-main > form:last-child,
+main .bg-bg-main > section:last-child {
+  margin-bottom: 0 !important;
+}
+
+main .bg-bg-main > .grid,
+main .bg-bg-main > div > .grid,
+main .bg-bg-main > form > .grid {
+  gap: 0.5rem !important; /* Reduced from gap-4 (1rem) or gap-5 (1.25rem) to 0.5rem (8px) */
+}
+
+/* For boarding houses grid page specifically */
+.boarding-houses-page .grid {
+  gap: 0.75rem !important; /* Reduced from 1.5rem */
 }
 
 

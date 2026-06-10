@@ -14,7 +14,7 @@
       <Header />
       <main
         ref="mainRef"
-        class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative lg:!pb-0"
+        class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative lg:!pb-0 rounded-2xl"
         style="padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));"
         @touchstart.passive="onTouchStart"
         @touchmove.passive="onTouchMove"
