@@ -1,18 +1,9 @@
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import PageHeader from "../../components/ui/PageHeader.vue";
 import DataTable from "../../components/ui/DataTable.vue";
-import Modal from "../../components/ui/Modal.vue";
-import Checkbox from "../../components/ui/Checkbox.vue";
-import FormInput from "../../components/ui/FormInput.vue";
-import FormSelect from "../../components/ui/FormSelect.vue";
-import FormButton from "../../components/ui/FormButton.vue";
 import ConfirmModal from "../../components/ui/ConfirmModal.vue";
 import { useContractStore } from "../../stores/contract.js";
-import { useRoomStore } from "../../stores/room.js";
-import { useTenantStore } from "../../stores/tenant.js";
-import contractService from "../../services/contractService.js";
-import { validateDateRange } from "../../utils/validation.js";
 import { useConfirmModal } from "../../composables/useConfirmModal.js";
 import { useAuthStore } from "../../stores/auth.js";
 
@@ -21,11 +12,6 @@ export default {
   components: {
     PageHeader,
     DataTable,
-    Modal,
-    Checkbox,
-    FormInput,
-    FormSelect,
-    FormButton,
     ConfirmModal,
   },
   setup() {
@@ -35,7 +21,6 @@ export default {
     const {
       confirmModal,
       showAlert,
-      showConfirm,
       onConfirmModal,
       closeConfirmModal,
     } = useConfirmModal();
@@ -87,19 +72,11 @@ export default {
     ];
 
     const contractStore = useContractStore();
-    const roomStore = useRoomStore();
-    const tenantStore = useTenantStore();
 
     const contracts = computed(() => contractStore.contracts);
-    const loading = computed(
-      () => contractStore.loading || roomStore.loading || tenantStore.loading,
-    );
+    const loading = computed(() => contractStore.loading);
     const totalPages = computed(() => contractStore.totalPages);
     const totalElements = computed(() => contractStore.totalElements);
-
-    const vacantRooms = ref([]);
-    const tenantsList = ref([]);
-    const availableExtraFees = ref([]);
 
     // Search
     const searchQuery = ref("");
@@ -107,34 +84,6 @@ export default {
     // Pagination
     const page = ref(0);
     const size = ref(10);
-
-    const showAddModal = ref(false);
-
-    // Inline tenant creation
-    const showInlineTenantForm = ref(false);
-    const inlineTenantLoading = ref(false);
-    const inlineTenantForm = ref({
-      fullName: "",
-      username: "",
-      password: "",
-      phone: "",
-      email: "",
-      identityCard: "",
-      idCardIssueDate: "",
-      idCardIssuePlace: "",
-      permanentAddress: "",
-    });
-
-    const form = ref({
-      roomId: "",
-      tenantId: "",
-      startDate: new Date().toISOString().substring(0, 10),
-      endDate: "",
-      deposit: 0,
-      contractedRoomPrice: 0,
-      numberOfTenants: 1,
-      fixedBillingDay: null,
-    });
 
     const formatMoney = (amount) => {
       if (amount === undefined || amount === null) return "0";
@@ -157,11 +106,10 @@ export default {
         showAlert(
           "Lỗi",
           err.response?.data?.error || "Không thể tải danh sách hợp đồng",
-          "danger",
+          "danger"
         );
       }
     };
-    
 
     const filteredContracts = computed(() => {
       if (!searchQuery.value) return contracts.value;
@@ -171,144 +119,12 @@ export default {
           contract.tenant.fullName.toLowerCase().includes(q) ||
           contract.tenant.username.toLowerCase().includes(q) ||
           contract.room.roomNumber.toLowerCase().includes(q) ||
-          contract.room.boardingHouse.name.toLowerCase().includes(q),
+          contract.room.boardingHouse.name.toLowerCase().includes(q)
       );
     });
 
-    const selectedRoom = computed(() => {
-      return vacantRooms.value.find((r) => r.id === form.value.roomId) || null;
-    });
-
-    const fetchVacantRooms = async () => {
-      try {
-        const list = await roomStore.fetchRooms({ size: 200 });
-        vacantRooms.value = list.filter((r) => r.status === "VACANT");
-      } catch (err) {
-        console.error("Không tải được danh sách phòng trống:", err);
-      }
-    };
-
-    const fetchTenants = async () => {
-      try {
-        const list = await tenantStore.fetchTenants({
-          size: 200,
-          status: "ACTIVE",
-          availableOnly: true,
-        });
-        tenantsList.value = list || [];
-      } catch (err) {
-        console.error("Không tải được danh sách người thuê:", err);
-      }
-    };
-
-    const onRoomChange = async () => {
-      const selectedRoom = vacantRooms.value.find(
-        (r) => r.id === form.value.roomId,
-      );
-      if (selectedRoom) {
-        form.value.contractedRoomPrice = selectedRoom.basePrice;
-        form.value.deposit = selectedRoom.basePrice;
-        form.value.fixedBillingDay =
-          selectedRoom.boardingHouse?.fixedBillingDay || null;
-
-        try {
-          const response = await contractService.getBoardingHouseExtraFees(
-            selectedRoom.boardingHouse.id,
-          );
-          availableExtraFees.value = (response.data || []).map((ef) => ({
-            ...ef,
-            selected: true,
-            customPrice: ef.defaultPrice,
-          }));
-        } catch (err) {
-          console.error("Không tải được dịch vụ dãy trọ:", err);
-        }
-      }
-    };
-
-    const openAddModal = async () => {
-      authStore.setBottomBarHidden(true);
-      await Promise.all([fetchVacantRooms(), fetchTenants()]);
-      if (vacantRooms.value.length > 0) {
-        form.value.roomId = vacantRooms.value[0].id;
-        onRoomChange();
-      }
-      if (tenantsList.value.length > 0) {
-        form.value.tenantId = tenantsList.value[0].id;
-      }
-      showAddModal.value = true;
-    };
-
-    const saveContract = async () => {
-      if (
-        form.value.endDate &&
-        !validateDateRange(form.value.startDate, form.value.endDate)
-      ) {
-        showAlert(
-          "Lỗi nhập liệu",
-          "Ngày bắt đầu thuê phải trước ngày kết thúc.",
-          "warning",
-        );
-        return;
-      }
-      try {
-        const extraFeesPayload = availableExtraFees.value
-          .filter((ef) => ef.selected)
-          .map((ef) => ({
-            extraFeeId: ef.id,
-            customPrice: ef.customPrice,
-          }));
-
-        const payload = {
-          ...form.value,
-          extraFees: extraFeesPayload,
-        };
-
-        if (payload.endDate === "") {
-          delete payload.endDate;
-        }
-
-        const createdContract = await contractStore.createContract(payload);
-        closeModal();
-        const routeName = isLandlord.value
-          ? "ContractDetail"
-          : "TenantContractDetail";
-        router.push({
-          name: routeName,
-          params: { id: createdContract.id },
-        });
-      } catch (err) {
-        showAlert(
-          "Lỗi",
-          err.response?.data?.error || "Tạo hợp đồng thất bại",
-          "danger",
-        );
-      }
-    };
-
-    const createInlineTenant = async () => {
-      if (!inlineTenantForm.value.fullName || !inlineTenantForm.value.username || !inlineTenantForm.value.password) {
-        showAlert("Lỗi", "Vui lòng nhập đầy đủ họ tên, tên đăng nhập và mật khẩu.", "warning");
-        return;
-      }
-      inlineTenantLoading.value = true;
-      try {
-        const newTenant = await tenantStore.createTenantAccount(inlineTenantForm.value);
-        // Refresh tenants list
-        await fetchTenants();
-        // Auto-select the new tenant
-        if (newTenant && newTenant.id) {
-          form.value.tenantId = newTenant.id;
-        }
-        // Reset and hide inline form
-        inlineTenantForm.value = { fullName: "", username: "", password: "", phone: "", email: "", identityCard: "", idCardIssueDate: "", idCardIssuePlace: "", permanentAddress: "" };
-        showInlineTenantForm.value = false;
-        showAlert("Thành công", `Đã tạo tài khoản khách thuê "${newTenant.fullName}" thành công.`, "success");
-      } catch (err) {
-        showAlert("Lỗi", err.response?.data?.error || "Tạo tài khoản khách thuê thất bại.", "danger");
-      } finally {
-        inlineTenantLoading.value = false;
-      }
+    const goToCreateContract = () => {
+      router.push({ name: "CreateContract" });
     };
 
     const changePage = (newPage) => {
@@ -316,34 +132,6 @@ export default {
         page.value = newPage;
         fetchContracts();
       }
-    };
-
-    const closeModal = () => {
-      authStore.setBottomBarHidden(false);
-      showAddModal.value = false;
-      availableExtraFees.value = [];
-      showInlineTenantForm.value = false;
-      inlineTenantForm.value = { fullName: "", username: "", password: "", phone: "", email: "", identityCard: "", idCardIssueDate: "", idCardIssuePlace: "", permanentAddress: "" };
-      form.value = {
-        roomId: "",
-        tenantId: "",
-        startDate: new Date().toISOString().substring(0, 10),
-        endDate: "",
-        deposit: 0,
-        contractedRoomPrice: 0,
-        numberOfTenants: 1,
-        fixedBillingDay: null,
-      };
-    };
-
-    const goToRooms = () => {
-      closeModal();
-      router.push({ name: "Rooms" });
-    };
-
-    const goToTenants = () => {
-      closeModal();
-      router.push({ name: "Tenants" });
     };
 
     const viewContractDetail = (id, edit = false) => {
@@ -359,14 +147,6 @@ export default {
 
     onMounted(() => {
       fetchContracts();
-      if (isLandlord.value) {
-        fetchVacantRooms();
-        fetchTenants();
-      }
-    });
-
-    onUnmounted(() => {
-      authStore.setBottomBarHidden(false);
     });
 
     return {
@@ -374,28 +154,13 @@ export default {
       contractIcon,
       contracts,
       filteredContracts,
-      vacantRooms,
-      selectedRoom,
-      tenantsList,
-      availableExtraFees,
       loading,
       searchQuery,
       page,
       totalPages,
       totalElements,
-      showAddModal,
-      showInlineTenantForm,
-      inlineTenantLoading,
-      inlineTenantForm,
-      createInlineTenant,
-      form,
-      openAddModal,
-      onRoomChange,
-      saveContract,
+      goToCreateContract,
       changePage,
-      closeModal,
-      goToRooms,
-      goToTenants,
       formatMoney,
       formatDate,
       viewContractDetail,
