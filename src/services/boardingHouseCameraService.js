@@ -18,5 +18,8 @@ export default {
   },
   deleteCamera(cameraId) {
     return api.delete(`/api/boarding-houses/cameras/${cameraId}`);
+  },
+  getCameraStream(cameraId) {
+    return api.get(`/api/boarding-houses/cameras/${cameraId}/stream`);
   }
 };

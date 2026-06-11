@@ -96,6 +96,7 @@
 <script>
 import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
 import Hls from 'hls.js';
+import cameraService from '../../services/boardingHouseCameraService.js';
 
 export default {
   name: 'CameraPlayer',
@@ -117,6 +118,7 @@ export default {
     const loading = ref(true);
     const isError = ref(false);
     const showControls = ref(false);
+    const liveStreamUrl = ref('');
     let hideTimeout = null;
     let hls = null;
 
@@ -143,11 +145,11 @@ export default {
     };
 
     const streamUrl = computed(() => {
-      let url = props.camera.streamUrl;
+      let url = props.camera.brand?.toUpperCase() === 'IMOU' ? liveStreamUrl.value : props.camera.streamUrl;
       if (!url) return '';
       
       // Basic authentication URL generation
-      if (props.camera.username && props.camera.password) {
+      if (props.camera.brand?.toUpperCase() !== 'IMOU' && props.camera.username && props.camera.password) {
         const protocolMatch = url.match(/^https?:\/\//);
         if (protocolMatch) {
           const protocol = protocolMatch[0];
@@ -159,7 +161,8 @@ export default {
     });
 
     const isHls = computed(() => {
-      const url = props.camera.streamUrl || '';
+      if (props.camera.brand?.toUpperCase() === 'IMOU') return true;
+      const url = streamUrl.value || props.camera.streamUrl || '';
       return url.toLowerCase().includes('.m3u8') || url.toLowerCase().includes('hls');
     });
 
@@ -174,9 +177,21 @@ export default {
       isError.value = true;
     };
 
-    const initializePlayer = () => {
+    const initializePlayer = async () => {
       loading.value = true;
       isError.value = false;
+
+      // 1. Nếu là camera IMOU, lấy URL luồng động mới nhất từ backend
+      if (props.camera.brand?.toUpperCase() === 'IMOU' && props.camera.id) {
+        try {
+          const response = await cameraService.getCameraStream(props.camera.id);
+          liveStreamUrl.value = response.data.streamUrl;
+        } catch (err) {
+          console.error('Lỗi khi lấy luồng động camera Imou:', err);
+          onError(err);
+          return;
+        }
+      }
 
       if (isHls.value) {
         // Clear previous HLS instance if any
@@ -311,6 +326,7 @@ export default {
     });
 
     watch(() => props.camera, () => {
+      liveStreamUrl.value = ''; // Reset link động cũ
       initializePlayer();
     }, { deep: true });
 
