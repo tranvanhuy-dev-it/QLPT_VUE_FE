@@ -37,6 +37,7 @@ export const useAuthStore = defineStore('auth', {
     user: JSON.parse(localStorage.getItem('user')) || null,
     isSidebarOpen: false,
     isBottomBarHidden: false,
+    isHeaderHidden: false,
   }),
   getters: {
     isAuthenticated: (state) => !!state.token,
@@ -104,6 +105,9 @@ export const useAuthStore = defineStore('auth', {
     },
     setBottomBarHidden(value) {
       this.isBottomBarHidden = value;
+    },
+    setHeaderHidden(value) {
+      this.isHeaderHidden = value;
     },
     async register(username, password, email, phone, fullName, role, identityCard, idCardIssueDate, idCardIssuePlace) {
       try {

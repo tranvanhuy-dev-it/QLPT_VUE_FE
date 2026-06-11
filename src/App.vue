@@ -8,10 +8,10 @@
       <!-- Status Bar Spacer on Mobile -->
       <div 
         class="lg:hidden w-full shrink-0 transition-colors duration-150" 
-        :class="hideHeaderOnMobile ? 'bg-bg-main' : 'bg-card border-b border-border-main/20'"
-        :style="{ height: hideHeaderOnMobile ? 'calc(env(safe-area-inset-top, 20px) + 12px)' : 'env(safe-area-inset-top, 20px)' }"
+        :class="(hideHeaderOnMobile || isHeaderHidden) ? 'bg-bg-main' : 'bg-card border-b border-border-main/20'"
+        :style="{ height: (hideHeaderOnMobile || isHeaderHidden) ? 'calc(env(safe-area-inset-top, 20px) + 12px)' : 'env(safe-area-inset-top, 20px)' }"
       ></div>
-      <Header />
+      <Header v-if="!isHeaderHidden" />
       <main
         ref="mainRef"
         class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative rounded-2xl"
@@ -105,6 +105,10 @@ export default {
       return !!(route.meta && route.meta.hideHeaderOnMobile);
     });
 
+    const isHeaderHidden = computed(() => {
+      return authStore.isHeaderHidden;
+    });
+
     const isBottomBarHidden = computed(() => {
       if (route.meta && (route.meta.hideBottomBar || route.meta.hideHeaderOnMobile)) return true;
       const path = route.path.toLowerCase();
@@ -184,9 +188,9 @@ export default {
         // Set background color on Android
         let hexColor = '#ffffff';
         if (isDark) {
-          hexColor = hideHeaderOnMobile.value ? '#0f172a' : '#1e293b';
+          hexColor = (hideHeaderOnMobile.value || isHeaderHidden.value) ? '#0f172a' : '#1e293b';
         } else {
-          hexColor = hideHeaderOnMobile.value ? '#f4f6f9' : '#ffffff';
+          hexColor = (hideHeaderOnMobile.value || isHeaderHidden.value) ? '#f4f6f9' : '#ffffff';
         }
 
         await StatusBar.setBackgroundColor({ color: hexColor });
@@ -195,7 +199,7 @@ export default {
       }
     };
 
-    watch(hideHeaderOnMobile, () => {
+    watch([hideHeaderOnMobile, isHeaderHidden], () => {
       updateStatusBar();
     });
 
@@ -256,6 +260,7 @@ export default {
       hideHeaderOnMobile,
       isApiSaving,
       isBottomBarHidden,
+      isHeaderHidden,
       savingMessage,
       // Pull to refresh
       mainRef,

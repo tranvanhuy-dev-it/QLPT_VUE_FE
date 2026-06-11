@@ -1,4 +1,4 @@
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import PageHeader from '../../components/ui/PageHeader.vue';
 import EmptyState from '../../components/ui/EmptyState.vue';
@@ -10,6 +10,7 @@ import AppIcon from '../../components/ui/icons/AppIcon.vue';
 import ConfirmModal from '../../components/ui/ConfirmModal.vue';
 import { useBoardingHouseStore } from '../../stores/boardingHouse.js';
 import { useConfirmModal } from '../../composables/useConfirmModal.js';
+import { useAuthStore } from '../../stores/auth.js';
 
 export default {
   name: 'BoardingHouses',
@@ -25,6 +26,7 @@ export default {
   },
   setup() {
     const router = useRouter();
+    const authStore = useAuthStore();
     const { confirmModal, showAlert, showConfirm, onConfirmModal, closeConfirmModal } = useConfirmModal();
     const houseIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>`;
 
@@ -105,6 +107,8 @@ export default {
     const openAddModal = () => {
       form.value.rules = DEFAULT_RULES;
       showAddModal.value = true;
+      authStore.setBottomBarHidden(true);
+      authStore.setHeaderHidden(true);
     };
 
     const saveHouse = async () => {
@@ -141,6 +145,8 @@ export default {
         })),
       };
       showEditModal.value = true;
+      authStore.setBottomBarHidden(true);
+      authStore.setHeaderHidden(true);
     };
 
     const deleteHouse = async (id) => {
@@ -175,6 +181,8 @@ export default {
         fixedBillingDay: null,
         extraFees: [],
       };
+      authStore.setBottomBarHidden(false);
+      authStore.setHeaderHidden(false);
     };
 
     const showRuleBuilder = ref(false);
@@ -281,6 +289,11 @@ export default {
 
     onMounted(() => {
       fetchBoardingHouses();
+    });
+
+    onUnmounted(() => {
+      authStore.setBottomBarHidden(false);
+      authStore.setHeaderHidden(false);
     });
 
     return {
