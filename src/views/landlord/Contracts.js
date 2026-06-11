@@ -65,12 +65,14 @@ export default {
         key: "startDate",
         type: "date",
         cellClass: "text-text-sub",
+        hideOnMobile: true,
       },
       {
         label: "Tiền cọc",
         key: "deposit",
         type: "money",
         cellClass: "font-semibold text-text-main",
+        hideOnMobile: true,
       },
       {
         label: "Trạng thái",

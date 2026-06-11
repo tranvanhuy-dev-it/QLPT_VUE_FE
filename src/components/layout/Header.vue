@@ -15,8 +15,8 @@
         class="flex lg:hidden items-center gap-2 cursor-pointer hover:opacity-90 active:scale-98 transition-all duration-100 select-none">
         <img src="/logo.ico" alt="Logo" class="w-7 h-7 rounded object-contain" />
         <div class="flex flex-col">
-          <span class="text-sm font-bold text-primary leading-none">SMART RENT</span>
-          <span class="text-[9px] text-text-sub font-semibold mt-0.5">Xin chào: {{ username }}</span>
+          <span class="text-[15px] font-bold text-primary leading-none">SMART RENT</span>
+          <span class="text-[11px] text-text-sub font-semibold mt-0.5">Xin chào: {{ username }}</span>
         </div>
       </div>
     </div>

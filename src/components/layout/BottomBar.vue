@@ -8,7 +8,7 @@
       :class="{ 'is-active text-primary font-semibold': isTabActive(tab) }"
     >
       <span class="w-5 h-5 mb-0.5 transition-transform duration-200 group-active:scale-90" v-html="tab.icon"></span>
-      <span class="text-[0.55rem] sm:text-[0.6rem] tracking-tight truncate w-full text-center px-0.5">{{ tab.label }}</span>
+      <span class="text-[0.7rem] sm:text-[0.75rem] tracking-tight truncate w-full text-center px-0.5">{{ tab.label }}</span>
       <!-- Subtle Active Indicator -->
       <div class="active-dot absolute -top-1 w-1.5 h-1.5 bg-primary rounded-full opacity-0 scale-0 transition-all duration-200"></div>
     </router-link>

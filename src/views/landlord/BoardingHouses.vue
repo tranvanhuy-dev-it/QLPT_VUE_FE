@@ -22,8 +22,8 @@
                 <AppIcon name="building" size="md" />
               </div>
               <div class="flex-1 min-w-0">
-                <h3 class="font-bold text-base text-text-main leading-tight mb-1 truncate">{{ house.name }}</h3>
-                <p class="text-[11px] text-text-sub flex items-center gap-1 truncate">
+                <h3 class="font-extrabold text-lg text-text-main leading-tight mb-1 truncate">{{ house.name }}</h3>
+                <p class="text-xs font-semibold text-text-sub flex items-center gap-1 truncate">
                   <AppIcon name="map-pin" size="xs" />
                   {{ house.address || 'Chưa cập nhật địa chỉ' }}
                 </p>
@@ -32,19 +32,7 @@
           </div>
 
           <!-- Card Body -->
-          <div class="px-5 py-4 flex-1 flex flex-col gap-3 text-xs">
-            <div class="flex items-center justify-between">
-              <span class="text-text-sub flex items-center gap-1.5">
-                <span class="text-amber-500"></span> Giá điện
-              </span>
-              <span class="font-bold text-text-main">{{ formatMoney(house.defaultElectricityRate) }} đ/kWh</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-text-sub flex items-center gap-1.5">
-                <span class="text-blue-500"></span> Giá nước
-              </span>
-              <span class="font-bold text-text-main">{{ formatMoney(house.defaultWaterRate) }} đ</span>
-            </div>
+          <div class="px-5 py-3 flex-1 flex flex-col gap-2 text-xs">
             <div class="flex items-center justify-between">
               <span class="text-text-sub flex items-center gap-1.5">
                 Ngày chốt tiền
@@ -56,32 +44,33 @@
 
             <!-- Extra fees preview -->
             <div v-if="house.extraFees && house.extraFees.length > 0" class="pt-2 border-t border-border-main/40">
-              <div class="text-[10px] text-text-sub font-semibold uppercase tracking-wider mb-1.5">Dịch vụ đi kèm</div>
+              <div class="text-xs text-text-sub font-bold uppercase tracking-wider mb-1.5">Dịch vụ đi kèm</div>
               <div class="flex flex-wrap gap-1">
                 <span v-for="ef in house.extraFees" :key="ef.id"
-                  class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 dark:bg-slate-800 text-text-sub">
-                  {{ ef.name }}: {{ formatMoney(ef.defaultPrice) }}đ
+                  class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-text-sub">
+                  {{ ef.name }}
                 </span>
               </div>
             </div>
 
-            <!-- Banking information preview -->
-            <div v-if="house.bankAccountNumber" class="pt-2 border-t border-border-main/40 flex flex-col gap-1 text-[11px]">
-              <div class="text-[10px] text-text-sub font-semibold uppercase tracking-wider">Tài khoản thanh toán</div>
-              <span class="text-text-main font-medium">Ngân hàng: {{ house.bankName }} - {{ house.bankAccountNumber }}</span>
-              <span class="text-text-sub font-medium">Chủ TK: {{ house.bankAccountName }}</span>
+            <!-- Banking information preview (ẩn ở list, xem trong chi tiết) -->
+            <div v-if="house.bankAccountNumber" class="pt-1 border-t border-border-main/40 flex items-center gap-1 text-[11px] text-text-sub">
+              <span>🏦</span>
+              <span class="font-medium">{{ house.bankName }}</span>
+              <span class="opacity-60">···</span>
+              <span>{{ house.bankAccountNumber.slice(-4) }}</span>
             </div>
           </div>
 
           <!-- Card Actions -->
           <div class="flex border-t border-border-main/50">
             <FormButton variant="custom" @click="goToDetail(house.id)"
-              class="flex-1 py-2.5 text-xs font-semibold text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-150 flex items-center justify-center gap-1.5 border-r border-border-main/50 rounded-none">
+              class="flex-1 py-2.5 text-sm font-bold text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-150 flex items-center justify-center gap-1.5 border-r border-border-main/50 rounded-none">
               <AppIcon name="eye" size="sm" />
               Chi tiết
             </FormButton>
             <FormButton variant="custom" @click="deleteHouse(house.id)"
-              class="flex-1 py-2.5 text-xs font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all duration-150 flex items-center justify-center gap-1.5 rounded-none">
+              class="flex-1 py-2.5 text-sm font-extrabold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all duration-150 flex items-center justify-center gap-1.5 rounded-none">
               <AppIcon name="trash" size="sm" />
               Xóa
             </FormButton>

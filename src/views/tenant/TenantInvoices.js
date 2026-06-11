@@ -22,6 +22,11 @@ export default {
       return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
     };
 
+    const formatMoney = (amount) => {
+      if (amount === undefined || amount === null) return '0';
+      return Math.round(amount).toLocaleString('vi-VN');
+    };
+
     const tableHeaders = [
       { label: 'Ngày xuất', key: 'invoiceDate', type: 'date', cellClass: 'text-text-sub' },
       {
@@ -30,9 +35,15 @@ export default {
         formatter: (item) => `${formatDate(item.billingPeriodStart)} - ${formatDate(item.billingPeriodEnd)}`,
         cellClass: 'text-xs text-text-sub',
       },
-      { label: 'Tiền phòng', key: 'roomPrice', type: 'money', cellClass: 'text-text-main' },
+      { label: 'Tiền phòng', key: 'roomPrice', type: 'money', cellClass: 'text-text-main', hideOnMobile: true },
       { label: 'Tổng cộng', key: 'totalAmount', type: 'money', cellClass: 'font-semibold text-primary' },
-      { label: 'Đã thanh toán', key: 'paidAmount', type: 'money', cellClass: 'font-semibold text-success' },
+      { label: 'Đã thanh toán', key: 'paidAmount', type: 'money', cellClass: 'font-semibold text-success', hideOnMobile: true },
+      {
+        label: 'Còn nợ',
+        key: 'remainingAmount',
+        formatter: (item) => `${formatMoney(item.totalAmount - item.paidAmount)} đ`,
+        cellClass: 'font-semibold text-rose-500',
+      },
       {
         label: 'Trạng thái',
         key: 'status',

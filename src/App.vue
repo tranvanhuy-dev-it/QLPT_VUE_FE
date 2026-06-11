@@ -51,11 +51,10 @@
         >
           © 2026 Nhà Trọ Thông Minh. Hệ thống đang trong quá trình phát triển &amp; thử nghiệm.
         </footer>
-        <!-- Bottom Safe Area Spacer to prevent content from being covered by BottomBar on mobile -->
+        <!-- Bottom Safe Area Spacer to prevent content from being covered by BottomBar or device safe areas on mobile -->
         <div 
-          v-if="!isBottomBarHidden" 
           class="w-full shrink-0 lg:hidden" 
-          :style="{ height: 'calc(6.5rem + env(safe-area-inset-bottom, 0px))' }"
+          :style="{ height: isBottomBarHidden ? 'calc(2.5rem + env(safe-area-inset-bottom, 16px))' : 'calc(6.5rem + env(safe-area-inset-bottom, 16px))' }"
         ></div>
       </main>
     </div>

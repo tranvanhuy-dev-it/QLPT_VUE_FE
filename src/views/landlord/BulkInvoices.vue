@@ -174,9 +174,9 @@
           <div class="flex justify-between items-center border-b border-border-main pb-2.5 mb-3">
             <div>
               <span class="font-extrabold text-sm text-primary">Phòng {{ room.roomNumber }}</span>
-              <span class="text-[11px] text-text-sub block mt-0.5">{{ room.tenantName }}</span>
+              <span class="text-xs text-text-sub font-semibold block mt-0.5">{{ room.tenantName }}</span>
             </div>
-            <div v-if="room.fixedBillingDay" class="text-[10px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-0.5 rounded-md border border-amber-200/40 font-medium">
+            <div v-if="room.fixedBillingDay" class="text-[11px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-0.5 rounded-md border border-amber-200/40 font-bold">
               💡 Ngày cố định: {{ room.fixedBillingDay }}
             </div>
           </div>
@@ -185,9 +185,9 @@
           <div class="grid grid-cols-2 gap-3 mb-3">
             <!-- Electricity Input -->
             <div class="bg-slate-50 dark:bg-slate-900/35 border border-border-main/40 rounded-xl p-2.5">
-              <span class="text-[10px] font-bold text-primary block mb-1">ĐIỆN (kWh)</span>
+              <span class="text-[11px] font-extrabold text-primary block mb-1">ĐIỆN (kWh)</span>
               <div class="flex flex-col gap-1.5">
-                <span class="text-[10px] text-text-sub">Cũ: <strong class="text-text-main">{{ room.currentElectricityIndex }}</strong></span>
+                <span class="text-xs font-semibold text-text-sub">Cũ: <strong class="text-text-main font-extrabold">{{ room.currentElectricityIndex }}</strong></span>
                 <input
                   type="number"
                   v-model.number="room.newElectricityIndex"
@@ -201,9 +201,9 @@
 
             <!-- Water Input -->
             <div class="bg-slate-50 dark:bg-slate-900/35 border border-border-main/40 rounded-xl p-2.5">
-              <span class="text-[10px] font-bold text-blue-600 block mb-1">NƯỚC (m³)</span>
+              <span class="text-[11px] font-extrabold text-blue-600 block mb-1">NƯỚC (m³)</span>
               <div v-if="room.waterBillingType === 'BY_INDEX'" class="flex flex-col gap-1.5">
-                <span class="text-[10px] text-text-sub">Chỉ số cũ: <strong class="text-text-main">{{ room.currentWaterIndex }}</strong></span>
+                <span class="text-xs font-semibold text-text-sub">Cũ: <strong class="text-text-main font-extrabold">{{ room.currentWaterIndex }}</strong></span>
                 <input
                   type="number"
                   v-model.number="room.newWaterIndex"
@@ -214,7 +214,7 @@
                 />
               </div>
               <div v-else class="flex flex-col justify-center h-full pt-1">
-                <span class="inline-flex items-center px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-semibold text-text-sub">
+                <span class="inline-flex items-center px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-xs font-bold text-text-sub">
                   Cố định ({{ formatMoney(room.defaultWaterRate) }}đ)
                 </span>
               </div>
@@ -225,10 +225,10 @@
           <div class="space-y-3 pt-2 border-t border-dashed border-border-main/50">
             <!-- Period Inputs -->
             <div>
-              <span class="text-[10px] font-bold text-text-sub uppercase tracking-wider block mb-1.5">Kỳ thanh toán</span>
+              <span class="text-[11px] font-extrabold text-text-sub uppercase tracking-wider block mb-1.5">Kỳ thanh toán</span>
               <div class="grid grid-cols-2 gap-2">
                 <div class="flex flex-col gap-1">
-                  <span class="text-[9px] text-text-sub">Từ ngày</span>
+                  <span class="text-[11px] font-bold text-text-sub">Từ ngày</span>
                   <input
                     type="date"
                     v-model="room.billingPeriodStart"
@@ -237,7 +237,7 @@
                   />
                 </div>
                 <div class="flex flex-col gap-1">
-                  <span class="text-[9px] text-text-sub">Đến ngày</span>
+                  <span class="text-[11px] font-bold text-text-sub">Đến ngày</span>
                   <input
                     type="date"
                     v-model="room.billingPeriodEnd"
@@ -250,7 +250,7 @@
 
             <!-- Discount Input -->
             <div class="flex items-center justify-between gap-4 pt-1">
-              <span class="text-[10px] font-bold text-text-sub uppercase tracking-wider">Số tiền giảm giá (đ)</span>
+              <span class="text-[11px] font-extrabold text-text-sub uppercase tracking-wider">Số tiền giảm giá (đ)</span>
               <input
                 type="number"
                 v-model.number="room.discount"

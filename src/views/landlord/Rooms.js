@@ -31,9 +31,9 @@ export default {
       { label: 'Số phòng', key: 'roomNumber', prefix: 'Phòng ', cellClass: 'font-semibold text-primary' },
       { label: 'Dãy trọ', key: 'boardingHouse.name', cellClass: 'text-text-sub' },
       { label: 'Giá thuê', key: 'basePrice', type: 'money', cellClass: 'font-semibold text-text-main' },
-      { label: 'Chỉ số điện', key: 'currentElectricityIndex', suffix: ' kWh', cellClass: 'text-text-sub' },
-      { label: 'Chỉ số nước', key: 'currentWaterIndex', suffix: ' m³', cellClass: 'text-text-sub' },
-      { label: 'Sức chứa', key: 'maxPeople', suffix: ' người', cellClass: 'text-text-sub' },
+      { label: 'Chỉ số điện', key: 'currentElectricityIndex', suffix: ' kWh', cellClass: 'text-text-sub', hideOnMobile: true },
+      { label: 'Chỉ số nước', key: 'currentWaterIndex', suffix: ' m³', cellClass: 'text-text-sub', hideOnMobile: true },
+      { label: 'Sức chứa', key: 'maxPeople', suffix: ' người', cellClass: 'text-text-sub', hideOnMobile: true },
       {
         label: 'Trạng thái',
         key: 'status',

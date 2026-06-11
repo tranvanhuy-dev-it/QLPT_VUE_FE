@@ -352,7 +352,7 @@
               upcomingBillingContracts.length }}</span>
         </div>
         <div class="overflow-x-auto">
-          <table class="w-full text-sm text-left text-text-main border-collapse">
+          <table class="w-full text-xs text-left text-text-main border-collapse">
             <thead>
               <tr class="border-b border-border-main">
                 <th class="py-3 font-semibold text-text-sub text-xs uppercase">Phòng</th>
@@ -364,10 +364,10 @@
             <tbody>
               <tr v-for="item in upcomingBillingContracts" :key="item.id"
                 class="border-b border-border-main/50 hover:bg-slate-50/50 dark:hover:bg-slate-900/20">
-                <td class="py-3 font-semibold text-primary">Phòng {{ item.roomNumber }}</td>
-                <td class="py-3 text-text-sub">{{ item.boardingHouseName }}</td>
-                <td class="py-3 font-semibold text-text-main">{{ formatFullDate(item.dueDate) }}</td>
-                <td class="py-3 text-right">
+                <td class="py-2 font-semibold text-primary">Phòng {{ item.roomNumber }}</td>
+                <td class="py-2 text-text-sub">{{ item.boardingHouseName }}</td>
+                <td class="py-2 font-semibold text-text-main">{{ formatFullDate(item.dueDate) }}</td>
+                <td class="py-2 text-right">
                   <FormButton
                     @click="navigateTo({ path: '/landlord/invoices', query: { createForContractId: item.id } })"
                     size="sm" class="flex items-center gap-1 ml-auto">
@@ -401,7 +401,7 @@
                 vacantRoomList.length }}</span>
           </div>
           <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left text-text-main border-collapse">
+            <table class="w-full text-xs text-left text-text-main border-collapse">
               <thead>
                 <tr class="border-b border-border-main">
                   <th class="py-3 font-semibold text-text-sub text-xs uppercase">Số phòng</th>
@@ -412,9 +412,9 @@
               <tbody>
                 <tr v-for="room in vacantRoomList" :key="room.id"
                   class="border-b border-border-main/50 hover:bg-slate-50/50 dark:hover:bg-slate-900/20">
-                  <td class="py-3 font-semibold text-primary">Phòng {{ room.roomNumber }}</td>
-                  <td class="py-3 text-text-sub">{{ room.boardingHouse.name }}</td>
-                  <td class="py-3 text-right font-semibold text-text-main">{{ formatMoney(room.basePrice) }} đ</td>
+                  <td class="py-2 font-semibold text-primary">Phòng {{ room.roomNumber }}</td>
+                  <td class="py-2 text-text-sub">{{ room.boardingHouse.name }}</td>
+                  <td class="py-2 text-right font-semibold text-text-main">{{ formatMoney(room.basePrice) }} đ</td>
                 </tr>
                 <tr v-if="vacantRoomList.length === 0">
                   <td colspan="3" class="text-center text-text-sub py-8">
@@ -439,7 +439,7 @@
                 filteredUnpaidInvoices.length }}</span>
           </div>
           <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left text-text-main border-collapse">
+            <table class="w-full text-xs text-left text-text-main border-collapse">
               <thead>
                 <tr class="border-b border-border-main">
                   <th class="py-3 font-semibold text-text-sub text-xs uppercase">Phòng</th>
@@ -452,12 +452,12 @@
                 <tr v-for="invoice in filteredUnpaidInvoices" :key="invoice.id"
                   @click="navigateTo('/landlord/invoices/' + invoice.id)"
                   class="border-b border-border-main/50 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 cursor-pointer">
-                  <td class="py-3 font-semibold text-primary">Phòng {{ invoice.contract.room.roomNumber }}</td>
-                  <td class="py-3 text-text-sub">{{ invoice.contract.room.boardingHouse.name }}</td>
-                  <td class="py-3 text-xs text-text-sub">
+                  <td class="py-2 font-semibold text-primary">Phòng {{ invoice.contract.room.roomNumber }}</td>
+                  <td class="py-2 text-text-sub">{{ invoice.contract.room.boardingHouse.name }}</td>
+                  <td class="py-2 text-text-sub">
                     {{ formatDate(invoice.billingPeriodStart) }} – {{ formatDate(invoice.billingPeriodEnd) }}
                   </td>
-                  <td class="py-3 text-right font-semibold text-danger">{{ formatMoney(invoice.totalAmount -
+                  <td class="py-2 text-right font-semibold text-danger">{{ formatMoney(invoice.totalAmount -
                     invoice.paidAmount) }} đ</td>
                 </tr>
                 <tr v-if="filteredUnpaidInvoices.length === 0">

@@ -62,9 +62,16 @@ export default {
         key: "billingPeriod",
         formatter: (item) => `${formatDate(item.billingPeriodStart)} - ${formatDate(item.billingPeriodEnd)}`,
         cellClass: "text-xs text-text-sub",
+        hideOnMobile: true,
       },
       { label: "Tổng tiền", key: "totalAmount", type: "money", cellClass: "font-semibold text-primary" },
-      { label: "Đã thanh toán", key: "paidAmount", type: "money", cellClass: "font-semibold text-success" },
+      { label: "Đã thanh toán", key: "paidAmount", type: "money", cellClass: "font-semibold text-success", hideOnMobile: true },
+      {
+        label: "Còn nợ",
+        key: "remainingAmount",
+        formatter: (item) => `${formatMoney(item.totalAmount - item.paidAmount)} đ`,
+        cellClass: "font-semibold text-rose-500",
+      }
     ];
 
     const invoiceStore = useInvoiceStore();

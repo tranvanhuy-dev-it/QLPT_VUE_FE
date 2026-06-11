@@ -29,7 +29,7 @@ export default {
       { label: 'Tên tài khoản (username)', key: 'username', cellClass: 'font-semibold text-primary' },
       { label: 'Họ và tên', key: 'fullName', cellClass: 'font-medium text-text-main' },
       { label: 'Số điện thoại', key: 'phone', formatter: (item) => item.phone || '-', cellClass: 'text-text-sub' },
-      { label: 'Email', key: 'email', formatter: (item) => item.email || '-', cellClass: 'text-text-sub' },
+      { label: 'Email', key: 'email', formatter: (item) => item.email || '-', cellClass: 'text-text-sub', hideOnMobile: true },
       {
         label: 'Trạng thái',
         key: 'status',

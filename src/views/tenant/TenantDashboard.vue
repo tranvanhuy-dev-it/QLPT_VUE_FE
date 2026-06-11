@@ -127,7 +127,7 @@
             </span>
           </div>
           <div class="overflow-x-auto">
-            <table class="w-full text-sm text-left text-text-main border-collapse">
+            <table class="w-full text-xs text-left text-text-main border-collapse">
               <thead>
                 <tr class="border-b border-border-main">
                   <th class="py-3 font-semibold text-text-sub text-xs uppercase">Kỳ hóa đơn</th>
@@ -138,13 +138,13 @@
               <tbody>
                 <tr v-for="invoice in unpaidInvoices" :key="invoice.id" @click="viewInvoiceDetails(invoice.id)"
                   class="border-b border-border-main/50 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 cursor-pointer">
-                  <td class="py-3 font-semibold text-primary">
+                  <td class="py-2 font-semibold text-primary">
                     {{ formatDate(invoice.billingPeriodStart) }} – {{ formatDate(invoice.billingPeriodEnd) }}
                   </td>
-                  <td class="py-3 text-text-sub">
+                  <td class="py-2 text-text-sub">
                     {{ formatDate(invoice.invoiceDate) }}
                   </td>
-                  <td class="py-3 text-right font-semibold text-rose-500">
+                  <td class="py-2 text-right font-semibold text-rose-500">
                     {{ formatMoney(invoice.totalAmount - invoice.paidAmount) }} đ
                   </td>
                 </tr>

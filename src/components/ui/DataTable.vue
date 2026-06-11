@@ -44,15 +44,15 @@
         <div 
           v-for="(item, index) in items" 
           :key="item.id || index" 
-          class="bg-card border border-border-main/50 rounded-2xl py-2 px-3 flex flex-col gap-1 shadow-xs hover:border-primary/20 transition-all duration-150 relative min-w-0"
+          class="bg-card border border-border-main/50 rounded-2xl p-4 flex flex-col gap-2.5 shadow-xs hover:border-primary/20 transition-all duration-150 relative min-w-0"
           :class="{'cursor-pointer active:scale-[0.99]': clickable}"
           @click="onRowClick(item)"
         >
           <!-- Top Row: Title, Subtitle and Status Badge -->
-          <div class="flex flex-col gap-0.5 relative">
+          <div class="flex flex-col gap-1 relative">
             <div class="flex justify-between items-start gap-2">
               <!-- Primary Title (Header 0) -->
-              <h4 v-if="mobileTitleHeader" class="text-xs font-bold text-text-main truncate max-w-[70%] leading-tight">
+              <h4 v-if="mobileTitleHeader" class="text-sm font-extrabold text-text-main truncate max-w-[70%] leading-snug">
                 <slot :name="`cell(${mobileTitleHeader.key.replace(/\./g, '_')})`" :item="item" :value="resolveKeyPath(item, mobileTitleHeader.key)">
                   {{ getFormattedValue(item, mobileTitleHeader) }}
                 </slot>
@@ -61,10 +61,10 @@
               <div v-if="mobileBadgeHeader" class="shrink-0 flex items-center">
                 <slot :name="`cell(${mobileBadgeHeader.key.replace(/\./g, '_')})`" :item="item" :value="resolveKeyPath(item, mobileBadgeHeader.key)">
                   <template v-if="resolveKeyPath(item, mobileBadgeHeader.key) === 'VACANT' || resolveKeyPath(item, mobileBadgeHeader.key) === 'OCCUPIED'">
-                    <span class="w-2.5 h-2.5 rounded-full shrink-0 animate-pulse" :class="resolveKeyPath(item, mobileBadgeHeader.key) === 'VACANT' ? 'bg-emerald-500' : 'bg-rose-500'" :title="resolveKeyPath(item, mobileBadgeHeader.key) === 'VACANT' ? 'Còn trống' : 'Đang thuê'"></span>
+                    <span class="w-3 h-3 rounded-full shrink-0 animate-pulse" :class="resolveKeyPath(item, mobileBadgeHeader.key) === 'VACANT' ? 'bg-emerald-500' : 'bg-rose-500'" :title="resolveKeyPath(item, mobileBadgeHeader.key) === 'VACANT' ? 'Còn trống' : 'Đang thuê'"></span>
                   </template>
                   <template v-else>
-                    <span :class="['inline-flex items-center px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider', getBadgeClass(mobileBadgeHeader, resolveKeyPath(item, mobileBadgeHeader.key))]">
+                    <span :class="['inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider', getBadgeClass(mobileBadgeHeader, resolveKeyPath(item, mobileBadgeHeader.key))]">
                       {{ getBadgeLabel(mobileBadgeHeader, resolveKeyPath(item, mobileBadgeHeader.key)) }}
                     </span>
                   </template>
@@ -72,7 +72,7 @@
               </div>
             </div>
             <!-- Secondary Subtitle (Header 1) -->
-            <p v-if="mobileSubtitleHeader" class="text-[0.65rem] text-text-sub truncate font-medium leading-tight">
+            <p v-if="mobileSubtitleHeader" class="text-xs text-text-sub truncate font-semibold leading-normal">
               <slot :name="`cell(${mobileSubtitleHeader.key.replace(/\./g, '_')})`" :item="item" :value="resolveKeyPath(item, mobileSubtitleHeader.key)">
                 {{ getFormattedValue(item, mobileSubtitleHeader) }}
               </slot>
@@ -80,17 +80,17 @@
           </div>
 
           <!-- Divider -->
-          <div v-if="mobileGridHeaders.length > 0" class="border-t border-border-main/10"></div>
+          <div v-if="mobileGridHeaders.length > 0" class="border-t border-border-main/30 my-0.5"></div>
 
           <!-- Stacked details (1 column of key-value rows) -->
-          <div v-if="mobileGridHeaders.length > 0" class="flex flex-col gap-0.5">
+          <div v-if="mobileGridHeaders.length > 0" class="flex flex-col gap-1.5">
             <div 
               v-for="header in mobileGridHeaders" 
               :key="header.key" 
-              class="flex justify-between items-center gap-2 text-[0.7rem] leading-tight py-0.5"
+              class="flex justify-between items-center gap-2 text-[0.8rem] leading-normal py-0.5"
             >
-              <span class="text-text-sub font-semibold shrink-0">{{ header.label }}</span>
-              <span :class="['text-text-main font-bold truncate max-w-[65%] text-right', header.cellClass]">
+              <span class="text-text-sub font-bold shrink-0">{{ header.label }}</span>
+              <span :class="['text-text-main font-extrabold truncate max-w-[65%] text-right', header.cellClass]">
                 <slot :name="`cell(${header.key.replace(/\./g, '_')})`" :item="item" :value="resolveKeyPath(item, header.key)">
                   {{ getFormattedValue(item, header) }}
                 </slot>
@@ -99,7 +99,7 @@
           </div>
 
           <!-- Actions Row (Bottom Right) -->
-          <div v-if="mobileActionsHeader" class="mt-auto pt-2 border-t border-border-main/10 flex justify-end items-center gap-1.5">
+          <div v-if="mobileActionsHeader" class="mt-auto pt-2.5 border-t border-border-main/30 flex justify-end items-center gap-1.5">
             <slot :name="`cell(${mobileActionsHeader.key.replace(/\./g, '_')})`" :item="item" :value="resolveKeyPath(item, mobileActionsHeader.key)">
               {{ getFormattedValue(item, mobileActionsHeader) }}
             </slot>

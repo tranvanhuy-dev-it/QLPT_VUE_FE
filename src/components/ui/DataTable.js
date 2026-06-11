@@ -128,7 +128,8 @@ export default {
         h !== mobileTitleHeader.value && 
         h !== mobileSubtitleHeader.value && 
         h !== mobileBadgeHeader.value && 
-        h !== mobileActionsHeader.value
+        h !== mobileActionsHeader.value &&
+        !h.hideOnMobile
       );
     });
 

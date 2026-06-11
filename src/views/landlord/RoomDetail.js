@@ -45,9 +45,9 @@ export default {
     const tableHeaders = [
       { label: 'Khách thuê đại diện', key: 'tenant.fullName', cellClass: 'font-semibold text-primary' },
       { label: 'Số điện thoại', key: 'tenant.phoneNumber', cellClass: 'text-text-sub' },
-      { label: 'Ngày bắt đầu', key: 'startDate', type: 'date', cellClass: 'text-text-sub' },
-      { label: 'Ngày hết hạn', key: 'endDate', type: 'date', cellClass: 'text-text-sub' },
-      { label: 'Tiền đặt cọc', key: 'deposit', type: 'money', cellClass: 'font-semibold text-text-main' },
+      { label: 'Ngày bắt đầu', key: 'startDate', type: 'date', cellClass: 'text-text-sub', hideOnMobile: true },
+      { label: 'Ngày hết hạn', key: 'endDate', type: 'date', cellClass: 'text-text-sub', hideOnMobile: true },
+      { label: 'Tiền đặt cọc', key: 'deposit', type: 'money', cellClass: 'font-semibold text-text-main', hideOnMobile: true },
       {
         label: 'Trạng thái',
         key: 'status',
