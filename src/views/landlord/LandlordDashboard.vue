@@ -15,10 +15,36 @@
           class="absolute -top-1/2 -right-10 w-[280px] h-[280px] bg-gradient-to-b from-white/20 to-transparent rounded-full pointer-events-none">
         </div>
 
-        <div class="relative z-10">
+        <div class="relative z-10 flex-1">
           <span class="block text-xs uppercase tracking-widest opacity-90 font-semibold mb-1">{{ greeting }}</span>
           <h1 class="text-2xl md:text-3xl font-extrabold text-white leading-tight">Tổng quan hệ thống</h1>
           <p class="text-sm opacity-85 mt-1">Thống kê hoạt động kinh doanh phòng trọ của bạn</p>
+
+          <!-- Warning alert for contracts due/overdue -->
+          <transition name="fade-slide">
+            <div v-if="upcomingBillingContracts.length > 0" 
+                 class="mt-4 flex items-start gap-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-3.5 text-xs text-white max-w-2xl shadow-sm hover:bg-white/15 transition-all duration-300">
+              <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-400/30 flex items-center justify-center shrink-0 text-amber-300 animate-pulse">
+                <AppIcon name="warning" size="sm" />
+              </div>
+              <div class="flex-1">
+                <h4 class="font-extrabold text-amber-300 uppercase tracking-wider mb-0.5 text-[10px]">Cảnh báo lập hóa đơn</h4>
+                <p class="opacity-90 leading-relaxed">
+                  Hệ thống phát hiện có <span class="font-extrabold text-amber-200 underline">{{ upcomingBillingContracts.length }}</span> hợp đồng đã đến hạn hoặc quá hạn lập hóa đơn tháng này.
+                </p>
+                <div class="mt-2 flex items-center gap-2">
+                  <button @click="scrollToSection('overdue-billing-section')" 
+                          class="bg-white text-indigo-700 hover:bg-indigo-50 font-bold px-3 py-1.5 rounded-lg shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer text-[10px] uppercase tracking-wide">
+                    Xem danh sách
+                  </button>
+                  <button @click="navigateTo('/landlord/invoices')" 
+                          class="bg-amber-500 hover:bg-amber-400 text-white font-bold px-3 py-1.5 rounded-lg shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer text-[10px] uppercase tracking-wide">
+                    Lập hóa đơn nhanh
+                  </button>
+                </div>
+              </div>
+            </div>
+          </transition>
         </div>
         <div
           class="relative z-10 flex items-center gap-2 text-xs bg-white/15 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full font-semibold whitespace-nowrap mt-4 md:mt-0">
@@ -359,6 +385,7 @@
 
       <!-- Overdue Invoices Section -->
       <div
+        id="overdue-billing-section"
         class="bg-card border border-border-main rounded-2xl shadow-xs hover:shadow-md transition-all duration-200 p-4 mb-4">
         <div class="flex justify-between items-center mb-4 border-b border-border-main pb-3">
           <div class="flex items-center gap-2">

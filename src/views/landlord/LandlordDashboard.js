@@ -242,6 +242,13 @@ export default {
       router.push(path);
     };
 
+    const scrollToSection = (id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
     const parseLocalYYYYMMDD = (dateStr) => {
       if (!dateStr) return new Date();
       const [y, m, d] = dateStr.split("-").map(Number);
@@ -367,6 +374,7 @@ export default {
       formatDueStatus,
       getDueStatusClass,
       navigateTo,
+      scrollToSection,
       filterStartDate,
       filterEndDate,
       filterOption,
