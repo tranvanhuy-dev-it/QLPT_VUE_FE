@@ -127,9 +127,10 @@ export default {
         };
         const res = await userService.updateProfile(payload);
         rawUserProfile.value = res.data;
-        // Cập nhật tên hiển thị ở authStore
+        // Cập nhật tên hiển thị ở authStore và localStorage
         if (authStore.user) {
           authStore.user.fullName = res.data.fullName;
+          localStorage.setItem('user', JSON.stringify(authStore.user));
         }
         showAlert('Thành công', 'Cập nhật thông tin cá nhân thành công!', 'success');
       } catch (err) {

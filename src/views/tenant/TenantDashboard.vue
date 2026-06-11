@@ -8,6 +8,35 @@
     </div>
 
     <div v-else>
+      <!-- Welcome Banner -->
+      <div
+        class="relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center bg-gradient-to-br from-indigo-600 to-blue-500 text-white p-4 md:p-6 rounded-2xl mb-6 shadow-md shadow-indigo-500/20">
+        <!-- Glow effect inside banner -->
+        <div
+          class="absolute -top-1/2 -right-10 w-[280px] h-[280px] bg-gradient-to-b from-white/20 to-transparent rounded-full pointer-events-none">
+        </div>
+
+        <div class="relative z-10">
+          <span class="block text-xs uppercase tracking-widest opacity-90 font-semibold mb-1">{{ greeting }}</span>
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-2xl md:text-3xl font-extrabold text-white leading-tight">Thông tin phòng trọ</h1>
+            <span v-if="unpaidInvoices.length > 0"
+              class="bg-rose-500/90 backdrop-blur-sm border border-rose-400/30 text-white text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md shadow-sm animate-pulse">
+              Chưa thanh toán
+            </span>
+          </div>
+          <p v-if="unpaidInvoices.length > 0" class="text-sm text-rose-200 font-medium mt-1 flex items-center gap-1">
+            ⚠️ Bạn còn {{ unpaidInvoices.length }} hóa đơn chưa thanh toán.
+          </p>
+          <p v-else class="text-sm opacity-85 mt-1">Xem chi tiết hợp đồng, hóa đơn và chỉ số dịch vụ của bạn</p>
+        </div>
+        <div
+          class="relative z-10 flex items-center gap-2 text-xs bg-white/15 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full font-semibold whitespace-nowrap mt-4 md:mt-0">
+          <AppIcon name="calendar" size="sm" />
+          {{ currentDate }}
+        </div>
+      </div>
+
       <div v-if="!activeContract"
         class="bg-card border border-border-main rounded-2xl p-12 text-center text-text-sub text-base font-semibold shadow-xs">
         ⚠️ Hiện tại tài khoản của bạn chưa được gắn vào hợp đồng thuê phòng nào. Vui lòng liên hệ chủ trọ để kích hoạt!
@@ -77,15 +106,55 @@
                 <div v-else class="flex justify-between border-b border-border-main/30 pb-2">
                   <strong>Nước (cố định):</strong> <span class="text-text-sub text-right">💧 Theo {{
                     activeContract.room.boardingHouse.waterBillingType === 'FIXED_PER_PERSON' ? 'người' : 'phòng'
-                  }}</span>
-                </div>
-                <div class="pt-3 text-[11px] text-text-sub flex flex-col gap-0.5">
-                  <div class="font-semibold text-text-main/80">Chủ nhà liên hệ:</div>
-                  <div>{{ activeContract.room.boardingHouse.landlord?.fullName || 'Chưa cập nhật' }} - 📞 {{
-                    activeContract.room.boardingHouse.landlord?.phone || 'Chưa cập nhật' }}</div>
+                    }}</span>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- Unpaid Invoices Section -->
+        <div
+          class="bg-card border border-border-main rounded-2xl shadow-xs hover:shadow-md transition-all duration-200 p-6">
+          <div class="flex justify-between items-center mb-4 border-b border-border-main pb-3">
+            <div class="flex items-center gap-2">
+              <AppIcon name="exclamation-triangle" class="text-rose-500 !w-[18px] !h-[18px]" />
+              <h3 class="text-[1.05rem] font-bold text-text-main">Hóa đơn chờ thanh toán</h3>
+            </div>
+            <span v-if="unpaidInvoices.length > 0"
+              class="inline-flex items-center justify-center min-w-6 h-6 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-950/30 text-rose-600 px-2">
+              {{ unpaidInvoices.length }}
+            </span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-text-main border-collapse">
+              <thead>
+                <tr class="border-b border-border-main">
+                  <th class="py-3 font-semibold text-text-sub text-xs uppercase">Kỳ hóa đơn</th>
+                  <th class="py-3 font-semibold text-text-sub text-xs uppercase">Ngày xuất</th>
+                  <th class="py-3 font-semibold text-text-sub text-xs uppercase text-right">Còn nợ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="invoice in unpaidInvoices" :key="invoice.id" @click="viewInvoiceDetails(invoice.id)"
+                  class="border-b border-border-main/50 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 cursor-pointer">
+                  <td class="py-3 font-semibold text-primary">
+                    {{ formatDate(invoice.billingPeriodStart) }} – {{ formatDate(invoice.billingPeriodEnd) }}
+                  </td>
+                  <td class="py-3 text-text-sub">
+                    {{ formatDate(invoice.invoiceDate) }}
+                  </td>
+                  <td class="py-3 text-right font-semibold text-rose-500">
+                    {{ formatMoney(invoice.totalAmount - invoice.paidAmount) }} đ
+                  </td>
+                </tr>
+                <tr v-if="unpaidInvoices.length === 0">
+                  <td colspan="3" class="text-center text-text-sub py-8 italic">
+                    Tuyệt vời! Bạn không có hóa đơn nào chưa thanh toán.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

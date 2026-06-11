@@ -1,5 +1,6 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '../../stores/auth.js';
 import boardingHouseService from '../../services/boardingHouseService.js';
 import roomService from '../../services/roomService.js';
 import contractService from '../../services/contractService.js';
@@ -18,6 +19,7 @@ export default {
   },
   setup() {
     const router = useRouter();
+    const authStore = useAuthStore();
 
     const currentDate = computed(() => {
       const d = new Date();
@@ -27,9 +29,10 @@ export default {
 
     const greeting = computed(() => {
       const hour = new Date().getHours();
-      if (hour < 12) return 'Chào buổi sáng,';
-      if (hour < 18) return 'Chào buổi chiều,';
-      return 'Chào buổi tối,';
+      const name = authStore.user?.fullName || authStore.user?.username || 'Người dùng';
+      if (hour < 12) return `Chào buổi sáng, ${name}`;
+      if (hour < 18) return `Chào buổi chiều, ${name}`;
+      return `Chào buổi tối, ${name}`;
     });
 
     const loading = ref(true);

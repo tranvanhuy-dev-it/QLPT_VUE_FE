@@ -37,6 +37,7 @@ export default {
     // Modal state
     const showModal = ref(false);
     const showGuideModal = ref(false);
+    const activeGuideTab = ref('general'); // 'general' | 'imou_auto' | 'custom'
     const editingCamera = ref(null);
     const saving = ref(false);
     const form = ref({
@@ -186,6 +187,7 @@ export default {
       selectedHouseId,
       showModal,
       showGuideModal,
+      activeGuideTab,
       editingCamera,
       saving,
       form,

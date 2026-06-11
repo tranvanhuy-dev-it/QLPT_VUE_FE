@@ -1,6 +1,7 @@
 import { useAuthStore } from '../../stores/auth.js';
 import { useRouter } from 'vue-router';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import userService from '../../services/userService.js';
 
 export default {
   name: 'Sidebar',
@@ -11,6 +12,27 @@ export default {
     const role = computed(() => authStore.role);
     const isSidebarOpen = computed(() => authStore.isSidebarOpen);
     const closeSidebar = () => authStore.closeSidebar();
+
+    const profileUser = ref(null);
+    const userFullName = computed(() => profileUser.value?.fullName || authStore.user?.fullName || authStore.username || 'Người dùng');
+
+    const fetchUserProfile = async () => {
+      try {
+        const res = await userService.getProfile();
+        profileUser.value = res.data;
+        if (authStore.user) {
+          authStore.user.fullName = res.data.fullName;
+        }
+      } catch (err) {
+        console.error('Không thể lấy thông tin cá nhân ở Sidebar:', err);
+      }
+    };
+
+    onMounted(() => {
+      if (authStore.isAuthenticated) {
+        fetchUserProfile();
+      }
+    });
 
     const landlordGeneral = [
       {
@@ -78,6 +100,11 @@ export default {
         to: '/tenant/cameras',
         label: 'Camera giám sát',
         icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>`
+      },
+      {
+        to: '/tenant/contact-landlord',
+        label: 'Liên hệ chủ nhà',
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>`
       }
     ];
 
@@ -113,6 +140,7 @@ export default {
       role,
       isSidebarOpen,
       closeSidebar,
+      userFullName,
       landlordGeneral,
       landlordManage,
       tenantGeneral,

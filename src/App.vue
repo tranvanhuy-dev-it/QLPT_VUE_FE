@@ -14,8 +14,7 @@
       <Header />
       <main
         ref="mainRef"
-        class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative lg:!pb-0 rounded-2xl"
-        :style="{ paddingBottom: isBottomBarHidden ? '0px' : 'calc(4.5rem + env(safe-area-inset-bottom))' }"
+        class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative rounded-2xl"
         @touchstart.passive="onTouchStart"
         @touchmove.passive="onTouchMove"
         @touchend="onTouchEnd"
@@ -48,10 +47,16 @@
           <router-view :key="routerViewKey" />
         </div>
         <footer 
-          class="py-3 text-center text-xs text-text-sub border-t border-border-main/50 bg-card/60 backdrop-blur-xs shrink-0"
+          class="hidden lg:block py-3 text-center text-xs text-text-sub border-t border-border-main/50 bg-card/60 backdrop-blur-xs shrink-0"
         >
           © 2026 Nhà Trọ Thông Minh. Hệ thống đang trong quá trình phát triển &amp; thử nghiệm.
         </footer>
+        <!-- Bottom Safe Area Spacer to prevent content from being covered by BottomBar on mobile -->
+        <div 
+          v-if="!isBottomBarHidden" 
+          class="w-full shrink-0 lg:hidden" 
+          :style="{ height: 'calc(4.5rem + env(safe-area-inset-bottom, 0px))' }"
+        ></div>
       </main>
     </div>
   </div>

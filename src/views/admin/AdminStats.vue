@@ -1,14 +1,23 @@
 <template>
   <div class="p-4 sm:p-6 md:p-8 bg-bg-main min-h-full">
-    <!-- Header Block -->
-    <div class="mb-6 pb-4 border-b border-border-main">
-      <h2 class="text-base sm:text-lg font-bold text-text-main flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-primary">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-        </svg>
-        <span>Tổng Quan Hệ Thống</span>
-      </h2>
-      <p class="text-[11px] text-text-sub mt-1">Số liệu thống kê chi tiết toàn bộ người dùng và phòng trọ hoạt động.</p>
+    <!-- Welcome Banner -->
+    <div
+      class="relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center bg-gradient-to-br from-indigo-600 to-blue-500 text-white p-4 md:p-6 rounded-2xl mb-6 shadow-md shadow-indigo-500/20">
+      <!-- Glow effect inside banner -->
+      <div
+        class="absolute -top-1/2 -right-10 w-[280px] h-[280px] bg-gradient-to-b from-white/20 to-transparent rounded-full pointer-events-none">
+      </div>
+
+      <div class="relative z-10">
+        <span class="block text-xs uppercase tracking-widest opacity-90 font-semibold mb-1">{{ greeting }}</span>
+        <h1 class="text-2xl md:text-3xl font-extrabold text-white leading-tight">Tổng quan hệ thống</h1>
+        <p class="text-sm opacity-85 mt-1">Số liệu thống kê chi tiết toàn bộ người dùng và phòng trọ hoạt động.</p>
+      </div>
+      <div
+        class="relative z-10 flex items-center gap-2 text-xs bg-white/15 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full font-semibold whitespace-nowrap mt-4 md:mt-0">
+        <AppIcon name="calendar" size="sm" />
+        {{ currentDate }}
+      </div>
     </div>
 
     <!-- Loading State -->

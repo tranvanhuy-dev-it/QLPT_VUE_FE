@@ -18,7 +18,7 @@ export default {
     const authStore = useAuthStore();
 
     const profileUser = ref(null);
-    const username = computed(() => profileUser.value?.fullName || authStore.username || 'Người dùng');
+    const username = computed(() => authStore.user?.fullName || profileUser.value?.fullName || authStore.username || 'Người dùng');
     
     const userInitial = computed(() => {
       const name = username.value;
@@ -56,6 +56,7 @@ export default {
         case 'SubscriptionUpgrade': return 'Gói dịch vụ & Gia hạn';
         case 'Cameras': return 'Hệ thống Camera';
         case 'TenantCameras': return 'Camera giám sát';
+        case 'TenantContactLandlord': return 'Liên hệ chủ nhà';
         default: return 'Chi tiết';
       }
     });
@@ -74,6 +75,10 @@ export default {
       try {
         const res = await userService.getProfile();
         profileUser.value = res.data;
+        if (authStore.user) {
+          authStore.user.fullName = res.data.fullName;
+          localStorage.setItem('user', JSON.stringify(authStore.user));
+        }
       } catch (err) {
         console.error('Không thể lấy thông tin cá nhân:', err);
       }
