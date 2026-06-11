@@ -14,7 +14,7 @@
       <Header v-if="!isHeaderHidden" />
       <main
         ref="mainRef"
-        class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative rounded-2xl"
+        class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative lg:rounded-2xl"
         @touchstart.passive="onTouchStart"
         @touchmove.passive="onTouchMove"
         @touchend="onTouchEnd"
@@ -54,7 +54,7 @@
         <!-- Bottom Safe Area Spacer to prevent content from being covered by BottomBar or device safe areas on mobile -->
         <div 
           class="w-full shrink-0 lg:hidden" 
-          :style="{ height: isBottomBarHidden ? 'calc(2.5rem + env(safe-area-inset-bottom, 16px))' : 'calc(6.5rem + env(safe-area-inset-bottom, 16px))' }"
+          :style="{ height: isBottomBarHidden ? 'calc(0.5rem + env(safe-area-inset-bottom, 8px))' : 'calc(6.5rem + env(safe-area-inset-bottom, 16px))' }"
         ></div>
       </main>
     </div>
