@@ -97,6 +97,15 @@ export default {
     const router = useRouter();
     const authStore = useAuthStore();
 
+    const applyFontSize = (size) => {
+      let fontSizePx = '16px';
+      if (size === 'small') fontSizePx = '14px';
+      else if (size === 'medium') fontSizePx = '16px';
+      else if (size === 'large') fontSizePx = '18px';
+      else if (size === 'xlarge') fontSizePx = '20px';
+      document.documentElement.style.fontSize = fontSizePx;
+    };
+
     const isGuest = computed(() => {
       return !authStore.isAuthenticated || !!(route.meta && route.meta.guestOnly);
     });
@@ -106,11 +115,11 @@ export default {
     });
 
     const isHeaderHidden = computed(() => {
-      return authStore.isHeaderHidden;
+      return authStore.isHeaderHidden || !!(route.meta && route.meta.hideHeader);
     });
 
     const isBottomBarHidden = computed(() => {
-      if (route.meta && (route.meta.hideBottomBar || route.meta.hideHeaderOnMobile)) return true;
+      if (route.meta && (route.meta.hideBottomBar || route.meta.hideHeaderOnMobile || route.meta.hideHeader)) return true;
       const path = route.path.toLowerCase();
       if (path.includes('/detail') || path.includes('/add') || path.includes('/create') || path.includes('/new') || route.params.id) return true;
       if (authStore.isBottomBarHidden) return true;
@@ -219,6 +228,8 @@ export default {
     onMounted(async () => {
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
+      const savedFontSize = localStorage.getItem('fontSize') || 'medium';
+      applyFontSize(savedFontSize);
       checkSession();
 
       // Khởi tạo và đồng bộ hóa Status Bar cho Capacitor

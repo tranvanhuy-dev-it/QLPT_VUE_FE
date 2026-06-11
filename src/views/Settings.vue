@@ -227,6 +227,56 @@
                 </div>
               </div>
             </div>
+
+            <!-- Font Size Option -->
+            <div class="flex flex-col gap-2 border-t border-border-main/50 pt-5 mt-5 animate-in fade-in duration-200">
+              <span class="text-xs font-semibold text-text-main">Cỡ chữ hiển thị (Font Size)</span>
+              <p class="text-[10px] text-text-sub leading-normal m-0">
+                Điều chỉnh kích thước chữ của toàn bộ hệ thống để tối ưu khả năng đọc thông tin.
+              </p>
+
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3">
+                <!-- Small Size -->
+                <div 
+                  @click="setFontSize('small')"
+                  :class="['border rounded-xl p-3 cursor-pointer text-center transition-all duration-150 flex flex-col items-center justify-center gap-1.5 min-h-[80px]',
+                    fontSize === 'small' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-border-main hover:bg-slate-50 dark:hover:bg-slate-800']"
+                >
+                  <span class="text-[11px] text-text-main font-normal">A</span>
+                  <span class="font-bold text-[10px] text-text-main">Nhỏ</span>
+                </div>
+
+                <!-- Medium Size -->
+                <div 
+                  @click="setFontSize('medium')"
+                  :class="['border rounded-xl p-3 cursor-pointer text-center transition-all duration-150 flex flex-col items-center justify-center gap-1.5 min-h-[80px]',
+                    fontSize === 'medium' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-border-main hover:bg-slate-50 dark:hover:bg-slate-800']"
+                >
+                  <span class="text-[13px] text-text-main font-normal">A</span>
+                  <span class="font-bold text-[10px] text-text-main">Vừa (Mặc định)</span>
+                </div>
+
+                <!-- Large Size -->
+                <div 
+                  @click="setFontSize('large')"
+                  :class="['border rounded-xl p-3 cursor-pointer text-center transition-all duration-150 flex flex-col items-center justify-center gap-1.5 min-h-[80px]',
+                    fontSize === 'large' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-border-main hover:bg-slate-50 dark:hover:bg-slate-800']"
+                >
+                  <span class="text-[15px] text-text-main font-normal">A</span>
+                  <span class="font-bold text-[10px] text-text-main">Lớn</span>
+                </div>
+
+                <!-- Extra Large Size -->
+                <div 
+                  @click="setFontSize('xlarge')"
+                  :class="['border rounded-xl p-3 cursor-pointer text-center transition-all duration-150 flex flex-col items-center justify-center gap-1.5 min-h-[80px]',
+                    fontSize === 'xlarge' ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-border-main hover:bg-slate-50 dark:hover:bg-slate-800']"
+                >
+                  <span class="text-[18px] text-text-main font-normal">A</span>
+                  <span class="font-bold text-[10px] text-text-main">Rất lớn</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

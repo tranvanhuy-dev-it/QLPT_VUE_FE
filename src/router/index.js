@@ -127,7 +127,7 @@ const routes = [
     path: '/landlord/upgrade',
     name: 'SubscriptionUpgrade',
     component: () => import('../views/landlord/SubscriptionUpgrade.vue'),
-    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD', hideHeader: true, hideBottomBar: true },
   },
   // TENANT ROUTES
   {
@@ -182,13 +182,13 @@ const routes = [
     path: '/settings',
     name: 'Settings',
     component: () => import('../views/Settings.vue'),
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, hideHeader: true, hideBottomBar: true },
   },
   {
     path: '/contact',
     name: 'Contact',
     component: () => import('../views/Contact.vue'),
-    meta: { guestOnly: false },
+    meta: { guestOnly: false, hideHeader: true, hideBottomBar: true },
   },
   {
     path: '/:pathMatch(.*)*',

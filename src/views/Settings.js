@@ -23,7 +23,19 @@ export default {
 
     const activeTab = ref('profile'); // 'profile' | 'security' | 'preferences' | 'imou'
     const theme = ref(localStorage.getItem('theme') || 'light');
+    const fontSize = ref(localStorage.getItem('fontSize') || 'medium');
     const isLandlord = computed(() => authStore.role === 'LANDLORD');
+
+    const setFontSize = (size) => {
+      fontSize.value = size;
+      localStorage.setItem('fontSize', size);
+      let fontSizePx = '16px';
+      if (size === 'small') fontSizePx = '14px';
+      else if (size === 'medium') fontSizePx = '16px';
+      else if (size === 'large') fontSizePx = '18px';
+      else if (size === 'xlarge') fontSizePx = '20px';
+      document.documentElement.style.fontSize = fontSizePx;
+    };
 
     // Profile state variables
     const loadingProfile = ref(true);
@@ -203,6 +215,8 @@ export default {
       resetImouForm,
       saveImouSettings,
       setTheme,
+      fontSize,
+      setFontSize,
       goBack,
       confirmModal,
       onConfirmModal,
