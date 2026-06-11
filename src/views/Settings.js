@@ -21,8 +21,9 @@ export default {
     const authStore = useAuthStore();
     const { confirmModal, showAlert, onConfirmModal, closeConfirmModal } = useConfirmModal();
 
-    const activeTab = ref('profile'); // 'profile' | 'security' | 'preferences'
+    const activeTab = ref('profile'); // 'profile' | 'security' | 'preferences' | 'imou'
     const theme = ref(localStorage.getItem('theme') || 'light');
+    const isLandlord = computed(() => authStore.role === 'LANDLORD');
 
     // Profile state variables
     const loadingProfile = ref(true);
@@ -47,12 +48,20 @@ export default {
       confirmPassword: '',
     });
 
+    // Imou config state variables
+    const savingImou = ref(false);
+    const imouForm = ref({
+      imouAppId: '',
+      imouAppSecret: '',
+    });
+
     const fetchUserProfile = async () => {
       loadingProfile.value = true;
       try {
         const res = await userService.getProfile();
         rawUserProfile.value = res.data;
         resetProfileForm();
+        resetImouForm();
       } catch (err) {
         console.error('Không thể lấy thông tin người dùng:', err);
         showAlert('Lỗi', 'Không thể tải thông tin cá nhân. Vui lòng thử lại!', 'danger');
@@ -73,6 +82,34 @@ export default {
           idCardIssuePlace: rawUserProfile.value.idCardIssuePlace || '',
           permanentAddress: rawUserProfile.value.permanentAddress || '',
         };
+      }
+    };
+
+    const resetImouForm = () => {
+      if (rawUserProfile.value) {
+        imouForm.value = {
+          imouAppId: rawUserProfile.value.imouAppId || '',
+          imouAppSecret: rawUserProfile.value.imouAppSecret || '',
+        };
+      }
+    };
+
+    const saveImouSettings = async () => {
+      savingImou.value = true;
+      try {
+        const payload = {
+          imouAppId: imouForm.value.imouAppId,
+          imouAppSecret: imouForm.value.imouAppSecret,
+        };
+        const res = await userService.updateImouSettings(payload);
+        rawUserProfile.value = res.data;
+        resetImouForm();
+        showAlert('Thành công', 'Cập nhật cấu hình Imou Cloud thành công!', 'success');
+      } catch (err) {
+        console.error(err);
+        showAlert('Lỗi', err.response?.data?.error || 'Cập nhật cấu hình thất bại', 'danger');
+      } finally {
+        savingImou.value = false;
       }
     };
 
@@ -151,6 +188,7 @@ export default {
     return {
       activeTab,
       theme,
+      isLandlord,
       loadingProfile,
       savingProfile,
       profileForm,
@@ -159,6 +197,10 @@ export default {
       savingPassword,
       passwordForm,
       savePassword,
+      savingImou,
+      imouForm,
+      resetImouForm,
+      saveImouSettings,
       setTheme,
       goBack,
       confirmModal,

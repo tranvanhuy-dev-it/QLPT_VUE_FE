@@ -7,6 +7,9 @@ export default {
   updateProfile(data) {
     return api.put('/api/users/profile', data);
   },
+  updateImouSettings(data) {
+    return api.put('/api/users/imou-settings', data);
+  },
   changePassword(data) {
     return api.post('/api/users/change-password', data);
   },

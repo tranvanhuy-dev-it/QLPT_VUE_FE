@@ -51,6 +51,18 @@
             </svg>
             <span>Tùy chọn hiển thị</span>
           </button>
+
+          <button 
+            v-if="isLandlord"
+            @click="activeTab = 'imou'"
+            :class="['w-full text-left px-4 py-3 rounded-xl font-semibold text-xs transition-all duration-150 flex items-center gap-2.5 cursor-pointer',
+              activeTab === 'imou' ? 'bg-primary text-white shadow-sm' : 'text-text-main hover:bg-slate-50 dark:hover:bg-slate-800']"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 0 0 4.5 4.5H18a3.75 3.75 0 0 0 1.333-7.26 5.977 5.977 0 0 0-10.807-3.911C7.82 7.586 5.86 8.513 5.373 9.91A4.49 4.49 0 0 0 2.25 15Z" />
+            </svg>
+            <span>Cấu hình Imou Cloud</span>
+          </button>
         </div>
       </div>
 
@@ -216,6 +228,50 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- 4. TAB: IMOU CLOUD CONFIGURATION -->
+        <div v-if="activeTab === 'imou' && isLandlord" class="bg-card border border-border-main rounded-2xl p-5 shadow-xs animate-in fade-in duration-200">
+          <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-3 mb-5 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-primary">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 0 0 4.5 4.5H18a3.75 3.75 0 0 0 1.333-7.26 5.977 5.977 0 0 0-10.807-3.911C7.82 7.586 5.86 8.513 5.373 9.91A4.49 4.49 0 0 0 2.25 15Z" />
+            </svg>
+            <span>Cấu hình Imou Cloud Developer</span>
+          </h3>
+
+          <div class="mb-5 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 rounded-xl p-4 text-xs text-blue-800 dark:text-blue-200 leading-relaxed">
+            <p class="font-semibold mb-1 flex items-center gap-1.5 text-blue-900 dark:text-blue-100">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-blue-600 dark:text-blue-400">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" />
+              </svg>
+              Hướng dẫn kết nối tài khoản nhà phát triển Imou:
+            </p>
+            <ol class="list-decimal pl-4 space-y-1 mt-1.5 text-text-sub">
+              <li>Truy cập cổng thông tin nhà phát triển Imou tại: <a href="https://open.imoulife.com" target="_blank" class="text-primary hover:underline font-semibold">https://open.imoulife.com</a> và đăng ký tài khoản.</li>
+              <li>Tạo một ứng dụng (App) trong phần Console để lấy thông tin <strong>App ID</strong> và <strong>App Secret</strong>.</li>
+              <li>Sao chép và dán hai mã khóa đó vào các trường bên dưới và bấm "Lưu cấu hình".</li>
+            </ol>
+          </div>
+
+          <form @submit.prevent="saveImouSettings" class="space-y-4 max-w-lg">
+            <FormInput
+              type="text"
+              label="Imou App ID"
+              v-model="imouForm.imouAppId"
+              placeholder="Nhập App ID được cấp từ Imou Console"
+            />
+            <FormInput
+              type="password"
+              label="Imou App Secret"
+              v-model="imouForm.imouAppSecret"
+              placeholder="Nhập App Secret được cấp từ Imou Console"
+            />
+
+            <div class="flex justify-end gap-3 pt-4 border-t border-border-main/50">
+              <FormButton type="button" variant="secondary" @click="resetImouForm">Đặt lại</FormButton>
+              <FormButton type="submit" :loading="savingImou" variant="primary">Lưu cấu hình</FormButton>
+            </div>
+          </form>
         </div>
       </div>
     </div>
