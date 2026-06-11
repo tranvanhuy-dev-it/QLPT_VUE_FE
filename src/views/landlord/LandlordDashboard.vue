@@ -41,11 +41,11 @@
               <span v-else class="text-xs font-semibold text-text-sub pl-1.5">(Tất cả thời gian)</span>
             </h3>
           </div>
-          <div class="flex items-center gap-2 min-w-0">
-            <div class="flex-1 min-w-0 text-xs">
+          <div class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:gap-2 sm:w-auto">
+            <div class="w-full sm:w-36 text-xs">
               <FormInput type="date" label="Từ ngày" v-model="filterStartDate" class="!mb-0" />
             </div>
-            <div class="flex-1 min-w-0 text-xs">
+            <div class="w-full sm:w-36 text-xs">
               <FormInput type="date" label="Đến ngày" v-model="filterEndDate" class="!mb-0" />
             </div>
           </div>

@@ -55,7 +55,7 @@
         <div 
           v-if="!isBottomBarHidden" 
           class="w-full shrink-0 lg:hidden" 
-          :style="{ height: 'calc(4.5rem + env(safe-area-inset-bottom, 0px))' }"
+          :style="{ height: 'calc(6.5rem + env(safe-area-inset-bottom, 0px))' }"
         ></div>
       </main>
     </div>
