@@ -188,26 +188,27 @@
                   </FormButton>
                 </div>
               </div>
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1.5">
-                <div><span class="text-text-sub">Giá phòng:</span> <span class="font-bold text-text-main">{{
+              <div class="flex flex-col gap-y-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-x-6 md:gap-y-1.5">
+                <div class="flex justify-between items-center md:block"><span class="text-text-sub">Giá phòng:</span> <span class="font-bold text-text-main text-right">{{
                   formatMoney(addendum.roomPrice) }} đ</span></div>
-                <div><span class="text-text-sub">Giá điện:</span> <span class="font-bold text-text-main">{{
+                <div class="flex justify-between items-center md:block"><span class="text-text-sub">Giá điện:</span> <span class="font-bold text-text-main text-right">{{
                   formatMoney(addendum.electricityRate) }} đ/kWh</span></div>
-                <div><span class="text-text-sub">Giá nước:</span> <span class="font-bold text-text-main">{{
+                <div class="flex justify-between items-center md:block"><span class="text-text-sub">Giá nước:</span> <span class="font-bold text-text-main text-right">{{
                   formatMoney(addendum.waterRate) }} đ</span></div>
-                <div><span class="text-text-sub">Tính nước:</span> <span class="font-semibold text-text-main">{{
+                <div class="flex justify-between items-center md:block"><span class="text-text-sub">Tính nước:</span> <span class="font-semibold text-text-main text-right">{{
                   formatWaterBillingType(addendum.waterBillingType) }}</span></div>
-                <div><span class="text-text-sub">Số người:</span> <span class="font-bold text-text-main">{{
+                <div class="flex justify-between items-center md:block"><span class="text-text-sub">Số người:</span> <span class="font-bold text-text-main text-right">{{
                   addendum.numberOfTenants }}</span></div>
               </div>
               <div v-if="addendum.extraFees && addendum.extraFees.length > 0"
                 class="mt-2 pt-2 border-t border-border-main/30">
-                <span class="text-text-sub text-[10px] font-semibold uppercase">Phụ phí:</span>
-                <div class="flex flex-wrap gap-1.5 mt-1">
-                  <span v-for="ef in addendum.extraFees" :key="ef.id"
-                    class="inline-flex px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-medium text-text-sub">
-                    {{ ef.extraFee.name }}: {{ formatMoney(ef.customPrice) }}đ
-                  </span>
+                <span class="text-text-sub text-[10px] font-semibold uppercase mb-1.5 block">Phụ phí:</span>
+                <div class="flex flex-col gap-1.5 md:flex-row md:flex-wrap">
+                  <div v-for="ef in addendum.extraFees" :key="ef.id"
+                    class="flex justify-between items-center md:inline-flex md:px-2 md:py-0.5 rounded md:bg-slate-100 md:dark:bg-slate-800 text-[11px] md:text-[10px] font-medium">
+                    <span class="text-text-sub md:text-text-sub">{{ ef.extraFee.name }}<span class="hidden md:inline">:</span></span>
+                    <span class="font-bold text-text-main md:font-medium md:text-text-sub md:ml-1">{{ formatMoney(ef.customPrice) }}đ</span>
+                  </div>
                 </div>
               </div>
             </div>
