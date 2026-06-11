@@ -233,7 +233,11 @@ export default {
     };
 
     const goBack = () => {
-      router.push({ name: 'BoardingHouses' });
+      if (window.history.state && window.history.state.back) {
+        router.back();
+      } else {
+        router.push({ name: 'BoardingHouses' });
+      }
     };
 
     onMounted(() => {

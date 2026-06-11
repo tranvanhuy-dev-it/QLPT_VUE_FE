@@ -18,5 +18,11 @@ export default {
   },
   getTenant(id) {
     return api.get(`/api/users/tenants/${id}`);
+  },
+  getLoginHistory() {
+    return api.get('/api/users/login-history');
+  },
+  revokeSession(id) {
+    return api.delete(`/api/users/login-history/${id}`);
   }
 };

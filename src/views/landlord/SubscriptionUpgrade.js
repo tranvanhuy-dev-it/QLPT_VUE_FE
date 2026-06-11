@@ -4,6 +4,7 @@ import { useAuthStore } from '../../stores/auth.js';
 import subscriptionService from '../../services/subscriptionService.js';
 import AppIcon from '../../components/ui/icons/AppIcon.vue';
 import FormButton from '../../components/ui/FormButton.vue';
+import { formatDate, formatDateTime } from '../../utils/date.js';
 
 export default {
   name: 'SubscriptionUpgrade',
@@ -121,18 +122,6 @@ export default {
     const formatMoney = (val) => {
       if (!val) return '0';
       return new Intl.NumberFormat('vi-VN').format(val);
-    };
-
-    const formatDate = (dateStr) => {
-      if (!dateStr) return '';
-      const d = new Date(dateStr);
-      return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
-    };
-
-    const formatDateTime = (dateTimeStr) => {
-      if (!dateTimeStr) return '';
-      const d = new Date(dateTimeStr);
-      return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')} ${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
     };
 
     onMounted(() => {

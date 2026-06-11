@@ -112,7 +112,11 @@ export default {
     };
 
     const goBack = () => {
-      router.push('/landlord/rooms');
+      if (window.history.state && window.history.state.back) {
+        router.back();
+      } else {
+        router.push('/landlord/rooms');
+      }
     };
 
     const viewContractDetails = (contract) => {

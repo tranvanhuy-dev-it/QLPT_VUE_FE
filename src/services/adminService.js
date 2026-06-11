@@ -9,5 +9,8 @@ export default {
   },
   getStatistics() {
     return api.get('/api/admin/statistics');
+  },
+  getAllLoginHistory(params) {
+    return api.get('/api/admin/login-history', { params });
   }
 };

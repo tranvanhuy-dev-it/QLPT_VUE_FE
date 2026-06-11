@@ -124,9 +124,18 @@
                 <!-- Content -->
                 <div class="flex-1 min-w-0 pr-2">
                   <div class="font-bold text-text-main text-[0.8rem] truncate">{{ notif.title }}</div>
-                  <div class="text-[0.75rem] text-text-sub line-clamp-2 mt-0.5 leading-relaxed">{{ notif.content }}
+                  <div class="text-[0.75rem] text-text-sub mt-0.5 leading-relaxed"
+                    :class="{ 'line-clamp-2': !expandedNotifications[notif.id] }">
+                    {{ notif.content }}
                   </div>
-                  <div class="text-[0.675rem] text-slate-400 mt-1 font-medium">{{ formatTime(notif.createdAt) }}</div>
+                  <button 
+                    v-if="notif.content && notif.content.length > 80" 
+                    @click.stop="toggleExpand(notif.id)"
+                    class="text-primary hover:text-primary-dark hover:underline font-bold text-[0.7rem] bg-transparent border-0 p-0 mt-1 cursor-pointer block"
+                  >
+                    {{ expandedNotifications[notif.id] ? 'Thu gọn' : 'Xem thêm' }}
+                  </button>
+                  <div class="text-[0.675rem] text-slate-400 mt-1.5 font-medium">{{ formatTime(notif.createdAt) }}</div>
                 </div>
 
                 <!-- Blue indicator for unread -->
@@ -174,16 +183,15 @@
         <!-- Dropdown Card -->
         <div v-if="showDropdown"
           class="absolute right-0 top-12 w-48 bg-card border border-border-main rounded-xl shadow-lg py-1.5 z-50 text-xs mt-1 animate-in fade-in slide-in-from-top-2 duration-150">
-          <!-- Cài đặt tài khoản -->
+          <!-- Cài đặt & Quyền riêng tư -->
           <button @click="navigateToSettings"
             class="w-full text-left px-4 py-2.5 text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
               stroke="currentColor" class="w-4 h-4 text-text-sub">
               <path stroke-linecap="round" stroke-linejoin="round"
-                d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.43l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
             </svg>
-            <span class="font-medium">Cài đặt chung</span>
+            <span class="font-medium">Cài đặt & Quyền riêng tư</span>
           </button>
 
           <!-- Gói dịch vụ - only for Landlord -->
@@ -195,6 +203,15 @@
                 d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span class="font-medium">Gói dịch vụ</span>
+          </button>
+
+          <!-- Quản lý Khách thuê - only for Landlord -->
+          <button v-if="role === 'LANDLORD'" @click="navigateToTenants"
+            class="w-full text-left px-4 py-2.5 text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-text-sub">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span class="font-medium">Quản lý khách thuê</span>
           </button>
 
           <!-- Liên hệ hỗ trợ -->

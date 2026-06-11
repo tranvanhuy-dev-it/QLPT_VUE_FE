@@ -512,6 +512,12 @@ export default {
       return str;
     };
 
+    const navigateToTenant = (tenantId) => {
+      if (isLandlord.value && tenantId) {
+        router.push(`/landlord/tenants/${tenantId}`);
+      }
+    };
+
     return {
       isLandlord,
       contract,
@@ -547,6 +553,8 @@ export default {
       confirmModal,
       onConfirmModal,
       closeConfirmModal,
+      navigateToTenant,
     };
   }
 };
+

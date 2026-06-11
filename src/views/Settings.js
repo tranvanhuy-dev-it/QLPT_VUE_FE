@@ -1,7 +1,8 @@
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth.js';
 import userService from '../services/userService.js';
+import { formatDateTime } from '../utils/date.js';
 import AppIcon from '../components/ui/icons/AppIcon.vue';
 import FormInput from '../components/ui/FormInput.vue';
 import FormButton from '../components/ui/FormButton.vue';
@@ -19,7 +20,7 @@ export default {
   setup() {
     const router = useRouter();
     const authStore = useAuthStore();
-    const { confirmModal, showAlert, onConfirmModal, closeConfirmModal } = useConfirmModal();
+    const { confirmModal, showAlert, showConfirm, onConfirmModal, closeConfirmModal } = useConfirmModal();
 
     const activeTab = ref('profile'); // 'profile' | 'security' | 'preferences' | 'imou'
     const theme = ref(localStorage.getItem('theme') || 'light');
@@ -58,6 +59,68 @@ export default {
       oldPassword: '',
       newPassword: '',
       confirmPassword: '',
+    });
+
+    // Sessions state variables
+    const sessions = ref([]);
+    const loadingSessions = ref(true);
+
+    const fetchSessions = async () => {
+      loadingSessions.value = true;
+      try {
+        const res = await userService.getLoginHistory();
+        sessions.value = res.data || [];
+      } catch (err) {
+        console.error('Không thể lấy lịch sử đăng nhập:', err);
+        showAlert('Lỗi', 'Không thể tải danh sách phiên đăng nhập. Vui lòng thử lại!', 'danger');
+      } finally {
+        loadingSessions.value = false;
+      }
+    };
+
+    const confirmRevoke = (id) => {
+      showConfirm(
+        'Xác nhận đăng xuất',
+        'Bạn có chắc chắn muốn đăng xuất khỏi thiết bị này? Phiên làm việc trên thiết bị đó sẽ bị hủy bỏ ngay lập tức.',
+        'warning',
+        async () => {
+          try {
+            await userService.revokeSession(id);
+            showAlert('Thành công', 'Đã đăng xuất thiết bị thành công!', 'success');
+            fetchSessions();
+          } catch (err) {
+            console.error(err);
+            showAlert('Lỗi', err.response?.data?.error || 'Không thể đăng xuất thiết bị', 'danger');
+          }
+        }
+      );
+    };
+
+    const formatUA = (ua) => {
+      if (!ua) return 'Không rõ';
+      let browser = 'Không rõ';
+      let os = 'Không rõ';
+      const uaLower = ua.toLowerCase();
+
+      if (uaLower.includes('firefox')) browser = 'Firefox';
+      else if (uaLower.includes('edge')) browser = 'Edge';
+      else if (uaLower.includes('opera') || uaLower.includes('opr')) browser = 'Opera';
+      else if (uaLower.includes('chrome') || uaLower.includes('crios')) browser = 'Chrome';
+      else if (uaLower.includes('safari')) browser = 'Safari';
+
+      if (uaLower.includes('windows')) os = 'Windows';
+      else if (uaLower.includes('macintosh') || uaLower.includes('mac os')) os = 'macOS';
+      else if (uaLower.includes('iphone') || uaLower.includes('ipad')) os = 'iOS';
+      else if (uaLower.includes('android')) os = 'Android';
+      else if (uaLower.includes('linux')) os = 'Linux';
+
+      return `${browser} (${os})`;
+    };
+
+    watch(activeTab, (newTab) => {
+      if (newTab === 'sessions') {
+        fetchSessions();
+      }
     });
 
     // Imou config state variables
@@ -233,6 +296,12 @@ export default {
       confirmModal,
       onConfirmModal,
       closeConfirmModal,
+      sessions,
+      loadingSessions,
+      fetchSessions,
+      confirmRevoke,
+      formatDateTime,
+      formatUA,
     };
   },
 };

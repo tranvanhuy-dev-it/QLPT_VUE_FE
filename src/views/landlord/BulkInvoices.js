@@ -207,7 +207,11 @@ export default {
     };
 
     const goBack = () => {
-      router.push({ name: "Invoices" });
+      if (window.history.state && window.history.state.back) {
+        router.back();
+      } else {
+        router.push({ name: "Invoices" });
+      }
     };
 
     watch(bulkInvoiceDate, (newVal) => {

@@ -2,6 +2,7 @@ import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '../../stores/auth.js';
 import { useNotificationStore } from '../../stores/notification.js';
+import { formatDateTime } from '../../utils/date.js';
 import userService from '../../services/userService.js';
 import { useConfirmModal } from '../../composables/useConfirmModal.js';
 
@@ -57,6 +58,9 @@ export default {
         case 'Cameras': return 'Hệ thống Camera';
         case 'TenantCameras': return 'Camera giám sát';
         case 'TenantContactLandlord': return 'Liên hệ chủ nhà';
+        case 'AdminLoginHistory': return 'Lịch sử đăng nhập';
+        case 'AdminSettings': return 'Cài đặt hệ thống';
+        case 'Settings': return 'Cài đặt & Quyền riêng tư';
         default: return 'Chi tiết';
       }
     });
@@ -96,6 +100,11 @@ export default {
     const unreadCount = computed(() => notificationStore.unreadCount);
     const loadingNotifications = computed(() => notificationStore.loading);
     const hasMore = computed(() => notificationStore.hasMore);
+
+    const expandedNotifications = ref({});
+    const toggleExpand = (id) => {
+      expandedNotifications.value[id] = !expandedNotifications.value[id];
+    };
 
     const toggleNotifications = () => {
       showNotificationsDropdown.value = !showNotificationsDropdown.value;
@@ -150,15 +159,7 @@ export default {
       }
     };
 
-    const formatTime = (timeStr) => {
-      if (!timeStr) return '';
-      try {
-        const d = new Date(timeStr);
-        return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
-      } catch (e) {
-        return timeStr;
-      }
-    };
+    const formatTime = formatDateTime;
 
     const handleLogout = () => {
       notificationStore.stopPolling();
@@ -175,6 +176,11 @@ export default {
     const navigateToUpgrade = () => {
       showDropdown.value = false;
       router.push('/landlord/upgrade');
+    };
+
+    const navigateToTenants = () => {
+      showDropdown.value = false;
+      router.push('/landlord/tenants');
     };
 
     const goToOverview = () => {
@@ -229,6 +235,7 @@ export default {
       toggleSidebar,
       role,
       navigateToUpgrade,
+      navigateToTenants,
       goToOverview,
       showDropdown,
       confirmModal,
@@ -246,6 +253,8 @@ export default {
       handleNotificationClick,
       getIconClass,
       formatTime,
+      expandedNotifications,
+      toggleExpand,
     };
   }
 };

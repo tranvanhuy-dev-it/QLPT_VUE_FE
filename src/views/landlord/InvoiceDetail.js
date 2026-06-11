@@ -362,6 +362,12 @@ export default {
       }
     };
 
+    const navigateToTenant = (tenantId) => {
+      if (isLandlord.value && tenantId) {
+        router.push(`/landlord/tenants/${tenantId}`);
+      }
+    };
+
     onMounted(() => {
       fetchInvoiceDetail();
     });
@@ -373,6 +379,7 @@ export default {
       isLandlord,
       showPayModal,
       payForm,
+      navigateToTenant,
       formatMoney,
       formatDate,
       goBack,

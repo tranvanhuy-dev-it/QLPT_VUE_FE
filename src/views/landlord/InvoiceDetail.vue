@@ -106,8 +106,18 @@
                 đại
                 diện</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 text-xs">
-                <DetailField label="Đại diện thuê:" :value="invoice.contract?.tenant?.fullName" layout="inline"
-                  value-class="font-bold" />
+                <DetailField label="Đại diện thuê:" layout="inline">
+                  <span 
+                    v-if="isLandlord && invoice.contract?.tenant?.id" 
+                    @click="navigateToTenant(invoice.contract.tenant.id)" 
+                    class="font-bold text-primary hover:underline cursor-pointer"
+                  >
+                    {{ invoice.contract.tenant.fullName }}
+                  </span>
+                  <span v-else class="font-bold">
+                    {{ invoice.contract?.tenant?.fullName || '---' }}
+                  </span>
+                </DetailField>
                 <DetailField label="Số điện thoại:" :value="invoice.contract?.tenant?.phone || 'Chưa cập nhật'"
                   layout="inline" value-class="font-bold" />
                 <DetailField label="Email liên hệ:" :value="invoice.contract?.tenant?.email || 'Chưa cập nhật'"

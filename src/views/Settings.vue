@@ -7,8 +7,10 @@
           <AppIcon name="arrow-left" class="text-text-sub !w-4 !h-4" />
         </FormButton>
         <h2 class="text-base sm:text-xl font-bold text-text-main flex items-center gap-2 flex-wrap">
-          <AppIcon name="cog" class="text-primary !w-5 !h-5" />
-          <span>Cài Đặt Hệ Thống</span>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="text-primary w-5 h-5 shrink-0">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+          </svg>
+          <span>Cài đặt & Quyền riêng tư</span>
         </h2>
       </div>
     </div>
@@ -38,6 +40,17 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
             </svg>
             <span>Đổi mật khẩu</span>
+          </button>
+
+          <button 
+            @click="activeTab = 'sessions'"
+            :class="['w-full text-left px-4 py-3 rounded-xl font-semibold text-xs transition-all duration-150 flex items-center gap-2.5 cursor-pointer',
+              activeTab === 'sessions' ? 'bg-primary text-white shadow-sm' : 'text-text-main hover:bg-slate-50 dark:hover:bg-slate-800']"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
+            </svg>
+            <span>Lịch sử đăng nhập & Thiết bị</span>
           </button>
 
           <button 
@@ -179,10 +192,91 @@
               required
             />
 
-            <div class="flex justify-end gap-3 pt-4 border-t border-border-main/50">
-              <FormButton type="submit" :loading="savingPassword" variant="primary">Cập nhật mật khẩu</FormButton>
-            </div>
           </form>
+        </div>
+
+        <!-- 5. TAB: LOGIN HISTORY & DEVICES -->
+        <div v-if="activeTab === 'sessions'" class="bg-card border border-border-main rounded-2xl p-5 shadow-xs animate-in fade-in duration-200">
+          <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-3 mb-5 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-primary">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
+            </svg>
+            <span>Lịch sử đăng nhập & Thiết bị</span>
+          </h3>
+
+          <p class="text-[11px] text-text-sub mb-6 leading-relaxed">
+            Danh sách các thiết bị đã và đang đăng nhập vào tài khoản của bạn. Bạn có thể đăng xuất (thu hồi quyền truy cập) từ xa cho các thiết bị lạ hoặc không còn sử dụng.
+          </p>
+
+          <div v-if="loadingSessions" class="flex justify-center items-center py-12">
+            <div class="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
+          </div>
+
+          <div v-else-if="sessions.length === 0" class="text-center py-12 text-text-sub">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 mx-auto text-slate-300 dark:text-slate-700 mb-2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span class="font-semibold text-xs">Không có dữ liệu phiên đăng nhập nào</span>
+          </div>
+
+          <div v-else class="space-y-4">
+            <div v-for="session in sessions" :key="session.id" 
+              class="border border-border-main rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 transition-all duration-150"
+              :class="session.current ? 'bg-primary/5 border-primary/20 shadow-xs' : 'bg-transparent'"
+            >
+              <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-text-main shrink-0 mt-0.5"
+                  :class="session.current ? 'text-primary bg-primary/10' : ''"
+                >
+                  <svg v-if="formatUA(session.userAgent).toLowerCase().includes('iphone') || formatUA(session.userAgent).toLowerCase().includes('android') || formatUA(session.userAgent).toLowerCase().includes('ios')" 
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H13.5a2.25 2.25 0 0 1 2.25 2.25v16.5a2.25 2.25 0 0 1-2.25 2.25H10.5A2.25 2.25 0 0 1 8.25 20.25V3.75a2.25 2.25 0 0 1 2.25-2.25Z" />
+                  </svg>
+                  <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
+                  </svg>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-bold text-xs text-text-main">{{ formatUA(session.userAgent) }}</span>
+                    <span v-if="session.current" class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-primary text-white tracking-wider">
+                      Thiết bị này
+                    </span>
+                    <span v-else-if="session.active" class="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-400">
+                      Đang hoạt động
+                    </span>
+                  </div>
+                  <div class="text-[10px] text-text-sub mt-1 space-y-0.5">
+                    <p class="m-0 flex items-center gap-1">
+                      <span class="font-semibold">IP:</span> 
+                      <span class="font-mono">{{ session.ipAddress }}</span>
+                    </p>
+                    <p class="m-0 flex items-center gap-1">
+                      <span class="font-semibold">Đăng nhập lúc:</span>
+                      <span>{{ formatDateTime(session.loginTime) }}</span>
+                    </p>
+                    <p v-if="session.lastActivityTime" class="m-0 flex items-center gap-1">
+                      <span class="font-semibold">Hoạt động cuối:</span>
+                      <span>{{ formatDateTime(session.lastActivityTime) }}</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div v-if="!session.current && session.active" class="flex items-center sm:self-center shrink-0">
+                <FormButton 
+                  @click="confirmRevoke(session.id)" 
+                  variant="danger" 
+                  class="!py-1.5 !px-3 !text-[10px] font-bold flex items-center gap-1 cursor-pointer animate-in fade-in duration-150"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12" />
+                  </svg>
+                  <span>Đăng xuất thiết bị</span>
+                </FormButton>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- 3. TAB: DISPLAY PREFERENCES -->

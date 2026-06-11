@@ -4,6 +4,7 @@ import ConfirmModal from '../../components/ui/ConfirmModal.vue';
 import userService from '../../services/userService.js';
 import { useTenantStore } from '../../stores/tenant.js';
 import { useConfirmModal } from '../../composables/useConfirmModal.js';
+import { formatDate } from '../../utils/date.js';
 
 import FormButton from '../../components/ui/FormButton.vue';
 import AppIcon from '../../components/ui/icons/AppIcon.vue';
@@ -22,11 +23,7 @@ export default {
     const tenant = ref(null);
     const loading = ref(true);
 
-    const formatDate = (dateString) => {
-      if (!dateString) return '-';
-      const d = new Date(dateString);
-      return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
-    };
+
 
     const fetchTenantDetails = async () => {
       loading.value = true;
@@ -77,7 +74,11 @@ export default {
     };
 
     const goBack = () => {
-      router.push('/landlord/tenants');
+      if (window.history.state && window.history.state.back) {
+        router.back();
+      } else {
+        router.push('/landlord/tenants');
+      }
     };
 
     onMounted(() => {

@@ -43,6 +43,12 @@ const routes = [
     component: () => import('../views/admin/AdminSettings.vue'),
     meta: { requiresAuth: true, requiresRole: 'ADMIN' },
   },
+  {
+    path: '/admin/login-history',
+    name: 'AdminLoginHistory',
+    component: () => import('../views/admin/AdminLoginHistory.vue'),
+    meta: { requiresAuth: true, requiresRole: 'ADMIN' },
+  },
   // LANDLORD ROUTES
   {
     path: '/landlord',
@@ -127,7 +133,7 @@ const routes = [
     path: '/landlord/upgrade',
     name: 'SubscriptionUpgrade',
     component: () => import('../views/landlord/SubscriptionUpgrade.vue'),
-    meta: { requiresAuth: true, requiresRole: 'LANDLORD', hideHeader: true, hideBottomBar: true },
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD', hideHeaderOnMobile: true, hideBottomBar: true },
   },
   // TENANT ROUTES
   {
@@ -182,13 +188,13 @@ const routes = [
     path: '/settings',
     name: 'Settings',
     component: () => import('../views/Settings.vue'),
-    meta: { requiresAuth: true, hideHeader: true, hideBottomBar: true },
+    meta: { requiresAuth: true, hideHeaderOnMobile: true, hideBottomBar: true },
   },
   {
     path: '/contact',
     name: 'Contact',
     component: () => import('../views/Contact.vue'),
-    meta: { guestOnly: false, hideHeader: true, hideBottomBar: true },
+    meta: { guestOnly: false, hideHeaderOnMobile: true, hideBottomBar: true },
   },
   {
     path: '/:pathMatch(.*)*',

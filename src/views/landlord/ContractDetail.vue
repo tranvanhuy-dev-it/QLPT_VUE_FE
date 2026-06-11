@@ -106,8 +106,18 @@
         <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
           <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Thông tin khách thuê</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 text-xs">
-            <DetailField label="Đại diện thuê:" :value="contract.tenant.fullName" layout="inline"
-              value-class="font-bold" />
+            <DetailField label="Đại diện thuê:" layout="inline">
+              <span 
+                v-if="isLandlord" 
+                @click="navigateToTenant(contract.tenant.id)" 
+                class="font-bold text-primary hover:underline cursor-pointer"
+              >
+                {{ contract.tenant.fullName }}
+              </span>
+              <span v-else class="font-bold">
+                {{ contract.tenant.fullName }}
+              </span>
+            </DetailField>
             <DetailField label="Tài khoản:" :value="contract.tenant.username" layout="inline" value-class="font-mono" />
             <DetailField label="Số điện thoại:" :value="contract.tenant.phone || 'Chưa cập nhật'" layout="inline"
               value-class="font-bold" />
