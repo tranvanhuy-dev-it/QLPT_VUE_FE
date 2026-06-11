@@ -13,9 +13,9 @@
       <h2 style="text-align: center; margin-bottom: 0.5rem; font-weight: 700; color: var(--primary-color);">
         Quản lý trọ thông minh
       </h2>
-      <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.9rem;">Đăng nhập
-        để
-        quản lý và xem thông tin trọ</p>
+      <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem; font-size: 0.9rem;">
+        Đăng nhập để quản lý và xem thông tin trọ
+      </p>
 
       <div v-if="error" class="badge badge-danger"
         style="width: 100%; padding: 0.75rem; margin-bottom: 1.25rem; border-radius: 8px; justify-content: center; text-transform: none;">

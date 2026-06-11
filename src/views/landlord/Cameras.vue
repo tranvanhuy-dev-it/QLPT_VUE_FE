@@ -103,6 +103,20 @@
           </select>
         </div>
 
+        <!-- Hãng sản xuất / Loại camera -->
+        <div>
+          <label class="block text-xs font-bold text-text-sub uppercase mb-1.5">Loại Camera (Hãng sản xuất) <span class="text-danger">*</span></label>
+          <select 
+            v-model="form.brand" 
+            required
+            class="w-full px-3.5 py-2.5 border border-border-main rounded-xl bg-slate-50 dark:bg-slate-900 text-text-main text-xs font-medium outline-none transition focus:bg-white dark:focus:bg-slate-900 focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,102,204,0.08)] cursor-pointer"
+          >
+            <option value="CUSTOM">Nhập link trực tiếp (CUSTOM - HLS/MJPEG)</option>
+            <option value="IMOU">Tự động Imou Cloud (Plug & Play)</option>
+            <option value="EZVIZ" disabled>Tự động EZVIZ Cloud (Sắp ra mắt)</option>
+          </select>
+        </div>
+
         <div>
           <FormInput
             type="text"
@@ -112,33 +126,65 @@
             required
           />
         </div>
-        <div>
-          <FormInput
-            type="text"
-            label="Đường dẫn luồng phát (HLS .m3u8 hoặc MJPEG .mjpg/.cgi)"
-            v-model="form.streamUrl"
-            placeholder="Ví dụ: http://192.168.1.50/stream.mjpg hoặc link cloud"
-            required
-          />
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+        <!-- Chế độ nhập link thủ công (CUSTOM) -->
+        <template v-if="form.brand === 'CUSTOM'">
           <div>
             <FormInput
               type="text"
-              label="Tài khoản truy cập (nếu có)"
-              v-model="form.username"
-              placeholder="Username"
+              label="Đường dẫn luồng phát (HLS .m3u8 hoặc MJPEG .mjpg/.cgi)"
+              v-model="form.streamUrl"
+              placeholder="Ví dụ: http://192.168.1.50/stream.mjpg hoặc link cloud"
+              required
             />
           </div>
-          <div>
-            <FormInput
-              type="password"
-              label="Mật khẩu truy cập (nếu có)"
-              v-model="form.password"
-              placeholder="Password"
-            />
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <FormInput
+                type="text"
+                label="Tài khoản truy cập (nếu có)"
+                v-model="form.username"
+                placeholder="Username"
+              />
+            </div>
+            <div>
+              <FormInput
+                type="password"
+                label="Mật khẩu truy cập (nếu có)"
+                v-model="form.password"
+                placeholder="Password"
+              />
+            </div>
           </div>
-        </div>
+        </template>
+
+        <!-- Chế độ Plug & Play (IMOU) -->
+        <template v-else-if="form.brand === 'IMOU'">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <FormInput
+                type="text"
+                label="Mã Serial Number (S/N) *"
+                v-model="form.serialNumber"
+                placeholder="Ví dụ: 8L02B97PAYXXXXX"
+                required
+              />
+            </div>
+            <div>
+              <FormInput
+                type="text"
+                label="Mã an toàn (Safety Code / Verification Code) *"
+                v-model="form.safetyCode"
+                placeholder="Mã bảo mật 8 ký tự in hoa dưới đáy camera"
+                required
+              />
+            </div>
+          </div>
+          <div class="p-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/30 rounded-xl text-[11px] text-text-sub leading-normal">
+            <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-0.5">💡 Cắm và chạy (Plug & Play)</span>
+            Chỉ cần nhập mã S/N và Mã an toàn (thường được in dưới mã vạch/QR của camera Imou), hệ thống sẽ tự động liên kết và cập nhật luồng phát trực tiếp.
+          </div>
+        </template>
 
         <div class="flex justify-between items-center pt-4 border-t border-border-main">
           <div>
@@ -239,24 +285,30 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor" class="w-4 h-4">
               <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
             </svg>
-            <span>Cách lấy URL luồng camera tương thích:</span>
+            <span>Hướng dẫn liên kết Camera Imou qua Cloud (Cách 1):</span>
           </h4>
-          <div class="space-y-2 text-[11px] text-text-sub leading-relaxed bg-slate-50 dark:bg-slate-900/60 p-3 rounded-xl border border-border-main/50">
-            <p>Trình duyệt web/di động <strong>không hỗ trợ trực tiếp</strong> giao thức RTSP truyền thống (<code>rtsp://...</code>). Bạn cần cung cấp luồng định dạng tương thích:</p>
-            <ul class="list-disc pl-4 space-y-1">
+          <div class="space-y-2.5 text-[11px] text-text-sub leading-relaxed bg-slate-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-border-main/50">
+            <p class="font-medium text-text-main">Do trình duyệt không hỗ trợ trực tiếp link RTSP truyền thống, vui lòng lấy link luồng HLS (.m3u8) từ Cloud Imou Developer theo các bước sau:</p>
+            <ol class="list-decimal pl-4 space-y-1.5">
               <li>
-                <strong>Luồng MJPEG trực tiếp (Đơn giản nhất)</strong>:<br>
-                Nhiều dòng camera IP (như Hikvision, Dahua, KBVision...) hỗ trợ cổng xuất trực tiếp luồng MJPEG qua HTTP. Bạn tìm cấu hình camera để lấy link dạng: <code class="text-primary break-all">http://[IP_Camera]:[Port]/live/mjpeg</code> hoặc <code class="text-primary break-all">http://[IP_Camera]/video.cgi</code>.
+                <strong>Chuẩn bị thông tin</strong>: Xem nhãn dán dưới đáy camera hoặc hộp để ghi lại mã <strong>S/N (Serial Number)</strong> và mã <strong>Safety Code (Mã an toàn / Lớp mã hóa)</strong>.
               </li>
               <li>
-                <strong>Sử dụng bộ chuyển đổi HLS trung gian (Khuyên dùng)</strong>:<br>
-                Cài đặt phần mềm miễn phí (như <strong>MediaMTX</strong>, <strong>go2rtc</strong>, hoặc <strong>Agent DVR</strong>) trên PC/Server trong cùng mạng LAN để chuyển luồng <code>rtsp://</code> sang HLS <code>.m3u8</code>. URL dạng: <code class="text-primary break-all">http://[IP_Server]:8554/[camera_name]/index.m3u8</code>.
+                <strong>Đăng ký tài khoản</strong>: Truy cập cổng nhà phát triển Imou tại <a href="https://open.imoulife.com" target="_blank" class="text-primary hover:underline font-semibold">open.imoulife.com</a>, đăng ký tài khoản miễn phí (chọn vùng <strong>Vietnam</strong> để luồng mượt nhất) và xác thực email.
               </li>
               <li>
-                <strong>Lấy luồng chia sẻ Cloud công khai</strong>:<br>
-                Các camera EZVIZ, Imou, Yoosee... cho phép lấy luồng phát trực tiếp HLS (link <code>.m3u8</code>) công khai thông qua ứng dụng gốc trên điện thoại. Bạn copy link này dán vào hệ thống.
+                <strong>Thêm Camera vào Cloud</strong>: Tại trang quản trị (Console), chọn <strong>Device Management</strong> &rarr; <strong>Add Device</strong>. Điền <strong>S/N</strong> và <strong>Safety Code</strong> ở bước 1 rồi bấm Xác nhận.
               </li>
-            </ul>
+              <li>
+                <strong>Bật Live Stream</strong>: Vào mục <strong>Media Service</strong> &rarr; <strong>Live Stream</strong>, chọn Camera vừa thêm và bấm <strong>Enable Live Stream</strong>.
+              </li>
+              <li>
+                <strong>Lấy link .m3u8</strong>: Copy đường link ở mục <strong>HLS Stream URL</strong> (định dạng <code>https://...m3u8?token=xxx</code>) dán vào ô "Đường dẫn luồng phát" trên ứng dụng.
+              </li>
+            </ol>
+            <div class="border-t border-border-main/50 pt-2 mt-2">
+              <p class="text-[10px] text-slate-500 italic">* Các camera hãng khác (như EZVIZ) cũng làm tương tự bằng cách kích hoạt chia sẻ luồng trên App điện thoại hoặc dùng bộ chuyển đổi cục bộ go2rtc / MediaMTX.</p>
+            </div>
           </div>
         </div>
 

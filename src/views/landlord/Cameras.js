@@ -45,6 +45,9 @@ export default {
       streamUrl: '',
       username: '',
       password: '',
+      brand: 'CUSTOM',
+      serialNumber: '',
+      safetyCode: '',
     });
 
     // Fetch all boarding houses & cameras
@@ -90,6 +93,9 @@ export default {
         streamUrl: '',
         username: '',
         password: '',
+        brand: 'CUSTOM',
+        serialNumber: '',
+        safetyCode: '',
       };
       showModal.value = true;
     };
@@ -102,6 +108,9 @@ export default {
         streamUrl: camera.streamUrl,
         username: camera.username || '',
         password: camera.password || '',
+        brand: camera.brand || 'CUSTOM',
+        serialNumber: camera.serialNumber || '',
+        safetyCode: camera.safetyCode || '',
       };
       showModal.value = true;
     };
