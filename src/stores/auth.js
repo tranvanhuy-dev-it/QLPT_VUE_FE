@@ -33,7 +33,14 @@ checkAndCleanExpiredToken();
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
+    // SECURITY NOTE: Token được lưu localStorage để persist qua F5.
+    // Rủi ro XSS được giảm thiểu bằng:
+    //   1. CSP meta tag (index.html) — ngăn script lạ inject vào trang
+    //   2. Vue template dùng {{ }} tự escape HTML — không có v-html với dữ liệu user
+    //   3. httpOnly cookie là giải pháp lý tưởng nhưng cần backend hỗ trợ
     token: localStorage.getItem('token') || null,
+    // Chỉ lưu tối thiểu thông tin cần thiết cho UI (id, username, role, isExpired)
+    // Không lưu thông tin nhạy cảm (password, CCCD, địa chỉ...)
     user: JSON.parse(localStorage.getItem('user')) || null,
     isSidebarOpen: typeof window !== 'undefined' ? window.innerWidth >= 1024 : false,
     isBottomBarHidden: false,
@@ -109,18 +116,21 @@ export const useAuthStore = defineStore('auth', {
     setHeaderHidden(value) {
       this.isHeaderHidden = value;
     },
-    async register(username, password, email, phone, fullName, role, identityCard, idCardIssueDate, idCardIssuePlace) {
+    // SECURITY: Không nhận `role` từ client — backend tự quyết định role dựa trên
+    // endpoint được gọi (/api/auth/register luôn tạo tài khoản LANDLORD).
+    // Điều này ngăn người dùng tự đặt role = ADMIN bằng cách chỉnh sửa request.
+    async register(username, password, email, phone, fullName, identityCard, idCardIssueDate, idCardIssuePlace) {
       try {
         const response = await api.post('/api/auth/register', {
           username,
           password,
-          email,
-          phone,
+          email:            email            || null,
+          phone:            phone            || null,
           fullName,
-          role,
-          identityCard,
-          idCardIssueDate,
-          idCardIssuePlace,
+          // role: KHÔNG gửi — backend tự assign LANDLORD cho endpoint này
+          identityCard:     identityCard     || null,
+          idCardIssueDate:  idCardIssueDate  || null,
+          idCardIssuePlace: idCardIssuePlace || null,
         });
         return response.data;
       } catch (error) {

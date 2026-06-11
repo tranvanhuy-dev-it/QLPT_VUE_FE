@@ -30,8 +30,12 @@ function updateLoadingState(method, isStart) {
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
+  // Sau 15 giây không có phản hồi từ server → tự động hủy request và báo lỗi
+  // (tránh trường hợp mất mạng / server chết khiến spinner quay vô hạn)
+  timeout: 15000, // 15 giây
   headers: {
     'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest', // Giúp backend nhận biết request từ SPA (CSRF hint)
   },
 });
 
@@ -82,6 +86,12 @@ api.interceptors.response.use(
       if (window.location.pathname !== '/landlord/upgrade') {
         window.location.href = '/landlord/upgrade';
       }
+    }
+    // Xử lý lỗi timeout: trả về thông báo thân thiện cho UI thay vì lỗi kỹ thuật
+    if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+      const timeoutError = new Error('Kết nối đến server quá lâu. Vui lòng kiểm tra mạng và thử lại.');
+      timeoutError.isTimeout = true;
+      return Promise.reject(timeoutError);
     }
     return Promise.reject(error);
   }

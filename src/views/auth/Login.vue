@@ -18,22 +18,45 @@
       </p>
 
       <div v-if="error" class="badge badge-danger"
-        style="width: 100%; padding: 0.75rem; margin-bottom: 1.25rem; border-radius: 8px; justify-content: center; text-transform: none;">
+        style="width: 100%; padding: 0.75rem; margin-bottom: 0.75rem; border-radius: 8px; justify-content: center; text-transform: none;">
         {{ error }}
       </div>
 
-      <form @submit.prevent="handleLogin">
+      <!-- Cảnh báo số lần thử còn lại -->
+      <div v-if="attemptsWarning"
+        style="width: 100%; padding: 0.6rem 0.875rem; margin-bottom: 1rem; border-radius: 8px; background: rgba(234, 179, 8, 0.08); border: 1px solid rgba(234, 179, 8, 0.35); color: #92400e; font-size: 0.8rem; line-height: 1.5;">
+        {{ attemptsWarning }}
+      </div>
+
+      <form @submit.prevent="handleLogin" novalidate autocomplete="on">
         <div class="form-group">
-          <label class="form-label">Tên đăng nhập</label>
-          <input type="text" class="form-input" v-model="username" placeholder="Nhập tên đăng nhập" required />
+          <label class="form-label" for="login-username">Tên đăng nhập</label>
+          <input
+            id="login-username"
+            type="text"
+            class="form-input"
+            v-model="username"
+            placeholder="Nhập tên đăng nhập"
+            autocomplete="username"
+            required
+          />
         </div>
 
         <div class="form-group" style="margin-bottom: 2rem;">
-          <label class="form-label">Mật khẩu</label>
+          <label class="form-label" for="login-password">Mật khẩu</label>
           <div style="position: relative; display: flex; align-items: center; width: 100%;">
-            <input :type="showPassword ? 'text' : 'password'" class="form-input" v-model="password"
-              placeholder="Nhập mật khẩu" required style="padding-right: 2.75rem;" />
+            <input
+              id="login-password"
+              :type="showPassword ? 'text' : 'password'"
+              class="form-input"
+              v-model="password"
+              placeholder="Nhập mật khẩu"
+              autocomplete="current-password"
+              required
+              style="padding-right: 2.75rem;"
+            />
             <button type="button" @click="showPassword = !showPassword"
+              :aria-label="showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'"
               style="position: absolute; right: 0.875rem; background: none; border: none; cursor: pointer; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; padding: 0;">
               <!-- Eye Icon when showPassword is true -->
               <svg v-if="showPassword" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
