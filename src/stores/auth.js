@@ -35,7 +35,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: localStorage.getItem('token') || null,
     user: JSON.parse(localStorage.getItem('user')) || null,
-    isSidebarOpen: false,
+    isSidebarOpen: typeof window !== 'undefined' ? window.innerWidth >= 1024 : false,
     isBottomBarHidden: false,
     isHeaderHidden: false,
   }),

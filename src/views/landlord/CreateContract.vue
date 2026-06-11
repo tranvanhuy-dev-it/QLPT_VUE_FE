@@ -1,17 +1,25 @@
 <template>
   <div class="p-4 bg-bg-main min-h-full create-contract-page">
     <!-- Header Block -->
-    <div class="mb-6 pb-4 border-b border-border-main flex items-center gap-2">
-      <FormButton @click="goBack" variant="secondary" class="!p-1.5">
-        <AppIcon name="arrow-left" class="!w-4 !h-4" />
-      </FormButton>
-      <h2 class="text-base sm:text-xl font-bold text-text-main">
-        Tạo Hợp Đồng Thuê Mới
-      </h2>
+    <div class="mb-6 pb-4 border-b border-border-main flex items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <FormButton @click="goBack" variant="secondary" class="!p-1.5">
+          <AppIcon name="arrow-left" class="!w-4 !h-4" />
+        </FormButton>
+        <h2 class="text-base sm:text-xl font-bold text-text-main">
+          Tạo Hợp Đồng Thuê Mới
+        </h2>
+      </div>
+      
+      <!-- Top Actions -->
+      <div v-if="vacantRooms.length > 0" class="flex items-center gap-2">
+        <FormButton type="button" @click="goBack" variant="secondary" size="sm">Hủy</FormButton>
+        <FormButton type="submit" form="create-contract-form" variant="primary" size="sm">Lưu hợp đồng</FormButton>
+      </div>
     </div>
 
     <!-- Main Form Area -->
-    <div class="max-w-3xl mx-auto">
+    <div class="w-full">
       <div v-if="loading && vacantRooms.length === 0" class="bg-card border border-border-main rounded-2xl p-8 shadow-xs flex flex-col items-center justify-center min-h-[300px]">
         <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
         <span class="text-xs text-text-sub font-medium">Đang tải dữ liệu...</span>
@@ -31,7 +39,7 @@
         </div>
       </div>
       
-      <form v-else @submit.prevent="saveContract" class="space-y-6">
+      <form v-else id="create-contract-form" @submit.prevent="saveContract" class="space-y-6">
         <!-- Section 1: Room & Tenant -->
         <div class="bg-card border border-border-main rounded-2xl p-5 shadow-xs">
           <h3 class="text-xs font-bold uppercase tracking-wider text-text-sub mb-4">1. Đối tượng hợp đồng</h3>
@@ -153,11 +161,7 @@
           </div>
         </div>
 
-        <!-- Submit Button Panel -->
-        <div class="flex gap-3 justify-end pt-2">
-          <FormButton type="button" @click="goBack" variant="secondary">Hủy</FormButton>
-          <FormButton type="submit">Lưu hợp đồng</FormButton>
-        </div>
+
       </form>
     </div>
 

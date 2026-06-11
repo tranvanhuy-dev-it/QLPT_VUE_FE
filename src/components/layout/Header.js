@@ -167,6 +167,8 @@ export default {
       router.push('/login');
     };
 
+    const isSidebarOpen = computed(() => authStore.isSidebarOpen);
+
     const toggleSidebar = () => {
       authStore.toggleSidebar();
     };
@@ -232,6 +234,7 @@ export default {
       currentRoute,
       navigateToSettings,
       handleLogout,
+      isSidebarOpen,
       toggleSidebar,
       role,
       navigateToUpgrade,

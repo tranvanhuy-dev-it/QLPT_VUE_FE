@@ -12,6 +12,12 @@ export default {
     const role = computed(() => authStore.role);
     const isSidebarOpen = computed(() => authStore.isSidebarOpen);
     const closeSidebar = () => authStore.closeSidebar();
+    const toggleSidebar = () => authStore.toggleSidebar();
+    const closeSidebarOnMobile = () => {
+      if (window.innerWidth < 1024) {
+        authStore.closeSidebar();
+      }
+    };
 
     const profileUser = ref(null);
     const userFullName = computed(() => profileUser.value?.fullName || authStore.user?.fullName || authStore.username || 'Người dùng');
@@ -145,6 +151,8 @@ export default {
       role,
       isSidebarOpen,
       closeSidebar,
+      toggleSidebar,
+      closeSidebarOnMobile,
       userFullName,
       landlordGeneral,
       landlordManage,

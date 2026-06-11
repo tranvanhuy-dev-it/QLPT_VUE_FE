@@ -227,7 +227,7 @@
             <li>Bạn có <strong>45 ngày đầu tiên sử dụng miễn phí đầy đủ tính năng</strong> ngay sau khi đăng ký tài khoản.</li>
             <li>Khi đăng ký mua trước, thời hạn gói cước mới sẽ được <strong>cộng dồn trực tiếp</strong> tiếp nối vào thời điểm gói hiện tại của bạn hết hạn.</li>
             <li>Hóa đơn và thông báo thanh toán sẽ được tự động hiển thị trong trang quản trị của bạn trước 3 ngày.</li>
-            <li>Vui lòng chuyển khoản đúng số tiền và nội dung chuyển khoản duy nhất được hiển thị để giao dịch đối soát nhanh nhất.</li>
+            <li>Vui lòng chuyển khoản đúng số tiền và nội dung chuyển khoản duy nhất được hiển thị để giao dịch đối soát nhanh nhất. </li>
           </ul>
         </div>
 
