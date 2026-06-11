@@ -1,4 +1,4 @@
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../../stores/auth.js';
 import boardingHouseService from '../../services/boardingHouseService.js';
@@ -8,6 +8,7 @@ import invoiceService from '../../services/invoiceService.js';
 
 import FormInput from '../../components/ui/FormInput.vue';
 import FormButton from '../../components/ui/FormButton.vue';
+import FormSelect from '../../components/ui/FormSelect.vue';
 import AppIcon from '../../components/ui/icons/AppIcon.vue';
 
 export default {
@@ -15,6 +16,7 @@ export default {
   components: {
     FormInput,
     FormButton,
+    FormSelect,
     AppIcon,
   },
   setup() {
@@ -53,6 +55,59 @@ export default {
 
     const filterStartDate = ref('');
     const filterEndDate = ref('');
+    const filterOption = ref('all');
+
+    const formatDateToYYYYMMDD = (date) => {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    };
+
+    watch(filterOption, (newVal) => {
+      if (newVal === 'custom') {
+        return;
+      }
+      
+      const today = new Date();
+      
+      if (newVal === 'all') {
+        filterStartDate.value = '';
+        filterEndDate.value = '';
+      } else if (newVal === 'week') {
+        const day = today.getDay();
+        const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+        const monday = new Date(today.setDate(diff));
+        const sunday = new Date(monday);
+        sunday.setDate(monday.getDate() + 6);
+        
+        filterStartDate.value = formatDateToYYYYMMDD(monday);
+        filterEndDate.value = formatDateToYYYYMMDD(sunday);
+      } else if (newVal === 'month') {
+        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+        const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        
+        filterStartDate.value = formatDateToYYYYMMDD(firstDay);
+        filterEndDate.value = formatDateToYYYYMMDD(lastDay);
+      } else if (newVal === 'quarter') {
+        const quarterIndex = Math.floor(today.getMonth() / 3);
+        const firstDay = new Date(today.getFullYear(), quarterIndex * 3, 1);
+        const lastDay = new Date(today.getFullYear(), quarterIndex * 3 + 3, 0);
+        
+        filterStartDate.value = formatDateToYYYYMMDD(firstDay);
+        filterEndDate.value = formatDateToYYYYMMDD(lastDay);
+      } else if (newVal === '6months') {
+        const startDate = new Date(today.getFullYear(), today.getMonth() - 6, today.getDate());
+        
+        filterStartDate.value = formatDateToYYYYMMDD(startDate);
+        filterEndDate.value = formatDateToYYYYMMDD(today);
+      } else if (newVal === 'year') {
+        const startDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
+        
+        filterStartDate.value = formatDateToYYYYMMDD(startDate);
+        filterEndDate.value = formatDateToYYYYMMDD(today);
+      }
+    });
 
     const revenueStats = computed(() => {
       const start = filterStartDate.value ? new Date(filterStartDate.value) : null;
@@ -314,6 +369,7 @@ export default {
       navigateTo,
       filterStartDate,
       filterEndDate,
+      filterOption,
       revenueStats,
       filteredUnpaidInvoices,
       monthlyRevenueData,

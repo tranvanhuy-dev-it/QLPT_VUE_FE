@@ -50,8 +50,7 @@ export default {
       {
         label: "Phòng - Dãy trọ",
         key: "room.roomNumber",
-        formatter: (item) =>
-          `Phòng ${item.room.roomNumber} - ${item.room.boardingHouse.name}`,
+        formatter: (item) => `Phòng ${item.room.roomNumber} - ${item.room.boardingHouse.name}`,
         cellClass: "font-semibold text-primary",
       },
       {
@@ -145,9 +144,7 @@ export default {
     const formatDate = (dateString) => {
       if (!dateString) return "-";
       const d = new Date(dateString);
-      return `${d.getDate().toString().padStart(2, "0")}/${(d.getMonth() + 1)
-        .toString()
-        .padStart(2, "0")}/${d.getFullYear()}`;
+      return `${d.getDate().toString().padStart(2, "0")}/${(d.getMonth() + 1).toString().padStart(2, "0")}/${d.getFullYear()}`;
     };
 
     const fetchContracts = async () => {
@@ -164,6 +161,7 @@ export default {
         );
       }
     };
+    
 
     const filteredContracts = computed(() => {
       if (!searchQuery.value) return contracts.value;
@@ -289,23 +287,13 @@ export default {
     };
 
     const createInlineTenant = async () => {
-      if (
-        !inlineTenantForm.value.fullName ||
-        !inlineTenantForm.value.username ||
-        !inlineTenantForm.value.password
-      ) {
-        showAlert(
-          "Lỗi",
-          "Vui lòng nhập đầy đủ họ tên, tên đăng nhập và mật khẩu.",
-          "warning",
-        );
+      if (!inlineTenantForm.value.fullName || !inlineTenantForm.value.username || !inlineTenantForm.value.password) {
+        showAlert("Lỗi", "Vui lòng nhập đầy đủ họ tên, tên đăng nhập và mật khẩu.", "warning");
         return;
       }
       inlineTenantLoading.value = true;
       try {
-        const newTenant = await tenantStore.createTenantAccount(
-          inlineTenantForm.value,
-        );
+        const newTenant = await tenantStore.createTenantAccount(inlineTenantForm.value);
         // Refresh tenants list
         await fetchTenants();
         // Auto-select the new tenant
@@ -313,29 +301,11 @@ export default {
           form.value.tenantId = newTenant.id;
         }
         // Reset and hide inline form
-        inlineTenantForm.value = {
-          fullName: "",
-          username: "",
-          password: "",
-          phone: "",
-          email: "",
-          identityCard: "",
-          idCardIssueDate: "",
-          idCardIssuePlace: "",
-          permanentAddress: "",
-        };
+        inlineTenantForm.value = { fullName: "", username: "", password: "", phone: "", email: "", identityCard: "", idCardIssueDate: "", idCardIssuePlace: "", permanentAddress: "" };
         showInlineTenantForm.value = false;
-        showAlert(
-          "Thành công",
-          `Đã tạo tài khoản khách thuê "${newTenant.fullName}" thành công.`,
-          "success",
-        );
+        showAlert("Thành công", `Đã tạo tài khoản khách thuê "${newTenant.fullName}" thành công.`, "success");
       } catch (err) {
-        showAlert(
-          "Lỗi",
-          err.response?.data?.error || "Tạo tài khoản khách thuê thất bại.",
-          "danger",
-        );
+        showAlert("Lỗi", err.response?.data?.error || "Tạo tài khoản khách thuê thất bại.", "danger");
       } finally {
         inlineTenantLoading.value = false;
       }
@@ -353,17 +323,7 @@ export default {
       showAddModal.value = false;
       availableExtraFees.value = [];
       showInlineTenantForm.value = false;
-      inlineTenantForm.value = {
-        fullName: "",
-        username: "",
-        password: "",
-        phone: "",
-        email: "",
-        identityCard: "",
-        idCardIssueDate: "",
-        idCardIssuePlace: "",
-        permanentAddress: "",
-      };
+      inlineTenantForm.value = { fullName: "", username: "", password: "", phone: "", email: "", identityCard: "", idCardIssueDate: "", idCardIssuePlace: "", permanentAddress: "" };
       form.value = {
         roomId: "",
         tenantId: "",

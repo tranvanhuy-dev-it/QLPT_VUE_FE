@@ -31,24 +31,42 @@
       <div class="bg-card border border-border-main rounded-2xl p-4 mb-4 shadow-xs flex flex-col gap-4">
         <!-- Date Selector Row -->
         <div class="flex flex-col gap-3 border-b border-border-main/50 pb-3">
-          <!-- Title row -->
-          <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-            <h3 class="text-sm font-bold text-text-main">
-              Thống Kê Doanh Thu & Công Nợ
-              <span v-if="filterStartDate || filterEndDate" class="text-xs font-semibold text-primary pl-1.5">(Theo kỳ lọc)</span>
-              <span v-else class="text-xs font-semibold text-text-sub pl-1.5">(Tất cả thời gian)</span>
-            </h3>
-          </div>
-          <!-- Date pickers row — always grid 2 cols, no overflow -->
-          <div class="grid grid-cols-2 gap-2">
-            <div class="text-xs">
-              <FormInput type="date" label="Từ ngày" v-model="filterStartDate" class="!mb-0" />
+          <!-- Title & Dropdown row -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+              <h3 class="text-sm font-bold text-text-main">
+                Thống Kê Doanh Thu & Công Nợ
+                <span v-if="filterStartDate || filterEndDate" class="text-xs font-semibold text-primary pl-1.5">(Theo kỳ lọc)</span>
+                <span v-else class="text-xs font-semibold text-text-sub pl-1.5">(Tất cả thời gian)</span>
+              </h3>
             </div>
-            <div class="text-xs">
-              <FormInput type="date" label="Đến ngày" v-model="filterEndDate" class="!mb-0" />
+            
+            <!-- Date Filter Preset Option -->
+            <div class="w-full sm:w-48 text-xs">
+              <FormSelect v-model="filterOption" size="sm" class="!w-full">
+                <option value="all">Tất cả thời gian</option>
+                <option value="week">Tuần này</option>
+                <option value="month">Tháng này</option>
+                <option value="quarter">Quý này</option>
+                <option value="6months">6 tháng</option>
+                <option value="year">Một năm</option>
+                <option value="custom">Tùy chỉnh</option>
+              </FormSelect>
             </div>
           </div>
+          
+          <!-- Date pickers row — only show when 'custom' is selected -->
+          <transition name="fade-slide">
+            <div v-if="filterOption === 'custom'" class="grid grid-cols-2 gap-2 mt-1">
+              <div class="text-xs">
+                <FormInput type="date" label="Từ ngày" v-model="filterStartDate" class="!mb-0" />
+              </div>
+              <div class="text-xs">
+                <FormInput type="date" label="Đến ngày" v-model="filterEndDate" class="!mb-0" />
+              </div>
+            </div>
+          </transition>
         </div>
 
         <!-- Period Statistics & Chart Grid -->
@@ -475,3 +493,15 @@
 </template>
 
 <script src="./LandlordDashboard.js"></script>
+
+<style scoped>
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+</style>
