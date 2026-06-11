@@ -267,6 +267,11 @@ export default {
           client_id: clientId,
           callback: handleGoogleLogin,
           auto_select: false,
+          error_callback: (err) => {
+            // GSI phát hiện môi trường không hỗ trợ (WebView, in-app browser, v.v.)
+            console.warn('[GSI] Không hỗ trợ môi trường này, dùng nút thay thế:', err?.type);
+            renderCustomGoogleButton();
+          },
         });
 
         const btnContainer = document.getElementById('google-signin-btn');
@@ -286,8 +291,9 @@ export default {
           }
         );
       } else {
-        if (isMobileApp || retryCount.value >= 15) {
-          console.warn('Không tải được SDK Google hoặc đang chạy trong Mobile App. Đang hiển thị nút thay thế.');
+        if (retryCount.value >= 15) {
+          // GSI không tải được sau nhiều lần thử → hiển thị nút thay thế
+          console.warn('Không tải được SDK Google. Đang hiển thị nút thay thế.');
           renderCustomGoogleButton();
         } else {
           retryCount.value++;
