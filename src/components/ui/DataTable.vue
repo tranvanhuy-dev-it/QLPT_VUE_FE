@@ -60,14 +60,9 @@
               <!-- Status Badge (Top Right) -->
               <div v-if="mobileBadgeHeader" class="shrink-0 flex items-center">
                 <slot :name="`cell(${mobileBadgeHeader.key.replace(/\./g, '_')})`" :item="item" :value="resolveKeyPath(item, mobileBadgeHeader.key)">
-                  <template v-if="resolveKeyPath(item, mobileBadgeHeader.key) === 'VACANT' || resolveKeyPath(item, mobileBadgeHeader.key) === 'OCCUPIED'">
-                    <span class="w-3 h-3 rounded-full shrink-0 animate-pulse" :class="resolveKeyPath(item, mobileBadgeHeader.key) === 'VACANT' ? 'bg-emerald-500' : 'bg-rose-500'" :title="resolveKeyPath(item, mobileBadgeHeader.key) === 'VACANT' ? 'Còn trống' : 'Đang thuê'"></span>
-                  </template>
-                  <template v-else>
-                    <span :class="['inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider', getBadgeClass(mobileBadgeHeader, resolveKeyPath(item, mobileBadgeHeader.key))]">
-                      {{ getBadgeLabel(mobileBadgeHeader, resolveKeyPath(item, mobileBadgeHeader.key)) }}
-                    </span>
-                  </template>
+                  <span :class="['inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider', getBadgeClass(mobileBadgeHeader, resolveKeyPath(item, mobileBadgeHeader.key))]">
+                    {{ getBadgeLabel(mobileBadgeHeader, resolveKeyPath(item, mobileBadgeHeader.key)) }}
+                  </span>
                 </slot>
               </div>
             </div>

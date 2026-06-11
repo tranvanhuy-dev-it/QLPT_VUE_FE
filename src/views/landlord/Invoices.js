@@ -55,8 +55,13 @@ export default {
     };
 
     const tableHeaders = [
-      { label: "Phòng", key: "contract.room.roomNumber", prefix: "Phòng ", cellClass: "font-semibold text-primary" },
-      { label: "Khách thuê", key: "contract.tenant.fullName", cellClass: "font-medium text-text-main" },
+      { label: "Khách thuê", key: "contract.tenant.fullName", cellClass: "font-semibold text-text-main" },
+      {
+        label: "Phòng - Dãy trọ",
+        key: "contract.room.roomNumber",
+        formatter: (item) => `Phòng ${item.contract.room.roomNumber} - ${item.contract.room.boardingHouse.name}`,
+        cellClass: "font-semibold text-primary",
+      },
       {
         label: "Kỳ tính tiền",
         key: "billingPeriod",
@@ -70,7 +75,7 @@ export default {
         label: "Còn nợ",
         key: "remainingAmount",
         formatter: (item) => `${formatMoney(item.totalAmount - item.paidAmount)} đ`,
-        cellClass: "font-semibold text-rose-500",
+        cellClass: "font-semibold !text-rose-500",
       }
     ];
 

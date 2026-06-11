@@ -28,8 +28,12 @@ export default {
     const roomIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>`;
     
     const tableHeaders = [
-      { label: 'Số phòng', key: 'roomNumber', prefix: 'Phòng ', cellClass: 'font-semibold text-primary' },
-      { label: 'Dãy trọ', key: 'boardingHouse.name', cellClass: 'text-text-sub' },
+      {
+        label: 'Phòng - Dãy trọ',
+        key: 'roomNumber',
+        formatter: (item) => `Phòng ${item.roomNumber} - ${item.boardingHouse.name}`,
+        cellClass: 'font-semibold text-primary',
+      },
       { label: 'Giá thuê', key: 'basePrice', type: 'money', cellClass: 'font-semibold text-text-main' },
       { label: 'Chỉ số điện', key: 'currentElectricityIndex', suffix: ' kWh', cellClass: 'text-text-sub', hideOnMobile: true },
       { label: 'Chỉ số nước', key: 'currentWaterIndex', suffix: ' m³', cellClass: 'text-text-sub', hideOnMobile: true },

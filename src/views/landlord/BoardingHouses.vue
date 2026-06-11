@@ -1,7 +1,15 @@
 <template>
   <div class="p-4 bg-bg-main min-h-full boarding-houses-page">
-    <PageHeader title="Quản Lý Dãy Trọ" subtitle="Thêm mới và thiết lập đơn giá dịch vụ của từng khu nhà trọ"
-      :icon="houseIcon" :showAdd="true" addText="Thêm" :showSearch="false" @add-click="openAddModal" />
+
+    <!-- FAB: Nút thêm dãy trọ - cố định góc dưới phải -->
+    <button @click="openAddModal"
+      class="fixed bottom-20 right-4 z-50 flex items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/40 hover:bg-primary-hover active:scale-95 transition-all duration-200"
+      style="width:52px;height:52px;" title="Thêm dãy trọ mới">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+    </button>
+
 
     <!-- Grid of Boarding Houses -->
     <div v-if="loading" class="flex flex-col items-center justify-center py-12 gap-4 text-text-sub">
@@ -12,7 +20,8 @@
     <template v-else>
       <div v-if="boardingHouses.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         <div v-for="house in boardingHouses" :key="house.id"
-          class="bg-card border border-border-main rounded-2xl shadow-xs flex flex-col overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group">
+          @click="goToDetail(house.id)"
+          class="bg-card border border-border-main rounded-2xl shadow-xs flex flex-col overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer">
           <!-- Card Header with gradient -->
           <div
             class="bg-gradient-to-br from-primary/10 via-sky-50 to-blue-50 dark:from-primary/20 dark:via-slate-800 dark:to-slate-900 px-5 pt-5 pb-4 border-b border-border-main/40">
@@ -60,20 +69,6 @@
               <span class="opacity-60">···</span>
               <span>{{ house.bankAccountNumber.slice(-4) }}</span>
             </div>
-          </div>
-
-          <!-- Card Actions -->
-          <div class="flex border-t border-border-main/50">
-            <FormButton variant="custom" @click="goToDetail(house.id)"
-              class="flex-1 py-2.5 text-sm font-bold text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-150 flex items-center justify-center gap-1.5 border-r border-border-main/50 rounded-none">
-              <AppIcon name="eye" size="sm" />
-              Chi tiết
-            </FormButton>
-            <FormButton variant="custom" @click="deleteHouse(house.id)"
-              class="flex-1 py-2.5 text-sm font-extrabold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all duration-150 flex items-center justify-center gap-1.5 rounded-none">
-              <AppIcon name="trash" size="sm" />
-              Xóa
-            </FormButton>
           </div>
         </div>
       </div>

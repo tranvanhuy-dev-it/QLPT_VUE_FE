@@ -30,22 +30,22 @@
       <!-- Date Filter & Revenue Report -->
       <div class="bg-card border border-border-main rounded-2xl p-4 mb-4 shadow-xs flex flex-col gap-4">
         <!-- Date Selector Row -->
-        <div
-          class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border-main/50 pb-3">
-          <div class="flex items-center gap-2 shrink-0">
+        <div class="flex flex-col gap-3 border-b border-border-main/50 pb-3">
+          <!-- Title row -->
+          <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
             <h3 class="text-sm font-bold text-text-main">
               Thống Kê Doanh Thu & Công Nợ
-              <span v-if="filterStartDate || filterEndDate" class="text-xs font-semibold text-primary pl-1.5">(Theo kỳ
-                lọc)</span>
+              <span v-if="filterStartDate || filterEndDate" class="text-xs font-semibold text-primary pl-1.5">(Theo kỳ lọc)</span>
               <span v-else class="text-xs font-semibold text-text-sub pl-1.5">(Tất cả thời gian)</span>
             </h3>
           </div>
-          <div class="grid grid-cols-2 gap-2 w-full sm:flex sm:items-center sm:gap-2 sm:w-auto">
-            <div class="w-full sm:w-36 text-xs">
+          <!-- Date pickers row — always grid 2 cols, no overflow -->
+          <div class="grid grid-cols-2 gap-2">
+            <div class="text-xs">
               <FormInput type="date" label="Từ ngày" v-model="filterStartDate" class="!mb-0" />
             </div>
-            <div class="w-full sm:w-36 text-xs">
+            <div class="text-xs">
               <FormInput type="date" label="Đến ngày" v-model="filterEndDate" class="!mb-0" />
             </div>
           </div>

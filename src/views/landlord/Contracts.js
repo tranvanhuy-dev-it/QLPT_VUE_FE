@@ -43,29 +43,21 @@ export default {
 
     const tableHeaders = [
       {
-        label: "Phòng",
-        key: "room.roomNumber",
-        prefix: "Phòng ",
-        cellClass: "font-semibold text-primary",
-      },
-      {
-        label: "Dãy trọ",
-        key: "room.boardingHouse.name",
-        cellClass: "text-text-sub",
-      },
-      {
         label: "Người thuê",
         key: "tenant.fullName",
-        formatter: (item) =>
-          `${item.tenant.fullName} (${item.tenant.username})`,
-        cellClass: "font-medium text-text-main",
+        cellClass: "font-semibold text-text-main",
+      },
+      {
+        label: "Phòng - Dãy trọ",
+        key: "room.roomNumber",
+        formatter: (item) => `Phòng ${item.room.roomNumber} - ${item.room.boardingHouse.name}`,
+        cellClass: "font-semibold text-primary",
       },
       {
         label: "Ngày bắt đầu",
         key: "startDate",
         type: "date",
         cellClass: "text-text-sub",
-        hideOnMobile: true,
       },
       {
         label: "Tiền cọc",
@@ -117,6 +109,21 @@ export default {
     const size = ref(10);
 
     const showAddModal = ref(false);
+
+    // Inline tenant creation
+    const showInlineTenantForm = ref(false);
+    const inlineTenantLoading = ref(false);
+    const inlineTenantForm = ref({
+      fullName: "",
+      username: "",
+      password: "",
+      phone: "",
+      email: "",
+      identityCard: "",
+      idCardIssueDate: "",
+      idCardIssuePlace: "",
+      permanentAddress: "",
+    });
 
     const form = ref({
       roomId: "",
@@ -278,6 +285,31 @@ export default {
       }
     };
 
+    const createInlineTenant = async () => {
+      if (!inlineTenantForm.value.fullName || !inlineTenantForm.value.username || !inlineTenantForm.value.password) {
+        showAlert("Lỗi", "Vui lòng nhập đầy đủ họ tên, tên đăng nhập và mật khẩu.", "warning");
+        return;
+      }
+      inlineTenantLoading.value = true;
+      try {
+        const newTenant = await tenantStore.createTenantAccount(inlineTenantForm.value);
+        // Refresh tenants list
+        await fetchTenants();
+        // Auto-select the new tenant
+        if (newTenant && newTenant.id) {
+          form.value.tenantId = newTenant.id;
+        }
+        // Reset and hide inline form
+        inlineTenantForm.value = { fullName: "", username: "", password: "", phone: "", email: "", identityCard: "", idCardIssueDate: "", idCardIssuePlace: "", permanentAddress: "" };
+        showInlineTenantForm.value = false;
+        showAlert("Thành công", `Đã tạo tài khoản khách thuê "${newTenant.fullName}" thành công.`, "success");
+      } catch (err) {
+        showAlert("Lỗi", err.response?.data?.error || "Tạo tài khoản khách thuê thất bại.", "danger");
+      } finally {
+        inlineTenantLoading.value = false;
+      }
+    };
+
     const changePage = (newPage) => {
       if (newPage >= 0 && newPage < totalPages.value) {
         page.value = newPage;
@@ -289,6 +321,8 @@ export default {
       authStore.setBottomBarHidden(false);
       showAddModal.value = false;
       availableExtraFees.value = [];
+      showInlineTenantForm.value = false;
+      inlineTenantForm.value = { fullName: "", username: "", password: "", phone: "", email: "", identityCard: "", idCardIssueDate: "", idCardIssuePlace: "", permanentAddress: "" };
       form.value = {
         roomId: "",
         tenantId: "",
@@ -299,6 +333,16 @@ export default {
         numberOfTenants: 1,
         fixedBillingDay: null,
       };
+    };
+
+    const goToRooms = () => {
+      closeModal();
+      router.push({ name: "Rooms" });
+    };
+
+    const goToTenants = () => {
+      closeModal();
+      router.push({ name: "Tenants" });
     };
 
     const viewContractDetail = (id, edit = false) => {
@@ -339,12 +383,18 @@ export default {
       totalPages,
       totalElements,
       showAddModal,
+      showInlineTenantForm,
+      inlineTenantLoading,
+      inlineTenantForm,
+      createInlineTenant,
       form,
       openAddModal,
       onRoomChange,
       saveContract,
       changePage,
       closeModal,
+      goToRooms,
+      goToTenants,
       formatMoney,
       formatDate,
       viewContractDetail,
