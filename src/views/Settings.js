@@ -191,7 +191,19 @@ export default {
     };
 
     const goBack = () => {
-      router.back();
+      if (window.history.state && window.history.state.back) {
+        router.back();
+      } else {
+        if (authStore.role === 'ADMIN') {
+          router.push('/admin');
+        } else if (authStore.role === 'LANDLORD') {
+          router.push('/landlord');
+        } else if (authStore.role === 'TENANT') {
+          router.push('/tenant');
+        } else {
+          router.push('/login');
+        }
+      }
     };
 
     onMounted(() => {

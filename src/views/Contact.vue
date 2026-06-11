@@ -169,7 +169,19 @@ export default {
     });
 
     const goBack = () => {
-      router.back();
+      if (window.history.state && window.history.state.back) {
+        router.back();
+      } else {
+        if (!authStore.isAuthenticated) {
+          router.push('/login');
+        } else {
+          const role = authStore.role;
+          if (role === 'ADMIN') router.push('/admin');
+          else if (role === 'LANDLORD') router.push('/landlord');
+          else if (role === 'TENANT') router.push('/tenant');
+          else router.push('/login');
+        }
+      }
     };
 
     const closeModal = () => {
