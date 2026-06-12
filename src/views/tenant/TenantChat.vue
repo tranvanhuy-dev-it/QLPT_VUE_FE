@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col bg-bg-main p-4 lg:p-6 overflow-hidden chat-container-safe">
+  <div class="h-full flex flex-col bg-bg-main px-4 pt-1 pb-4 lg:p-6 overflow-hidden chat-container-safe">
     <!-- Chat Container -->
     <div class="flex-grow bg-card border border-border-main rounded-2xl shadow-xs overflow-hidden flex flex-col min-h-0 max-w-4xl mx-auto w-full">
       <!-- Loading Rooms State -->
