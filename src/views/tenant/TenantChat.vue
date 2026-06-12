@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col bg-bg-main p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] lg:p-6 overflow-hidden">
+  <div class="h-full flex flex-col bg-bg-main p-4 lg:p-6 overflow-hidden chat-container-safe">
     <!-- Chat Container -->
     <div class="flex-grow bg-card border border-border-main rounded-2xl shadow-xs overflow-hidden flex flex-col min-h-0 max-w-4xl mx-auto w-full">
       <!-- Loading Rooms State -->
@@ -162,6 +162,14 @@
 
 <style scoped>
 /* Scoped styles for micro-animations and aesthetic refinements */
+.chat-container-safe {
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)) !important;
+}
+@media (min-width: 1024px) {
+  .chat-container-safe {
+    padding-bottom: 1.5rem !important;
+  }
+}
 .bg-primary {
   background-color: var(--primary-color, #4f46e5);
 }
