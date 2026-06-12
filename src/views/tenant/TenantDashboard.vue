@@ -136,7 +136,7 @@
           </router-link>
 
           <!-- Direct Chat card -->
-          <router-link to="/tenant/contact-landlord" class="no-underline bg-card border border-border-main rounded-2xl p-6 shadow-xs flex items-center justify-between hover:shadow-md hover:border-indigo-500/30 transition-all duration-200 cursor-pointer group">
+          <router-link to="/tenant/chat" class="no-underline bg-card border border-border-main rounded-2xl p-6 shadow-xs flex items-center justify-between hover:shadow-md hover:border-indigo-500/30 transition-all duration-200 cursor-pointer group">
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor" class="w-6 h-6">

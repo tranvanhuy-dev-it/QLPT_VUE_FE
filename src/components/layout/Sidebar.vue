@@ -10,7 +10,7 @@
       v-if="!isSidebarOpen"
       class="flex flex-col items-center justify-center gap-4 py-6 px-2 border-b border-slate-900/60 dark:border-border-main transition-all duration-300"
     >
-      <img src="/logo.ico" alt="Logo" class="w-[32px] h-[32px] rounded-lg object-contain bg-white/10 p-0.5 shrink-0" />
+      <img @click="goToOverview" src="/logo.ico" alt="Logo" class="w-[32px] h-[32px] rounded-lg object-contain bg-white/10 p-0.5 shrink-0 cursor-pointer hover:opacity-90 active:scale-95 transition-all" />
       <button
         @click="toggleSidebar"
         class="text-slate-400 dark:text-neutral-400 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-slate-800/60 dark:hover:bg-neutral-800/60 cursor-pointer"
@@ -27,7 +27,7 @@
       v-else
       class="flex items-center justify-between p-6 pb-5 border-b border-slate-900/60 dark:border-border-main transition-all duration-300"
     >
-      <div class="flex items-center gap-3">
+      <div @click="goToOverview" class="flex items-center gap-3 cursor-pointer hover:opacity-90 active:scale-[0.98] transition-all select-none">
         <img src="/logo.ico" alt="Logo" class="w-[38px] h-[38px] rounded-lg object-contain bg-white/10 p-0.5 shrink-0" />
         <div class="flex flex-col animate-fade-in">
           <h3 class="text-[0.95rem] font-extrabold text-white leading-tight tracking-wide whitespace-nowrap">SMART RENT</h3>
@@ -85,10 +85,18 @@
             ]"
             :title="!isSidebarOpen ? item.label : ''"
           >
-            <span class="flex items-center justify-center w-[1.15rem] h-[1.15rem] nav-icon shrink-0 transition-colors"
-              :class="isActive ? 'text-blue-400' : 'text-slate-400 dark:text-neutral-400 group-hover:text-white'"
-              v-html="item.icon"></span>
+            <div class="relative flex items-center justify-center shrink-0">
+              <span class="flex items-center justify-center w-[1.15rem] h-[1.15rem] nav-icon transition-colors"
+                :class="isActive ? 'text-blue-400' : 'text-slate-400 dark:text-neutral-400 group-hover:text-white'"
+                v-html="item.icon"></span>
+              <span v-if="!isSidebarOpen && (item.to === '/landlord/chat' || item.to === '/tenant/chat') && totalUnreadCount > 0" 
+                    class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-danger border border-[#0f172a] dark:border-[#0a0a0a]"></span>
+            </div>
             <span v-if="isSidebarOpen" class="nav-text whitespace-nowrap animate-fade-in">{{ item.label }}</span>
+            <span v-if="isSidebarOpen && (item.to === '/landlord/chat' || item.to === '/tenant/chat') && totalUnreadCount > 0" 
+                  class="ml-auto min-w-[16px] h-4 rounded-full bg-danger text-white text-[9px] font-bold flex items-center justify-center px-1 shadow-xs leading-none">
+              {{ totalUnreadCount }}
+            </span>
           </a>
         </router-link>
       </template>
@@ -109,10 +117,18 @@
             ]"
             :title="!isSidebarOpen ? item.label : ''"
           >
-            <span class="flex items-center justify-center w-[1.15rem] h-[1.15rem] nav-icon shrink-0 transition-colors"
-              :class="isActive ? 'text-blue-400' : 'text-slate-400 dark:text-neutral-400 group-hover:text-white'"
-              v-html="item.icon"></span>
+            <div class="relative flex items-center justify-center shrink-0">
+              <span class="flex items-center justify-center w-[1.15rem] h-[1.15rem] nav-icon transition-colors"
+                :class="isActive ? 'text-blue-400' : 'text-slate-400 dark:text-neutral-400 group-hover:text-white'"
+                v-html="item.icon"></span>
+              <span v-if="!isSidebarOpen && (item.to === '/landlord/chat' || item.to === '/tenant/chat') && totalUnreadCount > 0" 
+                    class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-danger border border-[#0f172a] dark:border-[#0a0a0a]"></span>
+            </div>
             <span v-if="isSidebarOpen" class="nav-text whitespace-nowrap animate-fade-in">{{ item.label }}</span>
+            <span v-if="isSidebarOpen && (item.to === '/landlord/chat' || item.to === '/tenant/chat') && totalUnreadCount > 0" 
+                  class="ml-auto min-w-[16px] h-4 rounded-full bg-danger text-white text-[9px] font-bold flex items-center justify-center px-1 shadow-xs leading-none">
+              {{ totalUnreadCount }}
+            </span>
           </a>
         </router-link>
       </template>

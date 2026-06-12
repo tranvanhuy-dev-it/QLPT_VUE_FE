@@ -2,6 +2,7 @@ import { useAuthStore } from '../../stores/auth.js';
 import { useRouter } from 'vue-router';
 import { ref, computed, onMounted } from 'vue';
 import userService from '../../services/userService.js';
+import { useChatStore } from '../../stores/chat.js';
 
 export default {
   name: 'Sidebar',
@@ -31,6 +32,21 @@ export default {
         }
       } catch (err) {
         console.error('Không thể lấy thông tin cá nhân ở Sidebar:', err);
+      }
+    };
+
+    const chatStore = useChatStore();
+    const totalUnreadCount = computed(() => chatStore.totalUnreadCount);
+
+    const goToOverview = () => {
+      if (authStore.role === 'ADMIN') {
+        router.push('/admin');
+      } else if (authStore.role === 'LANDLORD') {
+        router.push('/landlord');
+      } else if (authStore.role === 'TENANT') {
+        router.push('/tenant/chat');
+      } else {
+        router.push('/');
       }
     };
 
@@ -123,6 +139,11 @@ export default {
         icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>`
       },
       {
+        to: '/tenant/chat',
+        label: 'Nhắn tin chủ nhà',
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.497c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" /></svg>`
+      },
+      {
         to: '/tenant/contact-landlord',
         label: 'Liên hệ chủ nhà',
         icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>`
@@ -174,6 +195,8 @@ export default {
       tenantGeneral,
       adminGeneral,
       handleLogout,
+      totalUnreadCount,
+      goToOverview,
     };
   },
 };

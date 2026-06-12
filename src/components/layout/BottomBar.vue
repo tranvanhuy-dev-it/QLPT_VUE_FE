@@ -7,7 +7,13 @@
       class="flex flex-col items-center justify-center flex-1 py-1.5 px-1 mx-0.5 text-text-sub hover:text-primary transition-all duration-300 relative group min-w-0 rounded-xl"
       :class="{ 'is-active text-primary font-bold bg-primary/10 dark:bg-primary/20': isTabActive(tab) }"
     >
-      <span class="w-5 h-5 mb-0.5 transition-transform duration-200 group-active:scale-90" v-html="tab.icon"></span>
+      <div class="relative mb-0.5">
+        <span class="w-5 h-5 block transition-transform duration-200 group-active:scale-90" v-html="tab.icon"></span>
+        <span v-if="(tab.to === '/landlord/chat' || tab.to === '/tenant/chat') && totalUnreadCount > 0" 
+              class="absolute -top-1 -right-1 min-w-[12px] h-3 rounded-full bg-danger text-white text-[8px] font-black flex items-center justify-center px-0.5 shadow-sm leading-none border border-card">
+          {{ totalUnreadCount }}
+        </span>
+      </div>
       <span class="text-[9px] sm:text-[11px] tracking-tighter w-full text-center px-0.5 leading-none mt-0.5">{{ tab.label }}</span>
     </router-link>
   </div>
@@ -17,6 +23,7 @@
 import { computed } from 'vue';
 import { useAuthStore } from '../../stores/auth.js';
 import { useRoute } from 'vue-router';
+import { useChatStore } from '../../stores/chat.js';
 
 export default {
   name: 'BottomBar',
@@ -28,10 +35,12 @@ export default {
   },
   setup(props) {
     const authStore = useAuthStore();
+    const chatStore = useChatStore();
     const route = useRoute();
 
     const role = computed(() => authStore.role);
     const isAuthenticated = computed(() => authStore.isAuthenticated);
+    const totalUnreadCount = computed(() => chatStore.totalUnreadCount);
 
     const landlordTabs = [
       {
@@ -78,9 +87,9 @@ export default {
         icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`
       },
       {
-        to: '/tenant/rules',
-        label: 'Nội quy',
-        icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>`
+        to: '/tenant/chat',
+        label: 'Nhắn tin',
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.497c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" /></svg>`
       },
       {
         to: '/tenant/contact-landlord',
@@ -136,7 +145,8 @@ export default {
       role,
       isAuthenticated,
       currentTabs,
-      isTabActive
+      isTabActive,
+      totalUnreadCount
     };
   }
 };

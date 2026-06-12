@@ -14,7 +14,8 @@
       <Header v-if="!isHeaderHidden" />
       <main
         ref="mainRef"
-        class="flex-1 p-0 overflow-y-auto flex flex-col justify-between relative lg:rounded-2xl"
+        class="flex-1 p-0 flex flex-col justify-between relative lg:rounded-2xl"
+        :class="isMainScrollDisabled ? 'overflow-hidden animate-fade-in' : 'overflow-y-auto'"
         @touchstart.passive="onTouchStart"
         @touchmove.passive="onTouchMove"
         @touchend="onTouchEnd"
@@ -43,16 +44,18 @@
           </div>
         </div>
 
-        <div class="flex-grow">
+        <div class="flex-grow" :class="{ 'h-full min-h-0 flex flex-col': isMainScrollDisabled }">
           <router-view :key="routerViewKey" />
         </div>
         <footer 
+          v-if="!isMainScrollDisabled"
           class="hidden lg:block py-3 text-center text-xs text-text-sub border-t border-border-main/50 bg-card/60 backdrop-blur-xs shrink-0"
         >
           © 2026 Nhà Trọ Thông Minh. Hệ thống đang trong quá trình phát triển &amp; thử nghiệm.
         </footer>
         <!-- Bottom Safe Area Spacer to prevent content from being covered by BottomBar or device safe areas on mobile -->
         <div 
+          v-if="!isMainScrollDisabled"
           class="w-full shrink-0 lg:hidden" 
           :style="{ height: isBottomBarHidden ? 'calc(0.5rem + env(safe-area-inset-bottom, 8px))' : 'calc(6.5rem + env(safe-area-inset-bottom, 16px))' }"
         ></div>
@@ -87,12 +90,15 @@
           'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400': activeToast.type === 'PAYMENT_REPORTED' || activeToast.type === 'PAYMENT_CONFIRMED',
           'bg-blue-100 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400': activeToast.type === 'INVOICE_NEW',
           'bg-amber-100 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400': activeToast.type === 'SUBSCRIPTION_REQUEST' || activeToast.type === 'PAYMENT_REMINDER',
-          'bg-indigo-100 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400': activeToast.type === 'CONTRACT_ACTIVE',
-          'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400': !['PAYMENT_REPORTED', 'PAYMENT_CONFIRMED', 'INVOICE_NEW', 'SUBSCRIPTION_REQUEST', 'PAYMENT_REMINDER', 'CONTRACT_ACTIVE'].includes(activeToast.type)
+          'bg-indigo-100 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400': activeToast.type === 'CONTRACT_ACTIVE' || activeToast.type === 'CHAT_MESSAGE',
+          'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400': !['PAYMENT_REPORTED', 'PAYMENT_CONFIRMED', 'INVOICE_NEW', 'SUBSCRIPTION_REQUEST', 'PAYMENT_REMINDER', 'CONTRACT_ACTIVE', 'CHAT_MESSAGE'].includes(activeToast.type)
         }"
       >
         <!-- SVG Icons -->
-        <svg v-if="activeToast.type === 'PAYMENT_REPORTED' || activeToast.type === 'PAYMENT_CONFIRMED'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5.5 h-5.5">
+        <svg v-if="activeToast.type === 'CHAT_MESSAGE'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5.5 h-5.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.497c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+        </svg>
+        <svg v-else-if="activeToast.type === 'PAYMENT_REPORTED' || activeToast.type === 'PAYMENT_CONFIRMED'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5.5 h-5.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
         </svg>
         <svg v-else-if="activeToast.type === 'INVOICE_NEW'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5.5 h-5.5">
@@ -176,6 +182,10 @@ export default {
       return authStore.isHeaderHidden || !!(route.meta && route.meta.hideHeader);
     });
 
+    const isMainScrollDisabled = computed(() => {
+      return !!(route.meta && route.meta.disableMainScroll);
+    });
+
     const isBottomBarHidden = computed(() => {
       if (route.meta && (route.meta.hideBottomBar || route.meta.hideHeaderOnMobile || route.meta.hideHeader)) return true;
       const path = route.path.toLowerCase();
@@ -198,6 +208,7 @@ export default {
     let isPulling = false;
 
     const onTouchStart = (e) => {
+      if (isMainScrollDisabled.value) return;
       if (isRefreshing.value) return;
       const el = mainRef.value;
       // Chỉ kích hoạt khi scroll ở đầu trang
@@ -208,6 +219,7 @@ export default {
     };
 
     const onTouchMove = (e) => {
+      if (isMainScrollDisabled.value) return;
       if (!isPulling || isRefreshing.value) return;
       const currentY = e.touches[0].clientY;
       const diff = currentY - touchStartY;
@@ -221,6 +233,7 @@ export default {
     };
 
     const onTouchEnd = async () => {
+      if (isMainScrollDisabled.value) return;
       if (!isPulling || isRefreshing.value) return;
       isPulling = false;
 
@@ -343,6 +356,16 @@ export default {
       if (!notif) return;
       
       dismissToast();
+      
+      if (notif.type === 'CHAT_MESSAGE') {
+        if (authStore.role === 'LANDLORD') {
+          router.push('/landlord/chat');
+        } else if (authStore.role === 'TENANT') {
+          router.push('/tenant/chat');
+        }
+        return;
+      }
+      
       await notificationStore.markAsRead(notif.id);
       
       if (notif.type === 'INVOICE_NEW' || notif.type === 'PAYMENT_CONFIRMED' || notif.type === 'PAYMENT_REMINDER' || notif.type === 'PAYMENT_REPORTED') {
@@ -397,6 +420,7 @@ export default {
       isApiSaving,
       isBottomBarHidden,
       isHeaderHidden,
+      isMainScrollDisabled,
       savingMessage,
       // Pull to refresh
       mainRef,

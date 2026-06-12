@@ -2,6 +2,7 @@ import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '../../stores/auth.js';
 import { useNotificationStore } from '../../stores/notification.js';
+import { useChatStore } from '../../stores/chat.js';
 import { formatDateTime } from '../../utils/date.js';
 import userService from '../../services/userService.js';
 import { useConfirmModal } from '../../composables/useConfirmModal.js';
@@ -17,8 +18,10 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const authStore = useAuthStore();
+    const chatStore = useChatStore();
 
     const profileUser = ref(null);
+    const chatUnreadCount = computed(() => chatStore.totalUnreadCount);
     const username = computed(() => authStore.user?.fullName || profileUser.value?.fullName || authStore.username || 'Người dùng');
     
     const userInitial = computed(() => {
@@ -219,7 +222,7 @@ export default {
       } else if (authStore.role === 'LANDLORD') {
         router.push('/landlord');
       } else if (authStore.role === 'TENANT') {
-        router.push('/tenant');
+        router.push('/tenant/chat');
       } else {
         router.push('/');
       }
@@ -281,6 +284,7 @@ export default {
       showNotificationsDropdown,
       notifications,
       unreadCount,
+      chatUnreadCount,
       loadingNotifications,
       hasMore,
       toggleNotifications,

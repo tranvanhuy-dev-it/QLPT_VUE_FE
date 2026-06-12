@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import chatService from '../services/chatService';
 import { useAuthStore } from './auth';
+import { useNotificationStore } from './notification';
 
 export const useChatStore = defineStore('chat', {
   state: () => ({
@@ -31,6 +32,9 @@ export const useChatStore = defineStore('chat', {
         this.rooms = response.data.content || [];
       } catch (error) {
         console.error('Lỗi khi tải danh sách phòng chat:', error);
+        if (error.response && error.response.data) {
+          console.error('Chi tiết lỗi từ server:', error.response.data);
+        }
       } finally {
         this.loadingRooms = false;
       }
@@ -41,7 +45,7 @@ export const useChatStore = defineStore('chat', {
 
       this.loadingMessages = true;
       try {
-        const response = await chatService.getRoomMessages(roomId, page, 20);
+        const response = await chatService.getRoomMessages(roomId, page, 15);
         const fetchedMessages = response.data.content || [];
         
         // Reverse because backend returns page with order desc (latest first), 
@@ -177,6 +181,24 @@ export const useChatStore = defineStore('chat', {
           // Play sound if incoming
           if (!isFromCurrentUser) {
             this.playChatSound();
+            
+            // Show real-time toast notification if not in the active room
+            if (!isCurrentRoom) {
+              const notificationStore = useNotificationStore();
+              notificationStore.activeToast = {
+                id: message.id,
+                type: 'CHAT_MESSAGE',
+                title: `Tin nhắn mới từ ${message.senderFullName || 'Người dùng'}`,
+                content: message.content,
+                referenceId: message.chatRoomId
+              };
+              if (notificationStore.toastTimeout) {
+                clearTimeout(notificationStore.toastTimeout);
+              }
+              notificationStore.toastTimeout = setTimeout(() => {
+                notificationStore.activeToast = null;
+              }, 6000);
+            }
           }
         } catch (e) {
           console.error('Lỗi phân tích tin nhắn WebSocket Chat:', e);

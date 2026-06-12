@@ -64,15 +64,15 @@
               <a :href="'https://zalo.me/' + landlord.phone" target="_blank" class="inline-flex items-center justify-center gap-1.5 text-xs font-bold bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/30 dark:hover:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-800/40 px-3 py-2 rounded-lg transition-colors">
                 Zalo
               </a>
-              <button 
-                @click="showChatPanel = !showChatPanel" 
-                class="inline-flex items-center justify-center gap-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg transition-colors shadow-xs border-0 cursor-pointer"
+              <router-link 
+                to="/tenant/chat" 
+                class="inline-flex items-center justify-center gap-1.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg transition-colors shadow-xs border-0 cursor-pointer no-underline"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.497c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
                 </svg>
                 Nhắn tin trực tiếp
-              </button>
+              </router-link>
             </div>
           </div>
 
@@ -106,56 +106,6 @@
               <span class="text-[10px] text-text-sub font-bold uppercase tracking-wider">Văn phòng / Địa chỉ liên hệ</span>
               <p class="text-sm font-semibold text-text-main mt-0.5 leading-relaxed">{{ landlord.permanentAddress || 'Chưa cập nhật địa chỉ' }}</p>
             </div>
-          </div>
-        </div>
-
-        <!-- Chat Panel (Direct Message) -->
-        <div v-if="showChatPanel && currentRoom" class="border-t border-border-main flex flex-col h-[400px] bg-slate-50/10 dark:bg-slate-900/5">
-          <!-- Chat header -->
-          <div class="px-6 py-3 border-b border-border-main bg-slate-50/50 dark:bg-slate-900/10 flex items-center justify-between shrink-0">
-            <span class="font-bold text-xs text-text-main">Hội thoại trực tiếp với chủ nhà</span>
-            <button @click="showChatPanel = false" class="text-text-sub hover:text-text-main border-0 bg-transparent cursor-pointer flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-
-          <!-- Chat messages area -->
-          <div ref="messageContainerRef" class="flex-grow overflow-y-auto p-6 space-y-3 min-h-0 flex flex-col">
-            <!-- Load older messages button -->
-            <div v-if="hasMore" class="flex justify-center pb-2">
-              <button @click="loadMoreMessages" class="px-4 py-1.5 text-[10px] font-bold text-primary bg-primary/10 border border-primary/20 hover:bg-primary/20 transition rounded-full cursor-pointer" :disabled="loadingMessages">
-                Tải thêm tin nhắn cũ
-              </button>
-            </div>
-            
-            <div v-if="loadingMessages && currentRoomMessages.length === 0" class="flex justify-center py-6">
-              <div class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-            </div>
-
-            <!-- Messages list -->
-            <template v-else>
-              <div v-for="msg in currentRoomMessages" :key="msg.id" class="flex flex-col max-w-[80%]" :class="msg.senderUsername === currentUser?.username ? 'self-end items-end ml-auto' : 'self-start items-start mr-auto'">
-                <div class="px-3 py-2 rounded-2xl text-[12px] leading-relaxed break-words" :class="msg.senderUsername === currentUser?.username ? 'bg-primary text-white rounded-tr-none' : 'bg-card border border-border-main text-text-main rounded-tl-none'">
-                  {{ msg.content }}
-                </div>
-                <span class="text-[9px] text-text-sub mt-1 px-1">{{ formatMessageTime(msg.createdAt) }}</span>
-              </div>
-            </template>
-          </div>
-
-          <!-- Input field -->
-          <div class="p-4 border-t border-border-main bg-card shrink-0">
-            <form @submit.prevent="handleSendMessage" class="flex items-center gap-2">
-              <input v-model="newMessageText" type="text" placeholder="Nhập tin nhắn để gửi cho chủ nhà..." class="flex-grow bg-slate-50 dark:bg-slate-900 border border-border-main rounded-xl px-4 py-2.5 text-xs text-text-main focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20" :disabled="isSending" @keyup.enter.exact.prevent="handleSendMessage" />
-              <button type="submit" class="p-2.5 bg-primary hover:bg-primary-dark transition text-white rounded-xl flex items-center justify-center shrink-0 border-0 cursor-pointer shadow-xs disabled:opacity-50" :disabled="!newMessageText.trim() || isSending">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                  <path d="M3.478 2.404a.75.75 0 0 0-.967.96l5.003 9.135a.75.75 0 0 0 1.325-.006l4.947-9.135a.75.75 0 0 0-.974-.959L3.478 2.404Z" />
-                  <path d="M12.958 8.64a.75.75 0 0 1-.085 1.056L7.54 13.5a.75.75 0 0 1-1.077-.107l-3.5-4.5a.75.75 0 1 1 1.186-.922l2.96 3.805 4.8-3.75a.75.75 0 0 1 1.047.114Z" />
-                </svg>
-              </button>
-            </form>
           </div>
         </div>
       </div>

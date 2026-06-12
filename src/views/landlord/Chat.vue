@@ -9,11 +9,17 @@
         :class="{ 'hidden lg:flex': mobileShowChat }"
       >
         <!-- Inbox Header -->
-        <div class="p-4 border-b border-border-main flex items-center justify-between shrink-0 bg-slate-50/50 dark:bg-slate-900/10">
-          <h2 class="text-base font-bold text-text-main flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor" class="w-5 h-5 text-primary">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.497c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+        <div class="p-4 border-b border-border-main flex items-center gap-3 shrink-0 bg-slate-50/50 dark:bg-slate-900/10">
+          <router-link 
+            to="/landlord"
+            class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-text-sub border-0 cursor-pointer flex items-center justify-center transition-colors"
+            title="Quay lại Tổng quan"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
             </svg>
+          </router-link>
+          <h2 class="text-base font-bold text-text-main flex items-center gap-2">
             Hộp thư trò chuyện
           </h2>
         </div>
@@ -52,9 +58,7 @@
                 <span class="font-bold text-xs text-text-main truncate max-w-[150px]">{{ room.tenant.fullName }}</span>
                 <span class="text-[10px] text-text-sub font-semibold">{{ formatTimeOnly(room.lastMessageTime) }}</span>
               </div>
-              <div class="text-[11px] font-bold text-primary mb-1">
-                Phòng {{ room.room.roomNumber }} - {{ room.room.boardingHouse.name }}
-              </div>
+
               <p 
                 class="text-xs text-text-sub truncate pr-4"
                 :class="{ 'font-semibold text-text-main': room.unreadCount > 0 }"
@@ -80,10 +84,11 @@
           <!-- Chat box Header -->
           <div class="p-4 border-b border-border-main flex items-center justify-between shrink-0 bg-card z-10 shadow-xs">
             <div class="flex items-center gap-3">
-              <!-- Back button on mobile only -->
+              <!-- Back button -->
               <button 
                 @click="mobileShowChat = false; selectedRoom = null"
-                class="lg:hidden p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-text-sub border-0 cursor-pointer"
+                class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-text-sub border-0 cursor-pointer flex items-center justify-center transition-colors"
+                title="Quay lại danh sách"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
@@ -96,7 +101,7 @@
                   {{ selectedRoom.tenant.fullName }}
                 </h3>
                 <span class="text-[10px] sm:text-xs text-primary font-bold">
-                  Phòng {{ selectedRoom.room.roomNumber }} - {{ selectedRoom.room.boardingHouse.name }}
+                  Trò chuyện trực tiếp
                 </span>
               </div>
             </div>
@@ -187,12 +192,20 @@
               />
               <button 
                 type="submit" 
-                class="p-2.5 bg-primary hover:bg-primary-dark transition text-white rounded-xl flex items-center justify-center shrink-0 border-0 cursor-pointer shadow-xs disabled:opacity-50"
+                class="p-2.5 flex items-center justify-center shrink-0 border-0 cursor-pointer rounded-xl transition-all duration-200 group active:scale-95"
+                :class="newMessageText.trim() && !isSending 
+                  ? 'bg-gradient-to-br from-primary via-primary to-indigo-600 hover:from-indigo-500 hover:to-indigo-600 shadow-md shadow-primary/25 hover:shadow-lg hover:shadow-primary/35 text-white hover:-translate-y-[1px]' 
+                  : 'bg-slate-100 dark:bg-slate-800/60 text-slate-300 dark:text-neutral-600 cursor-not-allowed shadow-none'"
                 :disabled="!newMessageText.trim() || isSending"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                  <path d="M3.478 2.404a.75.75 0 0 0-.967.96l5.003 9.135a.75.75 0 0 0 1.325-.006l4.947-9.135a.75.75 0 0 0-.974-.959L3.478 2.404Z" />
-                  <path d="M12.958 8.64a.75.75 0 0 1-.085 1.056L7.54 13.5a.75.75 0 0 1-1.077-.107l-3.5-4.5a.75.75 0 1 1 1.186-.922l2.96 3.805 4.8-3.75a.75.75 0 0 1 1.047.114Z" />
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  viewBox="0 0 24 24" 
+                  fill="currentColor" 
+                  class="w-4.5 h-4.5 transform transition-transform duration-200"
+                  :class="{ 'group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rotate-12': newMessageText.trim() && !isSending }"
+                >
+                  <path d="M3.478 2.404a.75.75 0 0 0-.967.96L5.003 12l-2.492 8.636a.75.75 0 0 0 .967.96L21.75 12 3.478 2.404Z" />
                 </svg>
               </button>
             </form>
