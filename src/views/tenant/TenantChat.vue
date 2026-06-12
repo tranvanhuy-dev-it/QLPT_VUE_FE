@@ -132,6 +132,7 @@
               class="flex-grow bg-slate-50 dark:bg-slate-900 border border-border-main rounded-xl px-4 py-3 text-xs text-text-main focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all duration-150"
               :disabled="isSending"
               @keyup.enter.exact.prevent="handleSendMessage"
+              @focus="handleFocus"
             />
             <button 
               type="submit" 

@@ -78,7 +78,7 @@ const routes = [
     path: '/landlord/chat',
     name: 'LandlordChat',
     component: () => import('../views/landlord/Chat.vue'),
-    meta: { requiresAuth: true, requiresRole: 'LANDLORD', hideBottomBar: true, hideHeader: true, disableMainScroll: true },
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD', hideBottomBar: true, disableMainScroll: true },
   },
   {
     path: '/landlord/rooms',
@@ -212,7 +212,7 @@ const routes = [
     path: '/tenant/chat',
     name: 'TenantChat',
     component: () => import('../views/tenant/TenantChat.vue'),
-    meta: { requiresAuth: true, requiresRole: 'TENANT', hideBottomBar: true, hideHeader: true, disableMainScroll: true },
+    meta: { requiresAuth: true, requiresRole: 'TENANT', hideBottomBar: true, disableMainScroll: true },
   },
   {
     path: '/settings',

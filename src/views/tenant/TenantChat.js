@@ -70,6 +70,21 @@ export default {
       }
     };
 
+    const handleFocus = () => {
+      // Reset viewport scroll to prevent the header/avatar from sliding up off-screen
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+        scrollToBottom();
+      }, 80);
+      
+      // Secondary check to override delayed OS keyboard layout transitions
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+      }, 250);
+    };
+
     // Watch for incoming messages to auto-scroll
     watch(
       () => currentRoomMessages.value.length,
@@ -136,6 +151,7 @@ export default {
       landlordInfo,
       loadMoreMessages,
       handleSendMessage,
+      handleFocus,
       formatTimeOnly,
       formatMessageTime,
     };
