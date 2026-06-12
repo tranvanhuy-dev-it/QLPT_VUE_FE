@@ -60,101 +60,104 @@
 
       <!-- SUMMARY TAB VIEW -->
       <div v-if="activeTab === 'summary'" class="flex flex-col gap-4">
-        <!-- Room Info Card -->
-        <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
-          <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Thông tin phòng trọ</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 text-xs">
-            <DetailField label="Dãy trọ:" :value="contract.room.boardingHouse.name" layout="inline"
-              value-class="font-bold" />
-            <DetailField label="Phòng số:" layout="inline" value-class="font-bold text-primary">
-              Phòng {{ contract.room.roomNumber }}
-            </DetailField>
-            <DetailField label="Giá phòng gốc:" layout="inline" value-class="font-bold">
-              {{ formatMoney(contract.contractedRoomPrice) }} đ/tháng
-            </DetailField>
-            <DetailField label="Sức chứa tối đa:" layout="inline" value-class="font-bold">
-              {{ contract.room.maxPeople }} người
-            </DetailField>
-            <DetailField label="Số điện hiện tại:" layout="inline" value-class="font-bold">
-              {{ contract.room.currentElectricityIndex }} kWh
-            </DetailField>
-            <DetailField label="Số nước hiện tại:" layout="inline" value-class="font-bold">
-              {{ contract.room.currentWaterIndex }} m³
-            </DetailField>
-          </div>
-        </div>
-
-        <!-- Contract Terms Card -->
-        <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
-          <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Điều khoản hợp đồng</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 text-xs">
-            <DetailField label="Ngày bắt đầu thuê:" :value="formatDate(contract.startDate)" layout="inline"
-              value-class="font-semibold" />
-            <DetailField label="Ngày hết hạn:" :value="formatDate(contract.endDate)" layout="inline"
-              value-class="font-semibold" />
-            <DetailField label="Tiền đặt cọc:" layout="inline" value-class="font-bold text-green-600">
-              {{ formatMoney(contract.deposit) }} đ
-            </DetailField>
-            <DetailField label="Kỳ hạn tính tiền:" value="Thanh toán vào cuối tháng" layout="inline"
-              value-class="font-semibold" />
-            <DetailField label="Ngày tính tiền cố định:" :value="contract.fixedBillingDay ? `Ngày ${contract.fixedBillingDay} hàng tháng` : 'Tính theo ngày dọn vào'" layout="inline"
-              value-class="font-semibold" />
-          </div>
-        </div>
-
-        <!-- Tenant Info Card -->
-        <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
-          <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Thông tin khách thuê</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3.5 text-xs">
-            <DetailField label="Đại diện thuê:" layout="inline">
-              <span 
-                v-if="isLandlord" 
-                @click="navigateToTenant(contract.tenant.id)" 
-                class="font-bold text-primary hover:underline cursor-pointer"
-              >
-                {{ contract.tenant.fullName }}
-              </span>
-              <span v-else class="font-bold">
-                {{ contract.tenant.fullName }}
-              </span>
-            </DetailField>
-            <DetailField label="Tài khoản:" :value="contract.tenant.username" layout="inline" value-class="font-mono" />
-            <DetailField label="Số điện thoại:" :value="contract.tenant.phone || 'Chưa cập nhật'" layout="inline"
-              value-class="font-bold" />
-            <DetailField label="Email liên hệ:" :value="contract.tenant.email || 'Chưa cập nhật'" layout="inline"
-              value-class="font-semibold break-all" />
-          </div>
-        </div>
-
-        <!-- Occupants & Extra fees Card -->
-        <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
-          <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Số người ở & Dịch vụ</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-            <div class="bg-slate-50 dark:bg-slate-900/30 rounded-lg p-3 border border-border-main/50 text-xs">
-              <span class="text-text-sub block mb-2 font-medium">Số người đang ở thực tế:</span>
-              <span class="font-bold text-text-main text-sm">{{ contract.numberOfTenants }} người</span>
+        <!-- 2x2 Grid for the first 4 cards on PC -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Room Info Card -->
+          <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
+            <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Thông tin phòng trọ</h3>
+            <div class="grid grid-cols-1 gap-y-3 text-xs">
+              <DetailField label="Dãy trọ:" :value="contract.room.boardingHouse.name" layout="inline"
+                value-class="font-bold" />
+              <DetailField label="Phòng số:" layout="inline" value-class="font-bold text-primary">
+                Phòng {{ contract.room.roomNumber }}
+              </DetailField>
+              <DetailField label="Giá phòng gốc:" layout="inline" value-class="font-bold">
+                {{ formatMoney(contract.contractedRoomPrice) }} đ/tháng
+              </DetailField>
+              <DetailField label="Sức chứa tối đa:" layout="inline" value-class="font-bold">
+                {{ contract.room.maxPeople }} người
+              </DetailField>
+              <DetailField label="Số điện hiện tại:" layout="inline" value-class="font-bold">
+                {{ contract.room.currentElectricityIndex }} kWh
+              </DetailField>
+              <DetailField label="Số nước hiện tại:" layout="inline" value-class="font-bold">
+                {{ contract.room.currentWaterIndex }} m³
+              </DetailField>
             </div>
+          </div>
 
-            <!-- Right Side: Services applied -->
-            <div class="text-xs">
-              <span class="text-text-sub font-semibold block mb-2.5">Dịch vụ đi kèm:</span>
-              <div v-if="extraFees.length === 0" class="text-center py-4 text-text-sub italic">
-                Không có dịch vụ đi kèm
+          <!-- Contract Terms Card -->
+          <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
+            <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Điều khoản hợp đồng</h3>
+            <div class="grid grid-cols-1 gap-y-3 text-xs">
+              <DetailField label="Ngày bắt đầu thuê:" :value="formatDate(contract.startDate)" layout="inline"
+                value-class="font-semibold" />
+              <DetailField label="Ngày hết hạn:" :value="formatDate(contract.endDate)" layout="inline"
+                value-class="font-semibold" />
+              <DetailField label="Tiền đặt cọc:" layout="inline" value-class="font-bold text-green-600">
+                {{ formatMoney(contract.deposit) }} đ
+              </DetailField>
+              <DetailField label="Kỳ hạn tính tiền:" value="Thanh toán vào cuối tháng" layout="inline"
+                value-class="font-semibold" />
+              <DetailField label="Ngày tính tiền cố định:" :value="contract.fixedBillingDay ? `Ngày ${contract.fixedBillingDay} hàng tháng` : 'Tính theo ngày dọn vào'" layout="inline"
+                value-class="font-semibold" />
+            </div>
+          </div>
+
+          <!-- Tenant Info Card -->
+          <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
+            <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Thông tin khách thuê</h3>
+            <div class="grid grid-cols-1 gap-y-3 text-xs">
+              <DetailField label="Đại diện thuê:" layout="inline">
+                <span 
+                  v-if="isLandlord" 
+                  @click="navigateToTenant(contract.tenant.id)" 
+                  class="font-bold text-primary hover:underline cursor-pointer"
+                >
+                  {{ contract.tenant.fullName }}
+                </span>
+                <span v-else class="font-bold">
+                  {{ contract.tenant.fullName }}
+                </span>
+              </DetailField>
+              <DetailField label="Tài khoản:" :value="contract.tenant.username" layout="inline" value-class="font-mono" />
+              <DetailField label="Số điện thoại:" :value="contract.tenant.phone || 'Chưa cập nhật'" layout="inline"
+                value-class="font-bold" />
+              <DetailField label="Email liên hệ:" :value="contract.tenant.email || 'Chưa cập nhật'" layout="inline"
+                value-class="font-semibold break-all" />
+            </div>
+          </div>
+
+          <!-- Occupants & Extra fees Card -->
+          <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
+            <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Số người ở & Dịch vụ</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+              <div class="bg-slate-50 dark:bg-slate-900/30 rounded-lg p-3 border border-border-main/50 text-xs">
+                <span class="text-text-sub block mb-2 font-medium">Số người đang ở thực tế:</span>
+                <span class="font-bold text-text-main text-sm">{{ contract.numberOfTenants }} người</span>
               </div>
-              <div v-else class="flex flex-col gap-2">
-                <div v-for="cef in extraFees" :key="cef.id"
-                  class="border border-border-main/40 rounded p-2.5 bg-slate-50/50 dark:bg-slate-900/10 flex justify-between items-center">
-                  <div>
-                    <span class="font-semibold text-text-main block">{{ cef.extraFee.name }}</span>
-                    <span class="text-[10px] text-text-sub">
-                      {{ formatMoney(cef.customPrice) }} đ/{{ cef.extraFee.unitType === 'FIXED_PER_PERSON' ? 'người' :
-                        'phòng' }}
+
+              <!-- Right Side: Services applied -->
+              <div class="text-xs">
+                <span class="text-text-sub font-semibold block mb-2.5">Dịch vụ đi kèm:</span>
+                <div v-if="extraFees.length === 0" class="text-center py-4 text-text-sub italic">
+                  Không có dịch vụ đi kèm
+                </div>
+                <div v-else class="flex flex-col gap-2">
+                  <div v-for="cef in extraFees" :key="cef.id"
+                    class="border border-border-main/40 rounded p-2.5 bg-slate-50/50 dark:bg-slate-900/10 flex justify-between items-center">
+                    <div>
+                      <span class="font-semibold text-text-main block">{{ cef.extraFee.name }}</span>
+                      <span class="text-[10px] text-text-sub">
+                        {{ formatMoney(cef.customPrice) }} đ/{{ cef.extraFee.unitType === 'FIXED_PER_PERSON' ? 'người' :
+                          'phòng' }}
+                      </span>
+                    </div>
+                    <span class="font-bold text-primary shrink-0 ml-2">
+                      {{ formatMoney(cef.extraFee.unitType === 'FIXED_PER_PERSON' ? cef.customPrice *
+                        contract.numberOfTenants : cef.customPrice) }} đ
                     </span>
                   </div>
-                  <span class="font-bold text-primary shrink-0 ml-2">
-                    {{ formatMoney(cef.extraFee.unitType === 'FIXED_PER_PERSON' ? cef.customPrice *
-                      contract.numberOfTenants : cef.customPrice) }} đ
-                  </span>
                 </div>
               </div>
             </div>

@@ -16,7 +16,7 @@ export default {
     },
     labelWidth: {
       type: String,
-      default: "w-36", // Chỉ áp dụng cho layout="inline"
+      default: "w-32", // Chỉ áp dụng cho layout="inline"
     },
     labelClass: {
       type: [String, Array, Object],
