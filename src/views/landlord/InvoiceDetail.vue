@@ -10,7 +10,7 @@
         <h2 class="text-base sm:text-xl font-bold text-text-main flex items-center gap-2">
           <span>Hóa Đơn #{{ invoice ? invoice.id.substring(0, 8) : '...' }}</span>
           <span v-if="invoice" :class="[
-            'hidden sm:inline-flex text-[11px] font-semibold px-2.5 py-0.5 rounded border uppercase',
+            'inline-flex text-[11px] font-semibold px-2.5 py-0.5 rounded border uppercase',
             invoice.status === 'PAID'
               ? 'bg-green-50 text-green-700 border-green-200'
               : (invoice.status === 'PARTIALLY_PAID' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-red-50 text-red-700 border-red-200')
@@ -22,9 +22,9 @@
       </div>
 
       <!-- Bottom Row: buttons and financial status summary -->
-      <div v-if="invoice" class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full flex-wrap">
-        <!-- Left Area: Tab Switcher & Financial Badges -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
+      <div v-if="invoice" class="flex flex-col gap-4 w-full">
+        <!-- Top Row: Tab Switcher & Action buttons -->
+        <div class="flex flex-row items-center justify-between gap-3 w-full flex-wrap sm:flex-nowrap">
           <!-- Tab Switcher -->
           <div class="flex border border-border-main rounded-lg p-0.5 bg-slate-50 dark:bg-slate-900/60 shrink-0">
             <button @click="activeTab = 'summary'"
@@ -37,66 +37,55 @@
             </button>
           </div>
 
-          <!-- Financial Summary Badges -->
-          <div class="flex flex-wrap items-center gap-2 text-[11px] font-bold">
-            <!-- Status Badge (only on mobile) -->
-            <span v-if="invoice" :class="[
-              'sm:hidden text-[11px] font-semibold px-2.5 py-1 rounded border uppercase',
-              invoice.status === 'PAID'
-                ? 'bg-green-50 text-green-700 border-green-200'
-                : (invoice.status === 'PARTIALLY_PAID' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-red-50 text-red-700 border-red-200')
-            ]">
-              {{ invoice.status === 'PAID' ? 'Đã thu đủ' : (invoice.status === 'PARTIALLY_PAID' ? 'Đã thu một phần' :
-                'Chưa thu tiền') }}
-            </span>
-
-            <div
-              class="flex items-center gap-1 px-2.5 py-1 bg-slate-50 dark:bg-slate-900/30 border border-border-main/50 rounded-lg">
-              <span class="text-text-sub font-semibold">Tổng:</span>
-              <span class="text-text-main">{{ formatMoney(invoice.totalAmount) }} đ</span>
-            </div>
-            <div
-              class="flex items-center gap-1 px-2.5 py-1 bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400 border border-green-200/30 rounded-lg">
-              <span class="font-semibold">Đã đóng:</span>
-              <span>{{ formatMoney(invoice.paidAmount) }} đ</span>
-            </div>
-            <div
-              class="flex items-center gap-1 px-2.5 py-1 bg-rose-50 text-rose-700 dark:bg-rose-950/20 dark:text-rose-400 border border-rose-200/30 rounded-lg">
-              <span class="font-semibold">Còn nợ:</span>
-              <span>{{ formatMoney(invoice.totalAmount - invoice.paidAmount) }} đ</span>
-            </div>
+          <!-- Action buttons -->
+          <div class="flex items-center gap-1.5 shrink-0">
+            <FormButton v-if="isLandlord" variant="custom"
+              class="bg-[#0068ff] hover:bg-[#0052cc] text-white px-2.5 py-1.5 text-xs shadow-xs"
+              @click="copyAndShareZalo">
+              <AppIcon name="zalo" class="!w-4 !h-4" />
+              <span class="hidden sm:inline">Gửi Zalo</span>
+            </FormButton>
+            <FormButton v-if="activeTab === 'receipt'" variant="primary" size="sm" @click="showPreviewModal = true"
+              class="!px-2.5 !py-1.5">
+              <AppIcon name="printer" class="!w-4 !h-4" />
+              <span class="hidden sm:inline">In hóa đơn</span>
+            </FormButton>
+            <FormButton v-if="isLandlord && invoice.status !== 'PAID' && activeTab === 'summary'" variant="secondary"
+              size="sm" @click="openPayModal">
+              <AppIcon name="credit-card" class="!w-4 !h-4" />
+              <span class="hidden sm:inline">Thu trước</span>
+            </FormButton>
+            <FormButton v-if="isLandlord && invoice.status !== 'PAID' && activeTab === 'summary'" variant="primary"
+              size="sm" @click="quickPayInvoice">
+              <AppIcon name="check-circle" class="!w-4 !h-4" />
+              <span class="hidden sm:inline">Thu đủ</span>
+            </FormButton>
+            <FormButton v-if="!isLandlord && invoice.status !== 'PAID' && activeTab === 'summary'"
+              :variant="paymentNotified ? 'secondary' : 'primary'" size="sm" :disabled="paymentNotified"
+              @click="sendPaymentNotification">
+              <AppIcon name="check-circle" class="!w-4 !h-4" />
+              <span>{{ paymentNotified ? 'Đã báo chuyển khoản' : 'Tôi đã thanh toán' }}</span>
+            </FormButton>
           </div>
         </div>
 
-        <!-- Action buttons -->
-        <div class="flex items-center gap-1.5 shrink-0 ml-auto sm:ml-0">
-          <FormButton v-if="isLandlord" variant="custom"
-            class="bg-[#0068ff] hover:bg-[#0052cc] text-white px-2.5 py-1.5 text-xs shadow-xs"
-            @click="copyAndShareZalo">
-            <AppIcon name="zalo" class="!w-4 !h-4" />
-            <span class="hidden sm:inline">Gửi Zalo</span>
-          </FormButton>
-          <FormButton v-if="activeTab === 'receipt'" variant="primary" size="sm" @click="showPreviewModal = true"
-            class="!px-2.5 !py-1.5">
-            <AppIcon name="printer" class="!w-4 !h-4" />
-            <span class="hidden sm:inline">In hóa đơn</span>
-          </FormButton>
-          <FormButton v-if="isLandlord && invoice.status !== 'PAID' && activeTab === 'summary'" variant="secondary"
-            size="sm" @click="openPayModal">
-            <AppIcon name="credit-card" class="!w-4 !h-4" />
-            <span class="hidden sm:inline">Thu trước</span>
-          </FormButton>
-          <FormButton v-if="isLandlord && invoice.status !== 'PAID' && activeTab === 'summary'" variant="primary"
-            size="sm" @click="quickPayInvoice">
-            <AppIcon name="check-circle" class="!w-4 !h-4" />
-            <span class="hidden sm:inline">Thu đủ</span>
-          </FormButton>
-          <FormButton v-if="!isLandlord && invoice.status !== 'PAID' && activeTab === 'summary'"
-            :variant="paymentNotified ? 'secondary' : 'primary'" size="sm" :disabled="paymentNotified"
-            @click="sendPaymentNotification">
-            <AppIcon name="check-circle" class="!w-4 !h-4" />
-            <span>{{ paymentNotified ? 'Đã báo chuyển khoản' : 'Tôi đã thanh toán' }}</span>
-          </FormButton>
+        <!-- Bottom Row: Financial Summary Badges -->
+        <div class="flex flex-row items-center gap-2 text-[11px] font-bold overflow-x-auto py-1">
+          <div
+            class="flex items-center gap-1 px-2.5 py-1 bg-slate-50 dark:bg-slate-900/30 border border-border-main/50 rounded-lg shrink-0">
+            <span class="text-text-sub font-semibold">Tổng:</span>
+            <span class="text-text-main">{{ formatMoney(invoice.totalAmount) }} đ</span>
+          </div>
+          <div
+            class="flex items-center gap-1 px-2.5 py-1 bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400 border border-green-200/30 rounded-lg shrink-0">
+            <span class="font-semibold">Đã đóng:</span>
+            <span>{{ formatMoney(invoice.paidAmount) }} đ</span>
+          </div>
+          <div
+            class="flex items-center gap-1 px-2.5 py-1 bg-rose-50 text-rose-700 dark:bg-rose-950/20 dark:text-rose-400 border border-rose-200/30 rounded-lg shrink-0">
+            <span class="font-semibold">Còn nợ:</span>
+            <span>{{ formatMoney(invoice.totalAmount - invoice.paidAmount) }} đ</span>
+          </div>
         </div>
       </div>
     </div>
