@@ -133,17 +133,33 @@ export default {
       showNotificationsDropdown.value = false;
 
       // Điều hướng dựa trên loại thông báo
-      if (notif.type === 'INVOICE_NEW' || notif.type === 'PAYMENT_CONFIRMED' || notif.type === 'PAYMENT_REMINDER') {
+      if (notif.type === 'INVOICE_NEW' || notif.type === 'PAYMENT_CONFIRMED' || notif.type === 'PAYMENT_REPORTED' || notif.type === 'PAYMENT_REMINDER') {
         if (authStore.role === 'LANDLORD') {
-          router.push('/landlord/invoices');
+          if (notif.referenceId) {
+            router.push({ name: 'InvoiceDetail', params: { id: notif.referenceId } });
+          } else {
+            router.push('/landlord/invoices');
+          }
         } else if (authStore.role === 'TENANT') {
-          router.push('/tenant/invoices');
+          if (notif.referenceId) {
+            router.push({ name: 'TenantInvoiceDetail', params: { id: notif.referenceId } });
+          } else {
+            router.push('/tenant/invoices');
+          }
         }
       } else if (notif.type === 'CONTRACT_ACTIVE') {
         if (authStore.role === 'LANDLORD') {
-          router.push('/landlord/contracts');
+          if (notif.referenceId) {
+            router.push({ name: 'ContractDetail', params: { id: notif.referenceId } });
+          } else {
+            router.push('/landlord/contracts');
+          }
         } else if (authStore.role === 'TENANT') {
-          router.push('/tenant/contracts');
+          if (notif.referenceId) {
+            router.push({ name: 'TenantContractDetail', params: { id: notif.referenceId } });
+          } else {
+            router.push('/tenant/contracts');
+          }
         }
       }
     };

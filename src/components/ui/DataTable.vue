@@ -52,9 +52,9 @@
           <div class="flex flex-col gap-1 relative">
             <div class="flex justify-between items-start gap-2">
               <!-- Primary Title (Header 0) -->
-              <h4 v-if="mobileTitleHeader" class="text-sm font-extrabold text-text-main truncate max-w-[70%] leading-snug">
+              <h4 v-if="mobileTitleHeader" class="text-sm font-extrabold text-text-main leading-snug max-w-[70%]">
                 <slot :name="`cell(${mobileTitleHeader.key.replace(/\./g, '_')})`" :item="item" :value="resolveKeyPath(item, mobileTitleHeader.key)">
-                  {{ getFormattedValue(item, mobileTitleHeader) }}
+                  <span class="truncate block">{{ getFormattedValue(item, mobileTitleHeader) }}</span>
                 </slot>
               </h4>
               <!-- Status Badge (Top Right) -->
@@ -67,11 +67,11 @@
               </div>
             </div>
             <!-- Secondary Subtitle (Header 1) -->
-            <p v-if="mobileSubtitleHeader" class="text-xs text-text-sub truncate font-semibold leading-normal">
+            <div v-if="mobileSubtitleHeader" class="text-xs text-text-sub font-semibold leading-normal">
               <slot :name="`cell(${mobileSubtitleHeader.key.replace(/\./g, '_')})`" :item="item" :value="resolveKeyPath(item, mobileSubtitleHeader.key)">
-                {{ getFormattedValue(item, mobileSubtitleHeader) }}
+                <span class="truncate block">{{ getFormattedValue(item, mobileSubtitleHeader) }}</span>
               </slot>
-            </p>
+            </div>
           </div>
 
           <!-- Divider -->
@@ -85,11 +85,11 @@
               class="flex justify-between items-center gap-2 text-[0.8rem] leading-normal py-0.5"
             >
               <span class="text-text-sub font-bold shrink-0">{{ header.label }}</span>
-              <span :class="['text-text-main font-extrabold truncate max-w-[65%] text-right', header.cellClass]">
+              <div :class="['text-text-main font-extrabold text-right max-w-[65%] min-w-0', header.cellClass]">
                 <slot :name="`cell(${header.key.replace(/\./g, '_')})`" :item="item" :value="resolveKeyPath(item, header.key)">
-                  {{ getFormattedValue(item, header) }}
+                  <span class="truncate block">{{ getFormattedValue(item, header) }}</span>
                 </slot>
-              </span>
+              </div>
             </div>
           </div>
 

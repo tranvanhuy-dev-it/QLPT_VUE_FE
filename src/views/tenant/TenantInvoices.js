@@ -48,12 +48,12 @@ export default {
         badgeColors: {
           PAID: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/35 dark:text-emerald-400',
           PARTIALLY_PAID: 'bg-amber-50 text-amber-600 dark:bg-amber-950/35 dark:text-amber-400',
-          UNPAID: 'bg-rose-50 text-rose-600 dark:bg-rose-950/35 dark:text-rose-400',
+          PENDING: 'bg-rose-50 text-rose-600 dark:bg-rose-950/35 dark:text-rose-400',
         },
         badgeLabels: {
           PAID: 'Đã thanh toán',
           PARTIALLY_PAID: 'Trả một phần',
-          UNPAID: 'Chưa đóng tiền',
+          PENDING: 'Chưa đóng tiền',
         },
       },
     ];

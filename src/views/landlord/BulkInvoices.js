@@ -115,12 +115,17 @@ export default {
           return false;
         }
 
-        // 2. Ensure billing period start date is not in the future relative to bulkInvoiceDate
+        // 2. Exclude new contracts that start today or in the future
+        if (room.contractStartDate && room.contractStartDate >= bulkInvoiceDate.value) {
+          return false;
+        }
+
+        // 3. Ensure billing period start date is not in the future relative to bulkInvoiceDate
         if (room.billingPeriodStart > bulkInvoiceDate.value) {
           return false;
         }
 
-        // 3. Ensure they haven't already been billed in the selected month
+        // 4. Ensure they haven't already been billed in the selected month
         if (room.contractStartDate && room.billingPeriodStart === room.contractStartDate) {
           return true;
         }

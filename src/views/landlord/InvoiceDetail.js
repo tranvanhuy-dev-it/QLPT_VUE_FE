@@ -48,6 +48,7 @@ export default {
       if (!bh || !bh.bankName || !bh.bankAccountNumber) return '';
       
       const amount = invoice.value.totalAmount - invoice.value.paidAmount;
+      if (amount <= 0) return '';
       const roomNum = invoice.value.contract?.room?.roomNumber || '';
       
       const rawDesc = `PHONG ${roomNum} CK TIEN PHONG`.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D");
@@ -145,6 +146,7 @@ export default {
         await invoiceStore.notifyPayment(invoice.value.id);
         localStorage.setItem(`notified_pay_${invoice.value.id}`, 'true');
         paymentNotified.value = true;
+        await fetchInvoiceDetail();
         showAlert('Thành công', 'Đã gửi thông báo chuyển khoản tiền phòng tới chủ trọ. Vui lòng chờ đối soát!', 'success');
       } catch (err) {
         showAlert('Lỗi', err.response?.data?.error || 'Gửi thông báo thanh toán thất bại', 'danger');

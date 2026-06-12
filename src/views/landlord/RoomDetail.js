@@ -91,7 +91,7 @@ export default {
         };
 
         // Fetch contracts for this room
-        const contractsData = await contractStore.fetchContracts({ roomId, size: 100 });
+        const contractsData = await contractStore.fetchContracts({ roomId, size: 100, showAll: true });
         contracts.value = contractsData || [];
       } catch (err) {
         console.error('Lỗi khi tải thông tin phòng:', err);

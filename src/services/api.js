@@ -7,7 +7,15 @@ export const isApiSaving = ref(false);
 let activeGetRequests = 0;
 let activeWriteRequests = 0;
 
-function updateLoadingState(method, isStart) {
+function updateLoadingState(config, isStart) {
+  if (!config) return;
+  
+  // Bypass loading indicators if skipLoading or X-Skip-Loading header is present
+  if (config.skipLoading || (config.headers && config.headers['X-Skip-Loading'])) {
+    return;
+  }
+
+  const method = config.method;
   const isWrite = ['post', 'put', 'delete', 'patch'].includes(method?.toLowerCase());
   
   if (isStart) {
@@ -42,7 +50,7 @@ const api = axios.create({
 // Request Interceptor: Tự động đính kèm token JWT vào Header Authorization
 api.interceptors.request.use(
   (config) => {
-    updateLoadingState(config.method, true);
+    updateLoadingState(config, true);
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -50,7 +58,7 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    updateLoadingState(error.config?.method, false);
+    updateLoadingState(error.config, false);
     return Promise.reject(error);
   }
 );
@@ -58,11 +66,11 @@ api.interceptors.request.use(
 // Response Interceptor: Xử lý lỗi tập trung (Ví dụ lỗi 401 hết hạn token)
 api.interceptors.response.use(
   (response) => {
-    updateLoadingState(response.config?.method, false);
+    updateLoadingState(response.config, false);
     return response;
   },
   (error) => {
-    updateLoadingState(error.config?.method, false);
+    updateLoadingState(error.config, false);
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');

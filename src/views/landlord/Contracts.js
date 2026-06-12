@@ -1,8 +1,9 @@
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import PageHeader from "../../components/ui/PageHeader.vue";
 import DataTable from "../../components/ui/DataTable.vue";
 import ConfirmModal from "../../components/ui/ConfirmModal.vue";
+import Checkbox from "../../components/ui/Checkbox.vue";
 import { useContractStore } from "../../stores/contract.js";
 import { useConfirmModal } from "../../composables/useConfirmModal.js";
 import { useAuthStore } from "../../stores/auth.js";
@@ -13,6 +14,7 @@ export default {
     PageHeader,
     DataTable,
     ConfirmModal,
+    Checkbox,
   },
   setup() {
     const router = useRouter();
@@ -35,7 +37,6 @@ export default {
       {
         label: "Phòng - Dãy trọ",
         key: "room.roomNumber",
-        formatter: (item) => `Phòng ${item.room.roomNumber} - ${item.room.boardingHouse.name}`,
         cellClass: "font-semibold text-primary",
       },
       {
@@ -81,6 +82,9 @@ export default {
     // Search
     const searchQuery = ref("");
 
+    // Show all contracts (including liquidated/terminated)
+    const showAll = ref(false);
+
     // Pagination
     const page = ref(0);
     const size = ref(10);
@@ -101,6 +105,7 @@ export default {
         await contractStore.fetchContracts({
           page: page.value,
           size: size.value,
+          showAll: showAll.value,
         });
       } catch (err) {
         showAlert(
@@ -110,6 +115,11 @@ export default {
         );
       }
     };
+
+    watch(showAll, () => {
+      page.value = 0;
+      fetchContracts();
+    });
 
     const filteredContracts = computed(() => {
       if (!searchQuery.value) return contracts.value;
@@ -156,6 +166,7 @@ export default {
       filteredContracts,
       loading,
       searchQuery,
+      showAll,
       page,
       totalPages,
       totalElements,

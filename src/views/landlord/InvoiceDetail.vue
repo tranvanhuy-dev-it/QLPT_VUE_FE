@@ -10,13 +10,13 @@
         <h2 class="text-base sm:text-xl font-bold text-text-main flex items-center gap-2">
           <span>Hóa Đơn #{{ invoice ? invoice.id.substring(0, 8) : '...' }}</span>
           <span v-if="invoice" :class="[
-            'inline-flex text-[11px] font-semibold px-2.5 py-0.5 rounded border uppercase',
+            'inline-flex text-[11px] font-bold px-2.5 py-0.5 rounded border uppercase',
             invoice.status === 'PAID'
               ? 'bg-green-50 text-green-700 border-green-200'
-              : (invoice.status === 'PARTIALLY_PAID' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-red-50 text-red-700 border-red-200')
+              : (invoice.paymentClaimed ? 'bg-amber-50 text-amber-600 border-amber-300 animate-pulse' : (invoice.status === 'PARTIALLY_PAID' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-red-50 text-red-700 border-red-200'))
           ]">
-            {{ invoice.status === 'PAID' ? 'Đã thu đủ' : (invoice.status === 'PARTIALLY_PAID' ? 'Đã thu một phần' :
-              'Chưa thu tiền') }}
+            {{ invoice.status === 'PAID' ? 'Đã thu đủ' : (invoice.paymentClaimed ? 'Chờ xác nhận' : (invoice.status === 'PARTIALLY_PAID' ? 'Đã thu một phần' :
+              'Chưa thu tiền')) }}
           </span>
         </h2>
       </div>
@@ -100,14 +100,14 @@
       <div v-if="activeTab === 'summary'">
         <div :class="[
           'gap-6 w-full',
-          (invoice.status !== 'PAID' && vietQrUrl && !isLandlord)
+          (invoice.status !== 'PAID' && (invoice.totalAmount - invoice.paidAmount) > 0 && vietQrUrl && !isLandlord)
             ? 'grid grid-cols-1 lg:grid-cols-3'
             : 'flex flex-col'
         ]">
           <!-- Left Column: Invoice Details -->
           <div :class="[
             'flex flex-col gap-4',
-            (invoice.status !== 'PAID' && vietQrUrl && !isLandlord) ? 'lg:col-span-2' : 'w-full'
+            (invoice.status !== 'PAID' && (invoice.totalAmount - invoice.paidAmount) > 0 && vietQrUrl && !isLandlord) ? 'lg:col-span-2' : 'w-full'
           ]">
             <!-- 2x2 Grid for the first 4 cards on PC -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -297,7 +297,7 @@
           </div>
 
           <!-- Right Column: VietQR Payment Card (Only show for tenant when unpaid and bank configured) -->
-          <div v-if="invoice.status !== 'PAID' && vietQrUrl && !isLandlord" class="lg:col-span-1">
+          <div v-if="invoice.status !== 'PAID' && (invoice.totalAmount - invoice.paidAmount) > 0 && vietQrUrl && !isLandlord" class="lg:col-span-1">
             <div
               class="bg-card border border-border-main rounded-xl p-5 shadow-xs flex flex-col items-center sticky top-20">
               <h3 class="text-sm font-bold text-text-main mb-1 w-full text-center">Thanh toán chuyển khoản nhanh</h3>

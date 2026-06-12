@@ -30,7 +30,43 @@
         clickable
         @change-page="changePage"
         @row-click="viewDetails"
-      />
+      >
+        <!-- Custom slot for Room and Boarding House info with payment claim badge -->
+        <template #cell(contract_room_roomNumber)="{ item }">
+          <div class="flex flex-col gap-0.5">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="font-bold text-primary">Phòng {{ item.contract.room.roomNumber }}</span>
+              <span v-if="item.paymentClaimed && item.status !== 'PAID'" class="w-2 h-2 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse shrink-0" title="Chờ xác nhận"></span>
+            </div>
+            <span class="text-xs text-text-sub font-semibold">{{ item.contract.room.boardingHouse.name }}</span>
+          </div>
+        </template>
+
+        <!-- Custom slot for Billing Period (2 lines) -->
+        <template #cell(billingPeriod)="{ item }">
+          <div class="flex flex-col gap-0.5 text-xs text-text-sub font-semibold">
+            <span>{{ formatDate(item.billingPeriodStart) }}</span>
+            <span>- {{ formatDate(item.billingPeriodEnd) }}</span>
+          </div>
+        </template>
+
+        <!-- Custom slot for Quick Pay Toggle Switch -->
+        <template #cell(quickPay)="{ item }">
+          <div class="flex items-center justify-center">
+            <label :for="'switch-' + item.id" class="relative inline-flex items-center cursor-pointer select-none" @click.stop.prevent="handleQuickPay(item)">
+              <input
+                type="checkbox"
+                :checked="item.status === 'PAID'"
+                :disabled="item.status === 'PAID'"
+                class="sr-only peer"
+                :id="'switch-' + item.id"
+              />
+              <div class="w-9 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"
+                   :class="{'opacity-50 cursor-not-allowed': item.status === 'PAID'}"></div>
+            </label>
+          </div>
+        </template>
+      </DataTable>
     </div>
 
     <!-- Create Invoice Modal -->
@@ -239,7 +275,13 @@
           <FormButton type="submit">Xác nhận</FormButton>
         </div>
       </form>
-    </Modal>  </div>
+    </Modal>
+
+    <!-- Confirm Modal -->
+    <ConfirmModal :show="confirmModal.show" :title="confirmModal.title" :message="confirmModal.message"
+      :type="confirmModal.type" :confirm-text="confirmModal.confirmText" :cancel-text="confirmModal.cancelText"
+      :show-cancel="confirmModal.showCancel" @confirm="onConfirmModal" @cancel="closeConfirmModal" />
+  </div>
 </template>
 
 <script src="./Invoices.js"></script>

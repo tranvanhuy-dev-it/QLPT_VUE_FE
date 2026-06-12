@@ -56,7 +56,6 @@ export default {
       {
         label: "Phòng - Dãy trọ",
         key: "contract.room.roomNumber",
-        formatter: (item) => `Phòng ${item.contract.room.roomNumber} - ${item.contract.room.boardingHouse.name}`,
         cellClass: "font-semibold text-primary",
       },
       {
@@ -73,6 +72,11 @@ export default {
         key: "remainingAmount",
         formatter: (item) => `${formatMoney(item.totalAmount - item.paidAmount)} đ`,
         cellClass: "font-semibold !text-rose-500",
+      },
+      {
+        label: "Thu đủ",
+        key: "quickPay",
+        cellClass: "text-center",
       }
     ];
 
@@ -396,6 +400,25 @@ export default {
       }
     };
 
+    const handleQuickPay = (inv) => {
+      if (inv.status === 'PAID') return;
+      const remaining = inv.totalAmount - inv.paidAmount;
+      showConfirm(
+        'Xác nhận thanh toán',
+        `Xác nhận ghi nhận đã thu đủ số tiền còn lại cho phòng ${inv.contract.room.roomNumber}: ${formatMoney(remaining)} đ?`,
+        'info',
+        async () => {
+          try {
+            await invoiceStore.payInvoice(inv.id, remaining);
+            showAlert('Thành công', `Thanh toán thành công cho phòng ${inv.contract.room.roomNumber}!`, 'success');
+            await fetchInvoices();
+          } catch (err) {
+            showAlert('Lỗi', err.response?.data?.error || "Ghi nhận thanh toán thất bại", 'danger');
+          }
+        }
+      );
+    };
+
 
 
 
@@ -502,6 +525,7 @@ export default {
       viewDetails,
       payInvoiceFromDetails,
       quickPayInvoice,
+      handleQuickPay,
       goToBulkPage,
 
       changePage,

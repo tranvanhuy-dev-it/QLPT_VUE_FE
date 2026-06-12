@@ -9,7 +9,11 @@
       searchPlaceholder="Tìm theo tên người thuê, phòng, dãy trọ..." 
       v-model="searchQuery"
       @add-click="goToCreateContract" 
-    />
+    >
+      <template #filter-addons>
+        <Checkbox v-model="showAll" label="Hiển thị tất cả" />
+      </template>
+    </PageHeader>
 
     <!-- Contracts List -->
     <div class="bg-card border border-border-main rounded-2xl p-4 shadow-xs">
@@ -27,7 +31,15 @@
         :clickable="true"
         @change-page="changePage"
         @row-click="(item) => viewContractDetail(item.id)"
-      />
+      >
+        <!-- Custom slot for Room and Boarding House info -->
+        <template #cell(room_roomNumber)="{ item }">
+          <div class="flex flex-col gap-0.5">
+            <span class="font-bold text-primary">Phòng {{ item.room.roomNumber }}</span>
+            <span class="text-xs text-text-sub font-semibold">{{ item.room.boardingHouse.name }}</span>
+          </div>
+        </template>
+      </DataTable>
     </div>
 
     <!-- Confirm Modal -->

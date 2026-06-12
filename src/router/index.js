@@ -75,6 +75,12 @@ const routes = [
     meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
   },
   {
+    path: '/landlord/chat',
+    name: 'LandlordChat',
+    component: () => import('../views/landlord/Chat.vue'),
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD', hideBottomBar: true },
+  },
+  {
     path: '/landlord/rooms',
     name: 'Rooms',
     component: () => import('../views/landlord/Rooms.vue'),

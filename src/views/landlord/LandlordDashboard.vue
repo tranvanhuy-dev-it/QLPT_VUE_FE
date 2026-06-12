@@ -497,7 +497,10 @@
                 <tr v-for="invoice in filteredUnpaidInvoices" :key="invoice.id"
                   @click="navigateTo('/landlord/invoices/' + invoice.id)"
                   class="border-b border-border-main/30 last:border-0 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 cursor-pointer">
-                  <td class="py-3 px-4 font-semibold text-primary">Phòng {{ invoice.contract.room.roomNumber }}</td>
+                  <td class="py-3 px-4 font-semibold text-primary flex items-center gap-1.5">
+                    <span>Phòng {{ invoice.contract.room.roomNumber }}</span>
+                    <span v-if="invoice.paymentClaimed" class="w-2 h-2 rounded-full bg-amber-500 dark:bg-amber-400 animate-pulse shrink-0" title="Chờ xác nhận"></span>
+                  </td>
                   <td class="py-3 px-4 text-text-sub">{{ invoice.contract.room.boardingHouse.name }}</td>
                   <td class="py-3 px-4 text-text-sub">
                     {{ formatDate(invoice.billingPeriodStart) }} – {{ formatDate(invoice.billingPeriodEnd) }}
