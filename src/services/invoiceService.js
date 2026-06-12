@@ -21,5 +21,8 @@ export default {
   },
   createBulk(data) {
     return api.post('/api/invoices/bulk', data);
+  },
+  notifyPayment(id) {
+    return api.post(`/api/invoices/${id}/notify-payment`);
   }
 };

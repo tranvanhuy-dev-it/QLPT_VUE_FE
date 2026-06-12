@@ -77,6 +77,14 @@
             <AppIcon name="check-circle" class="!w-4 !h-4" />
             <span class="hidden sm:inline">Thu đủ</span>
           </FormButton>
+          <FormButton v-if="!isLandlord && invoice.status !== 'PAID' && activeTab === 'summary'" 
+            :variant="paymentNotified ? 'secondary' : 'primary'"
+            size="sm" 
+            :disabled="paymentNotified"
+            @click="sendPaymentNotification">
+            <AppIcon name="check-circle" class="!w-4 !h-4" />
+            <span>{{ paymentNotified ? 'Đã báo chuyển khoản' : 'Tôi đã thanh toán' }}</span>
+          </FormButton>
         </div>
       </div>
     </div>

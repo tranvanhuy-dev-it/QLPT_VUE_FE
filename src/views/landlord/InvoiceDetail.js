@@ -137,6 +137,20 @@ export default {
       );
     };
 
+    const paymentNotified = ref(localStorage.getItem(`notified_pay_${route.params.id}`) === 'true');
+
+    const sendPaymentNotification = async () => {
+      if (!invoice.value) return;
+      try {
+        await invoiceStore.notifyPayment(invoice.value.id);
+        localStorage.setItem(`notified_pay_${invoice.value.id}`, 'true');
+        paymentNotified.value = true;
+        showAlert('Thành công', 'Đã gửi thông báo chuyển khoản tiền phòng tới chủ trọ. Vui lòng chờ đối soát!', 'success');
+      } catch (err) {
+        showAlert('Lỗi', err.response?.data?.error || 'Gửi thông báo thanh toán thất bại', 'danger');
+      }
+    };
+
     const printInvoice = () => {
       if (!invoice.value) return;
       const printElement = document.getElementById("invoice-print-area");
@@ -395,6 +409,8 @@ export default {
       confirmModal,
       onConfirmModal,
       closeConfirmModal,
+      paymentNotified,
+      sendPaymentNotification,
     };
   }
 };

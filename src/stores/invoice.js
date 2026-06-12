@@ -72,6 +72,15 @@ export const useInvoiceStore = defineStore('invoice', {
         console.error('Error paying invoice:', error);
         throw error;
       }
+    },
+    async notifyPayment(id) {
+      try {
+        const response = await invoiceService.notifyPayment(id);
+        return response.data;
+      } catch (error) {
+        console.error('Error notifying payment:', error);
+        throw error;
+      }
     }
   }
 });

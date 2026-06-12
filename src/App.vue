@@ -214,6 +214,15 @@ export default {
       updateStatusBar();
     });
 
+    // Theo dõi trạng thái đăng nhập để kết nối/ngắt kết nối WebSocket
+    watch(() => authStore.isAuthenticated, (isAuthenticated) => {
+      if (isAuthenticated) {
+        notificationStore.connectWebSocket();
+      } else {
+        notificationStore.disconnectWebSocket();
+      }
+    });
+
     // ==================== Session Check ====================
     let checkInterval = null;
     let themeObserver = null;
