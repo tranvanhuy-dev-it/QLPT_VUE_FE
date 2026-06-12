@@ -76,7 +76,7 @@ export const useNotificationStore = defineStore('notification', {
       this.fetchUnreadCount();
       this.fetchNotifications(0, 10);
       
-      // Thiết lập chu kỳ 60s
+      // Thiết lập chu kỳ 30s
       this.pollingInterval = setInterval(() => {
         const authStore = useAuthStore();
         if (authStore.isAuthenticated) {
@@ -85,7 +85,7 @@ export const useNotificationStore = defineStore('notification', {
         } else {
           this.stopPolling();
         }
-      }, 60000);
+      }, 30000);
     },
     stopPolling() {
       if (this.pollingInterval) {

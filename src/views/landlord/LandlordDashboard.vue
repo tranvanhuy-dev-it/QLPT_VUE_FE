@@ -422,7 +422,7 @@
                 </td>
               </tr>
               <tr v-if="upcomingBillingContracts.length === 0">
-                <td colspan="6" class="text-center text-text-sub py-8">
+                <td colspan="4" class="text-center text-text-sub py-8">
                   Không có hợp đồng nào bị quá hạn lập hóa đơn.
                 </td>
               </tr>

@@ -84,6 +84,7 @@ import Header from './components/layout/Header.vue';
 import BottomBar from './components/layout/BottomBar.vue';
 import { isApiSaving } from './services/api';
 import { useAuthStore, isTokenExpired } from './stores/auth.js';
+import { useNotificationStore } from './stores/notification.js';
 
 export default {
   name: 'App',
@@ -96,6 +97,7 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const authStore = useAuthStore();
+    const notificationStore = useNotificationStore();
 
     const applyFontSize = (size) => {
       let fontSizePx = '16px';
@@ -252,6 +254,11 @@ export default {
           console.error('Lỗi khi tự động kiểm tra trạng thái gói dịch vụ:', err);
         }
       }
+
+      // Khởi động polling thông báo tại App root để luôn hoạt động dù Header bị ẩn
+      if (authStore.isAuthenticated) {
+        notificationStore.startPolling();
+      }
       
       // Kiểm tra định kỳ mỗi 10 giây xem phiên đăng nhập đã hết hạn chưa
       checkInterval = setInterval(checkSession, 10000);
@@ -264,6 +271,7 @@ export default {
       if (themeObserver) {
         themeObserver.disconnect();
       }
+      notificationStore.stopPolling();
     });
 
     return {

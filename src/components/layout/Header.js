@@ -49,6 +49,8 @@ export default {
         case 'Rooms': return 'Quản lý phòng trọ';
         case 'Contracts': return 'Hợp đồng thuê';
         case 'Invoices': return 'Hóa đơn & Thanh toán';
+        case 'Revenue': return 'Báo cáo Doanh thu';
+        case 'TaxDeclaration': return 'Khai báo Thuế';
         case 'Tenants': return 'Tài khoản khách thuê';
         case 'AdminStats': return 'Tổng quan';
         case 'AdminLandlords': return 'Quản lý chủ trọ';
@@ -185,6 +187,16 @@ export default {
       router.push('/landlord/tenants');
     };
 
+    const navigateToRevenue = () => {
+      showDropdown.value = false;
+      router.push('/landlord/revenue');
+    };
+
+    const navigateToTax = () => {
+      showDropdown.value = false;
+      router.push('/landlord/tax');
+    };
+
     const goToOverview = () => {
       if (authStore.role === 'ADMIN') {
         router.push('/admin');
@@ -215,13 +227,16 @@ export default {
       document.documentElement.setAttribute('data-theme', savedTheme);
       if (authStore.isAuthenticated) {
         fetchUserProfile();
-        notificationStore.startPolling();
+        // Polling thông báo được quản lý bởi App.vue
+        // Chỉ fetch lần đầu để hiển thị ngay
+        notificationStore.fetchUnreadCount();
+        notificationStore.fetchNotifications(0, 10);
       }
       document.addEventListener('click', handleDocumentClick);
     });
 
     onUnmounted(() => {
-      notificationStore.stopPolling();
+      // Không gọi stopPolling() ở đây vì App.vue quản lý vòng đời polling
       document.removeEventListener('click', handleDocumentClick);
     });
 
@@ -239,6 +254,8 @@ export default {
       role,
       navigateToUpgrade,
       navigateToTenants,
+      navigateToRevenue,
+      navigateToTax,
       goToOverview,
       showDropdown,
       confirmModal,

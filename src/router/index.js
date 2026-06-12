@@ -117,6 +117,18 @@ const routes = [
     meta: { requiresAuth: true, requiresRole: 'LANDLORD', hideHeaderOnMobile: true },
   },
   {
+    path: '/landlord/revenue',
+    name: 'Revenue',
+    component: () => import('../views/landlord/Revenue.vue'),
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+  },
+  {
+    path: '/landlord/tax',
+    name: 'TaxDeclaration',
+    component: () => import('../views/landlord/TaxDeclaration.vue'),
+    meta: { requiresAuth: true, requiresRole: 'LANDLORD' },
+  },
+  {
     path: '/landlord/invoices/:id',
     name: 'InvoiceDetail',
     component: () => import('../views/landlord/InvoiceDetail.vue'),

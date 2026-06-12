@@ -211,7 +211,7 @@ export default {
           error.value = 'Vai trò tài khoản không hợp lệ!';
         }
       } catch (err) {
-        error.value = err;
+        error.value = err?.response?.data?.error || err?.message || 'Đăng nhập Google thất bại. Vui lòng thử lại!';
       } finally {
         loading.value = false;
       }
@@ -259,8 +259,6 @@ export default {
         renderFallbackGoogleButton();
         return;
       }
-
-      const isMobileApp = typeof window !== 'undefined' && (window.Capacitor || window.cordova);
 
       if (typeof google !== 'undefined') {
         google.accounts.id.initialize({

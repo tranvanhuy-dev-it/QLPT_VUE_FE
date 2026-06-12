@@ -128,11 +128,8 @@
                     :class="{ 'line-clamp-2': !expandedNotifications[notif.id] }">
                     {{ notif.content }}
                   </div>
-                  <button 
-                    v-if="notif.content && notif.content.length > 80" 
-                    @click.stop="toggleExpand(notif.id)"
-                    class="text-primary hover:text-primary-dark hover:underline font-bold text-[0.7rem] bg-transparent border-0 p-0 mt-1 cursor-pointer block"
-                  >
+                  <button v-if="notif.content && notif.content.length > 80" @click.stop="toggleExpand(notif.id)"
+                    class="text-primary hover:text-primary-dark hover:underline font-bold text-[0.7rem] bg-transparent border-0 p-0 mt-1 cursor-pointer block">
                     {{ expandedNotifications[notif.id] ? 'Thu gọn' : 'Xem thêm' }}
                   </button>
                   <div class="text-[0.675rem] text-slate-400 mt-1.5 font-medium">{{ formatTime(notif.createdAt) }}</div>
@@ -208,10 +205,34 @@
           <!-- Quản lý Khách thuê - only for Landlord -->
           <button v-if="role === 'LANDLORD'" @click="navigateToTenants"
             class="w-full text-left px-4 py-2.5 text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-text-sub">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" class="w-4 h-4 text-text-sub">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
-            <span class="font-medium">Quản lý khách thuê</span>
+            <span class="font-medium">Khách thuê</span>
+          </button>
+
+          <!-- Thống kê doanh thu - only for Landlord -->
+          <button v-if="role === 'LANDLORD'" @click="navigateToRevenue"
+            class="w-full text-left px-4 py-2.5 text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" class="w-4 h-4 text-text-sub">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <span class="font-medium">Doanh thu</span>
+          </button>
+
+          <!-- Khai báo thuế - only for Landlord -->
+          <button v-if="role === 'LANDLORD'" @click="navigateToTax"
+            class="w-full text-left px-4 py-2.5 text-text-main hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" class="w-4 h-4 text-text-sub">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            <span class="font-medium">Báo cáo thuế</span>
           </button>
 
           <!-- Liên hệ hỗ trợ -->
