@@ -44,7 +44,7 @@ export default {
       } else if (authStore.role === 'LANDLORD') {
         router.push('/landlord');
       } else if (authStore.role === 'TENANT') {
-        router.push('/tenant/chat');
+        router.push('/tenant');
       } else {
         router.push('/');
       }

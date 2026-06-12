@@ -216,13 +216,22 @@ export default {
       router.push('/landlord/tax');
     };
 
+    const navigateToCameras = () => {
+      showDropdown.value = false;
+      if (authStore.role === 'LANDLORD') {
+        router.push('/landlord/cameras');
+      } else if (authStore.role === 'TENANT') {
+        router.push('/tenant/cameras');
+      }
+    };
+
     const goToOverview = () => {
       if (authStore.role === 'ADMIN') {
         router.push('/admin');
       } else if (authStore.role === 'LANDLORD') {
         router.push('/landlord');
       } else if (authStore.role === 'TENANT') {
-        router.push('/tenant/chat');
+        router.push('/tenant');
       } else {
         router.push('/');
       }
@@ -275,6 +284,7 @@ export default {
       navigateToTenants,
       navigateToRevenue,
       navigateToTax,
+      navigateToCameras,
       goToOverview,
       showDropdown,
       confirmModal,

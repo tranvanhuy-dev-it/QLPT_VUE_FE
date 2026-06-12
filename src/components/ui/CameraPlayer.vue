@@ -26,9 +26,14 @@
       </svg>
       <span class="text-[10px] font-bold text-slate-300">Không thể tải luồng camera</span>
       <span class="text-[9px] text-slate-500 leading-normal max-w-[200px]">
-        {{ camera.brand?.toUpperCase() === 'IMOU' 
-           ? 'Vui lòng kiểm tra kết nối Internet của camera hoặc cấu hình Imou Cloud trên app.' 
-           : 'Đường dẫn lỗi hoặc thiết bị không cùng mạng LAN với camera.' }}
+        <template v-if="isMixedContent">
+          Trình duyệt chặn luồng camera không bảo mật (http://) trên trang web bảo mật (https://). Hãy sử dụng https:// hoặc cấu hình qua IMOU Cloud.
+        </template>
+        <template v-else>
+          {{ camera.brand?.toUpperCase() === 'IMOU' 
+             ? 'Vui lòng kiểm tra kết nối Internet của camera hoặc cấu hình Imou Cloud trên app.' 
+             : 'Đường dẫn lỗi hoặc thiết bị không cùng mạng LAN với camera.' }}
+        </template>
       </span>
       <button @click.stop="retry" class="mt-1 px-2.5 py-1 text-[9px] bg-slate-800 hover:bg-slate-700 active:scale-95 text-white font-bold rounded transition-all">Thử lại</button>
     </div>
@@ -43,6 +48,7 @@
       playsinline
       @playing="onPlaying"
       @error="onError"
+      @canplay="onCanPlay"
     ></video>
 
     <!-- Image Element (MJPEG) -->
@@ -98,7 +104,7 @@
 </template>
 
 <script>
-import { ref, watch, onMounted, onUnmounted, computed } from 'vue';
+import { ref, watch, onMounted, onUnmounted, computed, nextTick } from 'vue';
 import Hls from 'hls.js';
 import cameraService from '../../services/boardingHouseCameraService.js';
 
@@ -170,6 +176,12 @@ export default {
       return url.toLowerCase().includes('.m3u8') || url.toLowerCase().includes('hls');
     });
 
+    const isMixedContent = computed(() => {
+      const url = streamUrl.value;
+      if (!url) return false;
+      return window.location.protocol === 'https:' && url.startsWith('http://');
+    });
+
     const onPlaying = () => {
       loading.value = false;
       isError.value = false;
@@ -179,6 +191,16 @@ export default {
       console.error('Camera playback error:', e);
       loading.value = false;
       isError.value = true;
+    };
+
+    const onCanPlay = () => {
+      const video = videoRef.value;
+      if (video) {
+        video.muted = true;
+        video.play().catch(err => {
+          console.warn('Playback was prevented, waiting for user interaction:', err);
+        });
+      }
     };
 
     const initializePlayer = async () => {
@@ -197,12 +219,24 @@ export default {
         }
       }
 
+      // Đợi Vue cập nhật DOM để `videoRef` được gán chính xác (đặc biệt khi chuyển đổi v-if)
+      await nextTick();
+
       if (isHls.value) {
         // Clear previous HLS instance if any
         destroyPlayer();
         
-        const video = videoRef.value;
-        if (!video) return;
+        let video = videoRef.value;
+        if (!video) {
+          await nextTick();
+          video = videoRef.value;
+        }
+
+        if (!video) {
+          console.error('Không tìm thấy phần tử videoRef để khởi tạo trình phát');
+          onError('Không thể khởi tạo trình phát video trong DOM');
+          return;
+        }
 
         if (Hls.isSupported()) {
           hls = new Hls({
@@ -214,6 +248,7 @@ export default {
           hls.attachMedia(video);
           
           hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            video.muted = true;
             video.play().catch(err => {
               console.warn('Auto play was prevented, waiting for user interaction:', err);
             });
@@ -240,10 +275,6 @@ export default {
         // For Safari which natively supports HLS
         else if (video.canPlayType('application/vnd.apple.mpegurl')) {
           video.src = streamUrl.value;
-          video.addEventListener('canplay', () => {
-            video.play().catch(err => console.warn(err));
-          });
-          video.addEventListener('error', onError);
         } else {
           onError('HLS is not supported in this browser');
         }
@@ -345,8 +376,10 @@ export default {
       onSettingsClick,
       streamUrl,
       isHls,
+      isMixedContent,
       onPlaying,
       onError,
+      onCanPlay,
       retry,
       toggleFullscreen
     };
