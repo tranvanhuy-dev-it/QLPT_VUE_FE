@@ -257,13 +257,14 @@
                     </template>
                     <template v-else>
                       <div class="flex justify-between"><span>Hình thức đóng:</span> <strong>{{
-                        invoice.contract?.room?.boardingHouse?.waterBillingType === 'FIXED_PER_PERSON' ? 'Cố định theo
-                          đầu người' : 'Cố định theo phòng' }}</strong></div>
+                        invoice.contract?.room?.boardingHouse?.waterBillingType === 'FIXED_PER_PERSON' ?
+                          'Cố định theo đầu người' : 'Cố định theo phòng' }}</strong></div>
                       <div class="flex justify-between"><span>Số lượng tính:</span> <strong>{{
                         invoice.contract?.room?.boardingHouse?.waterBillingType === 'FIXED_PER_PERSON' ?
                           invoice.contract?.numberOfTenants + ' người' : '1 phòng' }}</strong></div>
                       <div class="flex justify-between border-b border-border-main/20 pb-1"><span>Đơn giá:</span>
-                        <strong>{{ formatMoney(invoice.waterRate) }} đ</strong></div>
+                        <strong>{{ formatMoney(invoice.waterRate) }} đ</strong>
+                      </div>
                       <div
                         class="flex justify-between font-bold text-sm text-text-main pt-1.5 border-t border-border-main/20">
                         <span>Thành tiền:</span>
