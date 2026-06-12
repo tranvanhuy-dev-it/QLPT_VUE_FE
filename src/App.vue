@@ -72,6 +72,60 @@
       <p class="text-sm font-semibold text-text-main text-center animate-pulse">{{ savingMessage }}</p>
     </div>
   </div>
+
+  <!-- Global Real-Time Notification Toast Popup -->
+  <transition name="toast-slide">
+    <div 
+      v-if="activeToast" 
+      class="fixed top-6 md:top-20 right-4 left-4 md:left-auto md:w-96 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-2xl rounded-2xl border border-slate-200/50 dark:border-slate-800/50 p-4 z-[99999] flex gap-3.5 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/80 transition duration-200"
+      @click="clickToast"
+    >
+      <!-- Icon based on type -->
+      <div 
+        class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+        :class="{
+          'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400': activeToast.type === 'PAYMENT_REPORTED' || activeToast.type === 'PAYMENT_CONFIRMED',
+          'bg-blue-100 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400': activeToast.type === 'INVOICE_NEW',
+          'bg-amber-100 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400': activeToast.type === 'SUBSCRIPTION_REQUEST' || activeToast.type === 'PAYMENT_REMINDER',
+          'bg-indigo-100 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400': activeToast.type === 'CONTRACT_ACTIVE',
+          'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400': !['PAYMENT_REPORTED', 'PAYMENT_CONFIRMED', 'INVOICE_NEW', 'SUBSCRIPTION_REQUEST', 'PAYMENT_REMINDER', 'CONTRACT_ACTIVE'].includes(activeToast.type)
+        }"
+      >
+        <!-- SVG Icons -->
+        <svg v-if="activeToast.type === 'PAYMENT_REPORTED' || activeToast.type === 'PAYMENT_CONFIRMED'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5.5 h-5.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+        <svg v-else-if="activeToast.type === 'INVOICE_NEW'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5.5 h-5.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+        </svg>
+        <svg v-else-if="activeToast.type === 'SUBSCRIPTION_REQUEST' || activeToast.type === 'PAYMENT_REMINDER'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5.5 h-5.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+        <svg v-else-if="activeToast.type === 'CONTRACT_ACTIVE'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5.5 h-5.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+        </svg>
+        <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5.5 h-5.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+        </svg>
+      </div>
+
+      <!-- Content -->
+      <div class="flex-1 min-w-0 pr-4">
+        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100 mb-0.5 truncate">{{ activeToast.title }}</h4>
+        <p class="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400 line-clamp-2">{{ activeToast.content }}</p>
+      </div>
+
+      <!-- Close Button -->
+      <button 
+        class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer p-0.5"
+        @click.stop="dismissToast"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -273,6 +327,38 @@ export default {
       checkInterval = setInterval(checkSession, 10000);
     });
 
+    const activeToast = computed(() => notificationStore.activeToast);
+    
+    const dismissToast = () => {
+      notificationStore.activeToast = null;
+    };
+
+    const clickToast = async () => {
+      const notif = activeToast.value;
+      if (!notif) return;
+      
+      dismissToast();
+      await notificationStore.markAsRead(notif.id);
+      
+      if (notif.type === 'INVOICE_NEW' || notif.type === 'PAYMENT_CONFIRMED' || notif.type === 'PAYMENT_REMINDER' || notif.type === 'PAYMENT_REPORTED') {
+        if (authStore.role === 'LANDLORD') {
+          router.push('/landlord/invoices');
+        } else if (authStore.role === 'TENANT') {
+          router.push('/tenant/invoices');
+        }
+      } else if (notif.type === 'CONTRACT_ACTIVE') {
+        if (authStore.role === 'LANDLORD') {
+          router.push('/landlord/contracts');
+        } else if (authStore.role === 'TENANT') {
+          router.push('/tenant/contracts');
+        }
+      } else if (notif.type === 'SUBSCRIPTION_REQUEST') {
+        if (authStore.role === 'ADMIN') {
+          router.push('/admin/requests');
+        }
+      }
+    };
+
     onUnmounted(() => {
       if (checkInterval) {
         clearInterval(checkInterval);
@@ -299,7 +385,28 @@ export default {
       onTouchStart,
       onTouchMove,
       onTouchEnd,
+      activeToast,
+      dismissToast,
+      clickToast,
     };
   },
 };
 </script>
+
+<style scoped>
+/* Toast slide animation */
+.toast-slide-enter-active,
+.toast-slide-leave-active {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-slide-enter-from {
+  opacity: 0;
+  transform: translateY(-2rem) scale(0.95);
+}
+
+.toast-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-1rem) scale(0.95);
+}
+</style>

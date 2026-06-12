@@ -12,6 +12,8 @@ export const useNotificationStore = defineStore('notification', {
     reconnectDelay: 2000,
     currentPage: 0,
     hasMore: false,
+    activeToast: null,
+    toastTimeout: null,
   }),
   actions: {
     async fetchNotifications(page = 0, size = 10, append = false) {
@@ -120,6 +122,15 @@ export const useNotificationStore = defineStore('notification', {
           if (!exists) {
             this.notifications.unshift(notification);
             this.unreadCount++;
+            
+            // Hiển thị Toast Popup trên màn hình
+            this.activeToast = notification;
+            if (this.toastTimeout) {
+              clearTimeout(this.toastTimeout);
+            }
+            this.toastTimeout = setTimeout(() => {
+              this.activeToast = null;
+            }, 6000); // Tự động ẩn sau 6 giây
             
             // Phát âm báo hiệu
             this.playNotificationSound();
