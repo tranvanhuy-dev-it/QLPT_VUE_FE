@@ -252,34 +252,34 @@
 
         <!-- History Table (Desktop lg+) -->
         <div v-else class="hidden lg:block overflow-x-auto">
-          <table class="w-full text-sm text-left">
-            <thead>
-              <tr class="border-b border-border-main bg-bg-main/20">
-                <th class="px-4 py-3 text-xs text-text-sub font-semibold uppercase">Mã giao dịch</th>
-                <th class="px-4 py-3 text-xs text-text-sub font-semibold uppercase">Kỳ báo cáo</th>
-                <th class="px-4 py-3 text-xs text-text-sub font-semibold uppercase">Dãy trọ</th>
-                <th class="px-4 py-3 text-xs text-text-sub font-semibold uppercase text-right">Doanh thu kỳ</th>
-                <th class="px-4 py-3 text-xs text-text-sub font-semibold uppercase text-right">Thuế GTGT</th>
-                <th class="px-4 py-3 text-xs text-text-sub font-semibold uppercase text-right">Thuế TNCN</th>
-                <th class="px-4 py-3 text-xs text-text-sub font-semibold uppercase text-right">Tổng thuế</th>
-                <th class="px-4 py-3 text-xs text-text-sub font-semibold uppercase">Ngày nộp</th>
-                <th class="px-4 py-3 text-xs text-text-sub font-semibold uppercase text-center">Trạng thái</th>
+          <table class="w-full text-sm text-left text-text-main border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-900/40 border-b border-border-main/60">
+              <tr>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Mã giao dịch</th>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Kỳ báo cáo</th>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Dãy trọ</th>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider text-right">Doanh thu kỳ</th>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider text-right">Thuế GTGT</th>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider text-right">Thuế TNCN</th>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider text-right">Tổng thuế</th>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Ngày nộp</th>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider text-center">Trạng thái</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="decl in declarations" :key="decl.id"
-                class="border-b border-border-main/50 hover:bg-slate-50/40 dark:hover:bg-slate-900/20 transition-colors">
-                <td class="px-4 py-3 font-mono text-xs font-bold text-primary">{{ decl.declarationNumber }}</td>
-                <td class="px-4 py-3 font-semibold text-text-main">{{ decl.periodLabel }}</td>
-                <td class="px-4 py-3 text-text-sub text-xs">{{ decl.boardingHouseName }}</td>
-                <td class="px-4 py-3 text-right font-medium text-text-main">{{ formatMoney(decl.totalRevenue) }} đ</td>
-                <td class="px-4 py-3 text-right text-text-sub">{{ formatMoney(decl.vatAmount) }} đ</td>
-                <td class="px-4 py-3 text-right text-text-sub">{{ formatMoney(decl.pitAmount) }} đ</td>
-                <td class="px-4 py-3 text-right font-bold" :class="decl.totalTaxAmount > 0 ? 'text-rose-500' : 'text-emerald-600'">
+                class="border-b border-border-main/30 last:border-0 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 transition-colors duration-150">
+                <td class="py-3 px-4 font-mono font-bold text-primary">{{ decl.declarationNumber }}</td>
+                <td class="py-3 px-4 font-semibold text-text-main">{{ decl.periodLabel }}</td>
+                <td class="py-3 px-4 text-text-sub">{{ decl.boardingHouseName }}</td>
+                <td class="py-3 px-4 text-right font-medium text-text-main">{{ formatMoney(decl.totalRevenue) }} đ</td>
+                <td class="py-3 px-4 text-right text-text-sub">{{ formatMoney(decl.vatAmount) }} đ</td>
+                <td class="py-3 px-4 text-right text-text-sub">{{ formatMoney(decl.pitAmount) }} đ</td>
+                <td class="py-3 px-4 text-right font-bold" :class="decl.totalTaxAmount > 0 ? 'text-rose-500' : 'text-emerald-600'">
                   {{ formatMoney(decl.totalTaxAmount) }} đ
                 </td>
-                <td class="px-4 py-3 text-xs text-text-sub">{{ formatDate(decl.submittedDate) }}</td>
-                <td class="px-4 py-3 text-center">
+                <td class="py-3 px-4 text-text-sub">{{ formatDate(decl.submittedDate) }}</td>
+                <td class="py-3 px-4 text-center">
                   <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400">
                     Đã duyệt
                   </span>

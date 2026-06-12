@@ -396,23 +396,23 @@
             class="inline-flex items-center justify-center min-w-6 h-6 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-950/30 text-rose-600 px-2">{{
               upcomingBillingContracts.length }}</span>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-xs text-left text-text-main border-collapse">
-            <thead>
-              <tr class="border-b border-border-main">
-                <th class="py-3 font-semibold text-text-sub text-xs uppercase">Phòng</th>
-                <th class="py-3 font-semibold text-text-sub text-xs uppercase">Dãy trọ</th>
-                <th class="py-3 font-semibold text-text-sub text-xs uppercase">Ngày đến hạn</th>
-                <th class="py-3 font-semibold text-text-sub text-xs uppercase text-right">Thao tác</th>
+        <div class="overflow-x-auto border border-border-main/50 rounded-xl bg-card">
+          <table class="w-full text-sm text-left text-text-main border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-900/40 border-b border-border-main/60">
+              <tr>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Phòng</th>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Dãy trọ</th>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Ngày đến hạn</th>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider text-right">Thao tác</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="item in upcomingBillingContracts" :key="item.id"
-                class="border-b border-border-main/50 hover:bg-slate-50/50 dark:hover:bg-slate-900/20">
-                <td class="py-2 font-semibold text-primary">Phòng {{ item.roomNumber }}</td>
-                <td class="py-2 text-text-sub">{{ item.boardingHouseName }}</td>
-                <td class="py-2 font-semibold text-text-main">{{ formatFullDate(item.dueDate) }}</td>
-                <td class="py-2 text-right">
+                class="border-b border-border-main/30 last:border-0 hover:bg-slate-50/50 dark:hover:bg-slate-900/20">
+                <td class="py-3 px-4 font-semibold text-primary">Phòng {{ item.roomNumber }}</td>
+                <td class="py-3 px-4 text-text-sub">{{ item.boardingHouseName }}</td>
+                <td class="py-3 px-4 font-semibold text-text-main">{{ formatFullDate(item.dueDate) }}</td>
+                <td class="py-3 px-4 text-right">
                   <FormButton
                     @click="navigateTo({ path: '/landlord/invoices', query: { createForContractId: item.id } })"
                     size="sm" class="flex items-center gap-1 ml-auto">
@@ -422,7 +422,7 @@
                 </td>
               </tr>
               <tr v-if="upcomingBillingContracts.length === 0">
-                <td colspan="4" class="text-center text-text-sub py-8">
+                <td colspan="4" class="text-center text-text-sub py-12 italic text-sm">
                   Không có hợp đồng nào bị quá hạn lập hóa đơn.
                 </td>
               </tr>
@@ -445,24 +445,24 @@
               class="inline-flex items-center justify-center min-w-6 h-6 rounded-full text-xs font-bold bg-blue-50 text-blue-600 px-2">{{
                 vacantRoomList.length }}</span>
           </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left text-text-main border-collapse">
-              <thead>
-                <tr class="border-b border-border-main">
-                  <th class="py-3 font-semibold text-text-sub text-xs uppercase">Số phòng</th>
-                  <th class="py-3 font-semibold text-text-sub text-xs uppercase">Dãy trọ</th>
-                  <th class="py-3 font-semibold text-text-sub text-xs uppercase text-right">Giá thuê</th>
+          <div class="overflow-x-auto border border-border-main/50 rounded-xl bg-card">
+            <table class="w-full text-sm text-left text-text-main border-collapse">
+              <thead class="bg-slate-50 dark:bg-slate-900/40 border-b border-border-main/60">
+                <tr>
+                  <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Số phòng</th>
+                  <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Dãy trọ</th>
+                  <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider text-right">Giá thuê</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="room in vacantRoomList" :key="room.id"
-                  class="border-b border-border-main/50 hover:bg-slate-50/50 dark:hover:bg-slate-900/20">
-                  <td class="py-2 font-semibold text-primary">Phòng {{ room.roomNumber }}</td>
-                  <td class="py-2 text-text-sub">{{ room.boardingHouse.name }}</td>
-                  <td class="py-2 text-right font-semibold text-text-main">{{ formatMoney(room.basePrice) }} đ</td>
+                  class="border-b border-border-main/30 last:border-0 hover:bg-slate-50/50 dark:hover:bg-slate-900/20">
+                  <td class="py-3 px-4 font-semibold text-primary">Phòng {{ room.roomNumber }}</td>
+                  <td class="py-3 px-4 text-text-sub">{{ room.boardingHouse.name }}</td>
+                  <td class="py-3 px-4 text-right font-semibold text-text-main">{{ formatMoney(room.basePrice) }} đ</td>
                 </tr>
                 <tr v-if="vacantRoomList.length === 0">
-                  <td colspan="3" class="text-center text-text-sub py-8">
+                  <td colspan="3" class="text-center text-text-sub py-12 italic text-sm">
                     Tất cả phòng đều đã có người thuê
                   </td>
                 </tr>
@@ -483,30 +483,30 @@
               class="inline-flex items-center justify-center min-w-6 h-6 rounded-full text-xs font-bold bg-red-50 text-red-600 px-2">{{
                 filteredUnpaidInvoices.length }}</span>
           </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left text-text-main border-collapse">
-              <thead>
-                <tr class="border-b border-border-main">
-                  <th class="py-3 font-semibold text-text-sub text-xs uppercase">Phòng</th>
-                  <th class="py-3 font-semibold text-text-sub text-xs uppercase">Dãy trọ</th>
-                  <th class="py-3 font-semibold text-text-sub text-xs uppercase">Kỳ hóa đơn</th>
-                  <th class="py-3 font-semibold text-text-sub text-xs uppercase text-right">Số tiền nợ</th>
+          <div class="overflow-x-auto border border-border-main/50 rounded-xl bg-card">
+            <table class="w-full text-sm text-left text-text-main border-collapse">
+              <thead class="bg-slate-50 dark:bg-slate-900/40 border-b border-border-main/60">
+                <tr>
+                  <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Phòng</th>
+                  <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Dãy trọ</th>
+                  <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Kỳ hóa đơn</th>
+                  <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider text-right">Số tiền nợ</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="invoice in filteredUnpaidInvoices" :key="invoice.id"
                   @click="navigateTo('/landlord/invoices/' + invoice.id)"
-                  class="border-b border-border-main/50 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 cursor-pointer">
-                  <td class="py-2 font-semibold text-primary">Phòng {{ invoice.contract.room.roomNumber }}</td>
-                  <td class="py-2 text-text-sub">{{ invoice.contract.room.boardingHouse.name }}</td>
-                  <td class="py-2 text-text-sub">
+                  class="border-b border-border-main/30 last:border-0 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 cursor-pointer">
+                  <td class="py-3 px-4 font-semibold text-primary">Phòng {{ invoice.contract.room.roomNumber }}</td>
+                  <td class="py-3 px-4 text-text-sub">{{ invoice.contract.room.boardingHouse.name }}</td>
+                  <td class="py-3 px-4 text-text-sub">
                     {{ formatDate(invoice.billingPeriodStart) }} – {{ formatDate(invoice.billingPeriodEnd) }}
                   </td>
-                  <td class="py-2 text-right font-semibold text-danger">{{ formatMoney(invoice.totalAmount -
+                  <td class="py-3 px-4 text-right font-semibold text-danger">{{ formatMoney(invoice.totalAmount -
                     invoice.paidAmount) }} đ</td>
                 </tr>
                 <tr v-if="filteredUnpaidInvoices.length === 0">
-                  <td colspan="4" class="text-center text-text-sub py-8">
+                  <td colspan="4" class="text-center text-text-sub py-12 italic text-sm">
                     Không có hóa đơn nợ trong kỳ này — Tuyệt vời!
                   </td>
                 </tr>

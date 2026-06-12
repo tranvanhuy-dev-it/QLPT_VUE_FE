@@ -267,10 +267,10 @@
         Chưa từng phát sinh yêu cầu nâng cấp gói nào.
       </div>
       
-      <div v-else class="overflow-x-auto border border-border-main/50 rounded-xl">
-        <table class="w-full text-xs text-left border-collapse">
+      <div v-else class="overflow-x-auto border border-border-main/50 rounded-xl bg-card">
+        <table class="w-full text-sm text-left border-collapse">
           <thead>
-            <tr class="bg-slate-50 dark:bg-slate-900/40 border-b border-border-main/60 text-text-sub font-bold uppercase text-[10px] tracking-wider">
+            <tr class="bg-slate-50 dark:bg-slate-900/40 border-b border-border-main/60 text-text-sub font-bold uppercase text-[11px] tracking-wider">
               <th class="py-3 px-4">Gói cước</th>
               <th class="py-3 px-4">Số tiền</th>
               <th class="py-3 px-4">Nội dung chuyển</th>

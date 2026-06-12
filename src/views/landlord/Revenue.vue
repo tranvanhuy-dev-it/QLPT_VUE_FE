@@ -286,37 +286,37 @@
 
         <!-- ===== DESKTOP TABLE (lg+) ===== -->
         <div v-if="activeRows.length > 0" class="hidden lg:block overflow-x-auto">
-          <table class="w-full text-sm text-left">
-            <thead>
-              <tr class="border-b border-border-main bg-bg-main/40">
-                <th class="px-4 py-3 text-xs text-text-sub font-semibold uppercase">Phòng</th>
-                <th v-if="activeTab === 'contract'" class="px-4 py-3 text-xs text-text-sub font-semibold uppercase">Khách thuê / Bắt đầu</th>
-                <th class="px-4 py-3 text-xs text-text-sub font-semibold uppercase">Dãy trọ</th>
+          <table class="w-full text-sm text-left text-text-main border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-900/40 border-b border-border-main/60">
+              <tr>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Phòng</th>
+                <th v-if="activeTab === 'contract'" class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Khách thuê / Bắt đầu</th>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Dãy trọ</th>
                 <th
-                  class="px-4 py-3 text-xs text-text-sub font-semibold uppercase text-right cursor-pointer hover:text-primary"
+                  class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider text-right cursor-pointer hover:text-primary"
                   @click="setSort('expected')">
                   Phải thu <span v-if="sortKey === 'expected'">{{ sortDir === 'desc' ? '↓' : '↑' }}</span>
                 </th>
                 <th
-                  class="px-4 py-3 text-xs text-text-sub font-semibold uppercase text-right cursor-pointer hover:text-primary"
+                  class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider text-right cursor-pointer hover:text-primary"
                   @click="setSort('revenue')">
                   Đã thu <span v-if="sortKey === 'revenue'">{{ sortDir === 'desc' ? '↓' : '↑' }}</span>
                 </th>
                 <th
-                  class="px-4 py-3 text-xs text-text-sub font-semibold uppercase text-right cursor-pointer hover:text-primary"
+                  class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider text-right cursor-pointer hover:text-primary"
                   @click="setSort('debt')">
                   Còn nợ <span v-if="sortKey === 'debt'">{{ sortDir === 'desc' ? '↓' : '↑' }}</span>
                 </th>
-                <th class="px-4 py-3 text-xs text-text-sub font-semibold uppercase text-center">Tỷ lệ</th>
-                <th class="px-4 py-3 text-xs text-text-sub font-semibold uppercase text-center">HĐ</th>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider text-center">Tỷ lệ</th>
+                <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider text-center">HĐ</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="row in activeRows" :key="row.roomId || row.contractId"
                 @click="activeTab === 'contract' && goToContract(row.contractId)"
-                class="border-b border-border-main/50 hover:bg-slate-50/40 dark:hover:bg-slate-900/20 transition-colors"
+                class="border-b border-border-main/30 last:border-0 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 transition-colors duration-150"
                 :class="activeTab === 'contract' ? 'cursor-pointer group' : ''">
-                <td class="px-4 py-3">
+                <td class="py-3 px-4">
                   <div class="flex items-center gap-2">
                     <span class="w-8 h-8 rounded-lg text-xs font-bold flex items-center justify-center shrink-0"
                       :class="activeTab === 'room' ? 'bg-primary/10 text-primary' : 'bg-violet-100 dark:bg-violet-900/30 text-violet-600'">
@@ -327,29 +327,29 @@
                       }}</span>
                   </div>
                 </td>
-                <td v-if="activeTab === 'contract'" class="px-4 py-3 text-text-main text-sm">
+                <td v-if="activeTab === 'contract'" class="py-3 px-4 text-text-main">
                   {{ formatDate(row.startDate) }}
                 </td>
-                <td class="px-4 py-3 text-text-sub text-xs">{{ row.boardingHouseName }}</td>
-                <td class="px-4 py-3 text-right font-medium text-text-main">{{ formatMoney(row.expected) }}<span
+                <td class="py-3 px-4 text-text-sub">{{ row.boardingHouseName }}</td>
+                <td class="py-3 px-4 text-right font-medium text-text-main">{{ formatMoney(row.expected) }}<span
                     class="text-[10px] text-text-sub ml-0.5">đ</span></td>
-                <td class="px-4 py-3 text-right font-bold text-emerald-600">{{ formatMoney(row.paid) }}<span
+                <td class="py-3 px-4 text-right font-bold text-emerald-600">{{ formatMoney(row.paid) }}<span
                     class="text-[10px] ml-0.5">đ</span></td>
-                <td class="px-4 py-3 text-right font-medium" :class="row.debt > 0 ? 'text-rose-500' : 'text-text-sub'">
+                <td class="py-3 px-4 text-right font-medium" :class="row.debt > 0 ? 'text-rose-500' : 'text-text-sub'">
                   {{ formatMoney(row.debt) }}<span class="text-[10px] ml-0.5">đ</span>
                 </td>
-                <td class="px-4 py-3 text-center">
+                <td class="py-3 px-4 text-center">
                   <div class="flex items-center gap-2 justify-center">
                     <div class="w-16 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                       <div class="h-full rounded-full transition-all duration-500"
-                        :class="payRate(row) >= 90 ? 'bg-emerald-500' : payRate(row) >= 60 ? 'bg-amber-400' : 'bg-rose-400'"
+                         :class="payRate(row) >= 90 ? 'bg-emerald-500' : payRate(row) >= 60 ? 'bg-amber-400' : 'bg-rose-400'"
                         :style="{ width: payRate(row) + '%' }"></div>
                     </div>
                     <span class="text-xs font-semibold min-w-[30px]" :class="payRateClass(payRate(row))">{{ payRate(row)
                     }}%</span>
                   </div>
                 </td>
-                <td class="px-4 py-3 text-center">
+                <td class="py-3 px-4 text-center">
                   <span
                     class="text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-text-sub px-2 py-0.5 rounded-md">
                     {{ row.paidCount }}/{{ row.invoiceCount }}
@@ -357,16 +357,16 @@
                 </td>
               </tr>
             </tbody>
-            <tfoot class="bg-slate-50/60 dark:bg-slate-900/20 border-t-2 border-border-main">
+            <tfoot class="bg-slate-50/60 dark:bg-slate-900/20 border-t border-border-main">
               <tr>
-                <td :colspan="activeTab === 'room' ? 2 : 3" class="px-4 py-3 text-xs font-bold text-text-sub uppercase">
+                <td :colspan="activeTab === 'room' ? 2 : 3" class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">
                   Tổng cộng ({{ activeRows.length }} {{ activeTab === 'room' ? 'phòng' : 'hợp đồng' }})
                 </td>
-                <td class="px-4 py-3 text-right text-sm font-bold text-text-main">{{
+                <td class="py-3 px-4 text-right font-bold text-text-main">{{
                   formatMoney(summaryStats.totalExpected) }}<span class="text-[10px] ml-0.5">đ</span></td>
-                <td class="px-4 py-3 text-right text-sm font-bold text-emerald-600">{{
+                <td class="py-3 px-4 text-right font-bold text-emerald-600">{{
                   formatMoney(summaryStats.totalPaid) }}<span class="text-[10px] ml-0.5">đ</span></td>
-                <td class="px-4 py-3 text-right text-sm font-bold"
+                <td class="py-3 px-4 text-right font-bold"
                   :class="summaryStats.totalDebt > 0 ? 'text-rose-500' : 'text-text-sub'">
                   {{ formatMoney(summaryStats.totalDebt) }}<span class="text-[10px] ml-0.5">đ</span>
                 </td>

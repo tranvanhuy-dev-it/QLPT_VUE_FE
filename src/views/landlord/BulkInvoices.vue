@@ -68,21 +68,21 @@
     <form v-else @submit.prevent="saveBulkInvoices">
       <!-- Desktop Table View (hidden on mobile) -->
       <div class="hidden md:block bg-card border border-border-main rounded-2xl p-4 shadow-xs mb-4">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs">
+        <div class="overflow-x-auto border border-border-main/50 rounded-xl bg-card">
+          <table class="w-full text-sm text-left border-collapse">
             <thead>
-              <tr class="bg-slate-50 dark:bg-slate-900/60 border-b border-border-main text-text-sub font-semibold">
-                <th class="p-3">Phòng</th>
-                <th class="p-3">Điện (kWh)</th>
-                <th class="p-3">Nước (m³)</th>
-                <th class="p-3 min-w-[280px]">Kỳ thanh toán</th>
-                <th class="p-3 w-28 text-right">Giảm giá (đ)</th>
+              <tr class="bg-slate-50 dark:bg-slate-900/40 border-b border-border-main/60 text-text-sub font-bold uppercase text-[11px] tracking-wider">
+                <th class="py-3 px-4">Phòng</th>
+                <th class="py-3 px-4">Điện (kWh)</th>
+                <th class="py-3 px-4">Nước (m³)</th>
+                <th class="py-3 px-4 min-w-[280px]">Kỳ thanh toán</th>
+                <th class="py-3 px-4 w-28 text-right">Giảm giá (đ)</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-border-main/50">
               <tr v-for="room in visibleRooms" :key="room.roomId" class="hover:bg-slate-50/40 dark:hover:bg-slate-900/20">
                 <!-- Room & Tenant -->
-                <td class="p-3 align-middle">
+                <td class="py-3 px-4 align-middle">
                   <span class="font-bold text-primary block">Phòng {{ room.roomNumber }}</span>
                   <span class="text-[10px] text-text-sub block max-w-[120px] truncate" :title="room.tenantName">
                     {{ room.tenantName }}
@@ -90,7 +90,7 @@
                 </td>
 
                 <!-- Electricity Indices -->
-                <td class="p-3 align-middle">
+                <td class="py-3 px-4 align-middle">
                   <div class="flex flex-col gap-1">
                     <span class="text-[10px] text-text-sub">Cũ: <strong class="text-text-main">{{ room.currentElectricityIndex }}</strong></span>
                     <input
@@ -105,7 +105,7 @@
                 </td>
 
                 <!-- Water Indices -->
-                <td class="p-3 align-middle">
+                <td class="py-3 px-4 align-middle">
                   <div v-if="room.waterBillingType === 'BY_INDEX'" class="flex flex-col gap-1">
                     <span class="text-[10px] text-text-sub">Cũ: <strong class="text-text-main">{{ room.currentWaterIndex }}</strong></span>
                     <input
@@ -125,7 +125,7 @@
                 </td>
 
                 <!-- Billing Period Dates -->
-                <td class="p-3 align-middle">
+                <td class="py-3 px-4 align-middle">
                   <div class="flex items-center gap-1.5">
                     <div class="flex-1">
                       <input
@@ -152,7 +152,7 @@
                 </td>
 
                 <!-- Discount -->
-                <td class="p-3 align-middle text-right">
+                <td class="py-3 px-4 align-middle text-right">
                   <input
                     type="number"
                     v-model.number="room.discount"

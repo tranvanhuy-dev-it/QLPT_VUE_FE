@@ -39,15 +39,14 @@
           </div>
         </div>
 
-        <!-- Items Breakdown -->
         <div class="overflow-x-auto border border-slate-100 rounded-xl mb-6">
-          <table class="print-only-table min-w-[460px] md:min-w-0 w-full text-[11px] sm:text-xs border-collapse table-fixed">
+          <table class="print-only-table min-w-[460px] md:min-w-0 w-full text-sm border-collapse table-fixed">
             <thead>
-              <tr class="border-b border-slate-200 bg-slate-50">
-                <th class="text-left py-2 px-2 w-[40%] font-bold text-slate-600">Khoản chi phí</th>
-                <th class="text-right py-2 px-2 w-[24%] font-bold text-slate-600">Đơn giá</th>
-                <th class="text-right py-2 px-2 w-[12%] font-bold text-slate-600 text-center">SL</th>
-                <th class="text-right py-2 px-2 w-[24%] font-bold text-slate-600">Thành tiền</th>
+              <tr class="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider">
+                <th class="text-left py-2 px-2 w-[40%] text-slate-600">Khoản chi phí</th>
+                <th class="text-right py-2 px-2 w-[24%] text-slate-600">Đơn giá</th>
+                <th class="text-right py-2 px-2 w-[12%] text-slate-600 text-center">SL</th>
+                <th class="text-right py-2 px-2 w-[24%] text-slate-600">Thành tiền</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-dashed divide-slate-100">

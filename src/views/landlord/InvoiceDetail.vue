@@ -399,13 +399,13 @@
 
           <!-- Table of items -->
           <div class="overflow-x-auto border border-black dark:border-white rounded-lg mt-1">
-            <table class="w-full text-xs text-left border-collapse table-fixed min-w-0 sm:min-w-[500px]">
+            <table class="w-full text-sm text-left border-collapse table-fixed min-w-0 sm:min-w-[500px]">
               <thead>
-                <tr class="bg-slate-50 dark:bg-slate-900/40 border-b border-black dark:border-white">
-                  <th class="py-2 px-3 w-[45%] font-bold text-black dark:text-white">Mục chi phí</th>
-                  <th class="text-right py-2 px-3 w-[20%] font-bold text-black dark:text-white">Đơn giá</th>
-                  <th class="text-center py-2 px-3 w-[12%] font-bold text-black dark:text-white">SL</th>
-                  <th class="text-right py-2 px-3 w-[23%] font-bold text-black dark:text-white">Thành tiền</th>
+                <tr class="bg-slate-50 dark:bg-slate-900/40 border-b border-black dark:border-white text-[11px] font-bold uppercase tracking-wider">
+                  <th class="py-2 px-3 w-[45%] text-black dark:text-white">Mục chi phí</th>
+                  <th class="text-right py-2 px-3 w-[20%] text-black dark:text-white">Đơn giá</th>
+                  <th class="text-center py-2 px-3 w-[12%] text-black dark:text-white">SL</th>
+                  <th class="text-right py-2 px-3 w-[23%] text-black dark:text-white">Thành tiền</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-black/30 dark:divide-white/30">
@@ -582,13 +582,13 @@
 
               <!-- Table of items -->
               <div class="overflow-x-auto border border-black rounded-lg mt-1">
-                <table class="w-full text-xs text-left border-collapse table-fixed min-w-0 sm:min-w-[500px]">
+                <table class="w-full text-sm text-left border-collapse table-fixed min-w-0 sm:min-w-[500px]">
                   <thead>
-                    <tr class="bg-slate-50 border-b border-black">
-                      <th class="py-2 px-3 w-[45%] font-bold text-black">Mục chi phí</th>
-                      <th class="text-right py-2 px-3 w-[20%] font-bold text-black">Đơn giá</th>
-                      <th class="text-center py-2 px-3 w-[12%] font-bold text-black">SL</th>
-                      <th class="text-right py-2 px-3 w-[23%] font-bold text-black">Thành tiền</th>
+                    <tr class="bg-slate-50 border-b border-black text-[11px] font-bold uppercase tracking-wider">
+                      <th class="py-2 px-3 w-[45%] text-black">Mục chi phí</th>
+                      <th class="text-right py-2 px-3 w-[20%] text-black">Đơn giá</th>
+                      <th class="text-center py-2 px-3 w-[12%] text-black">SL</th>
+                      <th class="text-right py-2 px-3 w-[23%] text-black">Thành tiền</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-black/30">

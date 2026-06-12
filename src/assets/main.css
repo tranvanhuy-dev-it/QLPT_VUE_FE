@@ -531,70 +531,7 @@ main .bg-bg-main > form > .grid {
 .text-\[15px\] { font-size: 0.9375rem !important; }
 .text-\[18px\] { font-size: 1.125rem !important; }
 
-/* Increase font size on mobile by ~30% for non-bold text */
 @media (max-width: 767px) {
-  /* Default body font size on mobile for non-bold */
-  body:not(.font-medium):not(.font-semibold):not(.font-bold):not(.font-extrabold):not(.font-black) {
-    font-size: 1.3rem !important; /* 16px * 1.3 = 20.8px */
-  }
-
-  /* Override text sizing classes for elements that are NOT bold */
-  .text-\[8px\]:not(.font-medium):not(.font-semibold):not(.font-bold):not(.font-extrabold):not(.font-black):not(strong):not(b):not(th):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
-    font-size: 0.65rem !important; /* 8px * 1.3 = 10.4px -> 0.65rem */
-  }
-
-  .text-\[9px\]:not(.font-medium):not(.font-semibold):not(.font-bold):not(.font-extrabold):not(.font-black):not(strong):not(b):not(th):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
-    font-size: 0.73125rem !important; /* 9px * 1.3 = 11.7px -> 0.73125rem */
-  }
-
-  .text-\[10px\]:not(.font-medium):not(.font-semibold):not(.font-bold):not(.font-extrabold):not(.font-black):not(strong):not(b):not(th):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
-    font-size: 0.8125rem !important; /* 10px * 1.3 = 13px -> 0.8125rem */
-  }
-
-  .text-\[11px\]:not(.font-medium):not(.font-semibold):not(.font-bold):not(.font-extrabold):not(.font-black):not(strong):not(b):not(th):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
-    font-size: 0.89375rem !important; /* 11px * 1.3 = 14.3px -> 0.89375rem */
-  }
-
-  .text-\[12px\]:not(.font-medium):not(.font-semibold):not(.font-bold):not(.font-extrabold):not(.font-black):not(strong):not(b):not(th):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
-    font-size: 0.975rem !important; /* 12px * 1.3 = 15.6px -> 0.975rem */
-  }
-
-  .text-\[13px\]:not(.font-medium):not(.font-semibold):not(.font-bold):not(.font-extrabold):not(.font-black):not(strong):not(b):not(th):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
-    font-size: 1.05625rem !important; /* 13px * 1.3 = 16.9px -> 1.05625rem */
-  }
-
-  .text-\[14px\]:not(.font-medium):not(.font-semibold):not(.font-bold):not(.font-extrabold):not(.font-black):not(strong):not(b):not(th):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
-    font-size: 1.1375rem !important; /* 14px * 1.3 = 18.2px -> 1.1375rem */
-  }
-
-  .text-\[15px\]:not(.font-medium):not(.font-semibold):not(.font-bold):not(.font-extrabold):not(.font-black):not(strong):not(b):not(th):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
-    font-size: 1.21875rem !important; /* 15px * 1.3 = 19.5px -> 1.21875rem */
-  }
-
-  .text-\[18px\]:not(.font-medium):not(.font-semibold):not(.font-bold):not(.font-extrabold):not(.font-black):not(strong):not(b):not(th):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
-    font-size: 1.4625rem !important; /* 18px * 1.3 = 23.4px -> 1.4625rem */
-  }
-
-  .text-xs:not(.font-medium):not(.font-semibold):not(.font-bold):not(.font-extrabold):not(.font-black):not(strong):not(b):not(th):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
-    font-size: 0.975rem !important; /* 0.75rem * 1.3 = 0.975rem (~15.6px) */
-  }
-  
-  .text-sm:not(.font-medium):not(.font-semibold):not(.font-bold):not(.font-extrabold):not(.font-black):not(strong):not(b):not(th):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
-    font-size: 1.1375rem !important; /* 0.875rem * 1.3 = 1.1375rem (~18.2px) */
-  }
-  
-  .text-base:not(.font-medium):not(.font-semibold):not(.font-bold):not(.font-extrabold):not(.font-black):not(strong):not(b):not(th):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
-    font-size: 1.3rem !important; /* 1rem * 1.3 = 1.3rem (~20.8px) */
-  }
-  
-  .text-lg:not(.font-medium):not(.font-semibold):not(.font-bold):not(.font-extrabold):not(.font-black):not(strong):not(b):not(th):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
-    font-size: 1.4625rem !important; /* 1.125rem * 1.3 = 1.4625rem (~23.4px) */
-  }
-  
-  .text-xl:not(.font-medium):not(.font-semibold):not(.font-bold):not(.font-extrabold):not(.font-black):not(strong):not(b):not(th):not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
-    font-size: 1.625rem !important; /* 1.25rem * 1.3 = 1.625rem (~26px) */
-  }
-
   /* Ensure modals have extra bottom spacing on mobile to clear safe areas and navigation indicators */
   .fixed.inset-0.bg-black\/50 > div {
     margin-bottom: calc(4.5rem + env(safe-area-inset-bottom, 16px)) !important;

@@ -62,7 +62,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="req in requests" :key="req.id" class="border-b border-border-main/30 last:border-0 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 transition-all duration-150 text-xs">
+              <tr v-for="req in requests" :key="req.id" class="border-b border-border-main/30 last:border-0 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 transition-all duration-150 text-sm">
                 <td class="py-3.5 px-4">
                   <div class="font-bold text-primary">@{{ req.user?.username }}</div>
                   <div class="text-[10px] text-text-sub font-medium mt-0.5">{{ req.user?.fullName }}</div>

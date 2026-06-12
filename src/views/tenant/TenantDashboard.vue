@@ -126,30 +126,30 @@
               {{ unpaidInvoices.length }}
             </span>
           </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left text-text-main border-collapse">
-              <thead>
-                <tr class="border-b border-border-main">
-                  <th class="py-3 font-semibold text-text-sub text-xs uppercase">Kỳ hóa đơn</th>
-                  <th class="py-3 font-semibold text-text-sub text-xs uppercase">Ngày xuất</th>
-                  <th class="py-3 font-semibold text-text-sub text-xs uppercase text-right">Còn nợ</th>
+          <div class="overflow-x-auto border border-border-main/50 rounded-xl bg-card">
+            <table class="w-full text-sm text-left text-text-main border-collapse">
+              <thead class="bg-slate-50 dark:bg-slate-900/40 border-b border-border-main/60">
+                <tr>
+                  <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Kỳ hóa đơn</th>
+                  <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider">Ngày xuất</th>
+                  <th class="py-3 px-4 font-bold text-text-sub text-[11px] uppercase tracking-wider text-right">Còn nợ</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="invoice in unpaidInvoices" :key="invoice.id" @click="viewInvoiceDetails(invoice.id)"
-                  class="border-b border-border-main/50 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 cursor-pointer">
-                  <td class="py-2 font-semibold text-primary">
+                  class="border-b border-border-main/30 last:border-0 hover:bg-slate-50/50 dark:hover:bg-slate-900/20 cursor-pointer transition-colors duration-150">
+                  <td class="py-3 px-4 font-semibold text-primary">
                     {{ formatDate(invoice.billingPeriodStart) }} – {{ formatDate(invoice.billingPeriodEnd) }}
                   </td>
-                  <td class="py-2 text-text-sub">
+                  <td class="py-3 px-4 text-text-sub">
                     {{ formatDate(invoice.invoiceDate) }}
                   </td>
-                  <td class="py-2 text-right font-semibold text-rose-500">
+                  <td class="py-3 px-4 text-right font-semibold text-rose-500">
                     {{ formatMoney(invoice.totalAmount - invoice.paidAmount) }} đ
                   </td>
                 </tr>
                 <tr v-if="unpaidInvoices.length === 0">
-                  <td colspan="3" class="text-center text-text-sub py-8 italic">
+                  <td colspan="3" class="text-center text-text-sub py-12 italic text-sm">
                     Tuyệt vời! Bạn không có hóa đơn nào chưa thanh toán.
                   </td>
                 </tr>

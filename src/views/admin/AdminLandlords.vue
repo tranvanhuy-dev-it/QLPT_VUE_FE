@@ -38,7 +38,7 @@
                 v-for="item in landlords" 
                 :key="item.id" 
                 @click="selectLandlord(item)"
-                :class="['border-b border-border-main/30 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors text-xs', 
+                :class="['border-b border-border-main/30 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors text-sm', 
                   selectedLandlord?.id === item.id ? 'bg-primary/5 hover:bg-primary/10 border-l-2 border-l-primary' : '']"
               >
                 <td class="py-3 px-4 font-bold text-primary">{{ item.username }}</td>

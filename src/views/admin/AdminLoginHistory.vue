@@ -94,10 +94,10 @@
       </div>
 
       <!-- Table View -->
-      <div v-else class="overflow-x-auto">
-        <table class="w-full text-xs text-left border-collapse min-w-[700px]">
+      <div v-else class="overflow-x-auto border border-border-main/50 rounded-xl bg-card">
+        <table class="w-full text-sm text-left border-collapse min-w-[700px]">
           <thead>
-            <tr class="bg-slate-50 dark:bg-slate-900/40 border-b border-border-main/60 text-text-sub font-bold uppercase text-[9px] tracking-wider select-none">
+            <tr class="bg-slate-50 dark:bg-slate-900/40 border-b border-border-main/60 text-text-sub font-bold uppercase text-[11px] tracking-wider select-none">
               <th class="py-3 px-4">Tài khoản</th>
               <th class="py-3 px-4">Họ và tên</th>
               <th class="py-3 px-4">Vai trò</th>
