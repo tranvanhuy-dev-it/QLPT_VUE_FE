@@ -163,11 +163,14 @@
 <style scoped>
 /* Scoped styles for micro-animations and aesthetic refinements */
 .chat-container-safe {
-  padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)) !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom, 24px)) !important;
 }
 @media (min-width: 1024px) {
   .chat-container-safe {
-    padding-bottom: 1.5rem !important;
+    padding: 1.5rem !important;
   }
 }
 .bg-primary {
