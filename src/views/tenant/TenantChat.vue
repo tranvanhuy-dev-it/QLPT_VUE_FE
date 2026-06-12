@@ -1,8 +1,7 @@
 <template>
-  <div class="h-full flex flex-col bg-bg-main px-4 pt-1 pb-4 lg:p-6 overflow-hidden chat-container-safe">
+  <div class="h-full flex flex-col bg-bg-main px-4 pt-1 pb-4 lg:p-6 overflow-hidden chat-container-safe" :class="{ 'keyboard-open': isKeyboardOpen }">
     <!-- Chat Container -->
-    <div
-      class="flex-grow bg-card border border-border-main rounded-2xl shadow-xs overflow-hidden flex flex-col min-h-0 max-w-4xl mx-auto w-full">
+    <div class="flex-grow bg-card border border-border-main rounded-2xl shadow-xs overflow-hidden flex flex-col min-h-0 max-w-4xl mx-auto w-full">
       <!-- Loading Rooms State -->
       <div v-if="loadingRooms" class="flex-grow flex flex-col items-center justify-center py-20 gap-4 text-text-sub">
         <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -121,7 +120,7 @@
           <form @submit.prevent="handleSendMessage" class="flex items-center gap-2">
             <input v-model="newMessageText" type="text" placeholder="Nhập nội dung tin nhắn gửi cho chủ nhà..."
               class="flex-grow bg-slate-50 dark:bg-slate-900 border border-border-main rounded-xl px-4 py-3 text-xs text-text-main focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all duration-150"
-              :disabled="isSending" @keyup.enter.exact.prevent="handleSendMessage" @focus="handleFocus" />
+              :disabled="isSending" @keyup.enter.exact.prevent="handleSendMessage" @focus="handleFocus" @blur="handleBlur" />
             <button type="submit"
               class="p-3 flex items-center justify-center shrink-0 border-0 cursor-pointer rounded-xl transition-all duration-200 group active:scale-95"
               :class="newMessageText.trim() && !isSending
@@ -146,15 +145,19 @@
 
 <style scoped>
 /* Scoped styles for micro-animations and aesthetic refinements */
-.chat-container-safe {
+main .chat-container-safe {
   padding-left: 1rem !important;
   padding-right: 1rem !important;
   padding-top: 0.5rem !important;
-  padding-bottom: calc(1rem + env(safe-area-inset-bottom, 24px)) !important;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+main .chat-container-safe.keyboard-open {
+  padding-bottom: 0.5rem !important;
 }
 
 @media (min-width: 1024px) {
-  .chat-container-safe {
+  main .chat-container-safe {
     padding: 1.5rem !important;
   }
 }

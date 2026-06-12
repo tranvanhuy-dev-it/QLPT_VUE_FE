@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col bg-bg-main px-4 pt-1 pb-4 lg:p-6 overflow-hidden chat-container-safe">
+  <div class="h-full flex flex-col bg-bg-main px-4 pt-1 pb-4 lg:p-6 overflow-hidden chat-container-safe" :class="{ 'keyboard-open': isKeyboardOpen }">
     <!-- Main Chat Workspace Card -->
     <div class="flex-1 bg-card border border-border-main rounded-2xl shadow-xs overflow-hidden flex flex-col lg:grid lg:grid-cols-12 min-h-0">
       
@@ -190,6 +190,7 @@
                 :disabled="isSending"
                 @keyup.enter.exact.prevent="handleSendMessage"
                 @focus="handleFocus"
+                @blur="handleBlur"
               />
               <button 
                 type="submit" 
@@ -236,14 +237,17 @@
 <script src="./Chat.js"></script>
 
 <style scoped>
-.chat-container-safe {
+main .chat-container-safe {
   padding-left: 1rem !important;
   padding-right: 1rem !important;
   padding-top: 0.5rem !important;
-  padding-bottom: calc(1rem + env(safe-area-inset-bottom, 24px)) !important;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)) !important;
+}
+main .chat-container-safe.keyboard-open {
+  padding-bottom: 0.5rem !important;
 }
 @media (min-width: 1024px) {
-  .chat-container-safe {
+  main .chat-container-safe {
     padding: 1.5rem !important;
   }
 }

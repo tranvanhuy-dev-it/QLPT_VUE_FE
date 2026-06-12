@@ -11,6 +11,7 @@ export default {
     const newMessageText = ref('');
     const messageContainerRef = ref(null);
     const isSending = ref(false);
+    const isKeyboardOpen = ref(false);
 
     // For tenant, there's only one chat room (with their landlord)
     const currentRoom = computed(() => chatStore.rooms[0] || null);
@@ -71,18 +72,27 @@ export default {
     };
 
     const handleFocus = () => {
+      isKeyboardOpen.value = true;
       // Reset viewport scroll to prevent the header/avatar from sliding up off-screen
       setTimeout(() => {
         window.scrollTo(0, 0);
         document.body.scrollTop = 0;
         scrollToBottom();
-      }, 80);
+      }, 50);
       
       // Secondary check to override delayed OS keyboard layout transitions
       setTimeout(() => {
         window.scrollTo(0, 0);
         document.body.scrollTop = 0;
       }, 250);
+    };
+
+    const handleBlur = () => {
+      isKeyboardOpen.value = false;
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+      }, 100);
     };
 
     // Watch for incoming messages to auto-scroll
@@ -149,9 +159,11 @@ export default {
       isSending,
       currentUser,
       landlordInfo,
+      isKeyboardOpen,
       loadMoreMessages,
       handleSendMessage,
       handleFocus,
+      handleBlur,
       formatTimeOnly,
       formatMessageTime,
     };

@@ -14,6 +14,7 @@ export default {
     const messageContainerRef = ref(null);
     const isSending = ref(false);
     const mobileShowChat = ref(false);
+    const isKeyboardOpen = ref(false);
 
     const rooms = computed(() => chatStore.rooms);
     const currentRoomMessages = computed(() => chatStore.currentRoomMessages);
@@ -70,18 +71,27 @@ export default {
     };
 
     const handleFocus = () => {
+      isKeyboardOpen.value = true;
       // Reset viewport scroll to prevent the header from sliding up off-screen
       setTimeout(() => {
         window.scrollTo(0, 0);
         document.body.scrollTop = 0;
         scrollToBottom();
-      }, 80);
+      }, 50);
       
       // Secondary check to override delayed OS keyboard layout transitions
       setTimeout(() => {
         window.scrollTo(0, 0);
         document.body.scrollTop = 0;
       }, 250);
+    };
+
+    const handleBlur = () => {
+      isKeyboardOpen.value = false;
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
+      }, 100);
     };
 
     const scrollToBottom = () => {
@@ -160,9 +170,11 @@ export default {
       currentUser,
       mobileShowChat,
       selectRoom,
+      isKeyboardOpen,
       loadMoreMessages,
       handleSendMessage,
       handleFocus,
+      handleBlur,
       formatTimeOnly,
       formatMessageTime,
       formatDateTime,
