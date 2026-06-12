@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col bg-bg-main p-4 lg:p-6 overflow-hidden">
+  <div class="h-full flex flex-col bg-bg-main p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] lg:p-6 overflow-hidden">
     <!-- Main Chat Workspace Card -->
     <div class="flex-1 bg-card border border-border-main rounded-2xl shadow-xs overflow-hidden flex flex-col lg:grid lg:grid-cols-12 min-h-0">
       
