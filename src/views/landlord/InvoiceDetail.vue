@@ -10,7 +10,7 @@
         <h2 class="text-base sm:text-xl font-bold text-text-main flex items-center gap-2">
           <span>Hóa Đơn #{{ invoice ? invoice.id.substring(0, 8) : '...' }}</span>
           <span v-if="invoice" :class="[
-            'text-[11px] font-semibold px-2.5 py-0.5 rounded border uppercase',
+            'hidden sm:inline-flex text-[11px] font-semibold px-2.5 py-0.5 rounded border uppercase',
             invoice.status === 'PAID'
               ? 'bg-green-50 text-green-700 border-green-200'
               : (invoice.status === 'PARTIALLY_PAID' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-red-50 text-red-700 border-red-200')
@@ -24,7 +24,7 @@
       <!-- Bottom Row: buttons and financial status summary -->
       <div v-if="invoice" class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full flex-wrap">
         <!-- Left Area: Tab Switcher & Financial Badges -->
-        <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
           <!-- Tab Switcher -->
           <div class="flex border border-border-main rounded-lg p-0.5 bg-slate-50 dark:bg-slate-900/60 shrink-0">
             <button @click="activeTab = 'summary'"
@@ -39,15 +39,29 @@
 
           <!-- Financial Summary Badges -->
           <div class="flex flex-wrap items-center gap-2 text-[11px] font-bold">
-            <div class="flex items-center gap-1 px-2.5 py-1 bg-slate-50 dark:bg-slate-900/30 border border-border-main/50 rounded-lg">
+            <!-- Status Badge (only on mobile) -->
+            <span v-if="invoice" :class="[
+              'sm:hidden text-[11px] font-semibold px-2.5 py-1 rounded border uppercase',
+              invoice.status === 'PAID'
+                ? 'bg-green-50 text-green-700 border-green-200'
+                : (invoice.status === 'PARTIALLY_PAID' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-red-50 text-red-700 border-red-200')
+            ]">
+              {{ invoice.status === 'PAID' ? 'Đã thu đủ' : (invoice.status === 'PARTIALLY_PAID' ? 'Đã thu một phần' :
+                'Chưa thu tiền') }}
+            </span>
+
+            <div
+              class="flex items-center gap-1 px-2.5 py-1 bg-slate-50 dark:bg-slate-900/30 border border-border-main/50 rounded-lg">
               <span class="text-text-sub font-semibold">Tổng:</span>
               <span class="text-text-main">{{ formatMoney(invoice.totalAmount) }} đ</span>
             </div>
-            <div class="flex items-center gap-1 px-2.5 py-1 bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400 border border-green-200/30 rounded-lg">
+            <div
+              class="flex items-center gap-1 px-2.5 py-1 bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400 border border-green-200/30 rounded-lg">
               <span class="font-semibold">Đã đóng:</span>
               <span>{{ formatMoney(invoice.paidAmount) }} đ</span>
             </div>
-            <div class="flex items-center gap-1 px-2.5 py-1 bg-rose-50 text-rose-700 dark:bg-rose-950/20 dark:text-rose-400 border border-rose-200/30 rounded-lg">
+            <div
+              class="flex items-center gap-1 px-2.5 py-1 bg-rose-50 text-rose-700 dark:bg-rose-950/20 dark:text-rose-400 border border-rose-200/30 rounded-lg">
               <span class="font-semibold">Còn nợ:</span>
               <span>{{ formatMoney(invoice.totalAmount - invoice.paidAmount) }} đ</span>
             </div>
@@ -77,10 +91,8 @@
             <AppIcon name="check-circle" class="!w-4 !h-4" />
             <span class="hidden sm:inline">Thu đủ</span>
           </FormButton>
-          <FormButton v-if="!isLandlord && invoice.status !== 'PAID' && activeTab === 'summary'" 
-            :variant="paymentNotified ? 'secondary' : 'primary'"
-            size="sm" 
-            :disabled="paymentNotified"
+          <FormButton v-if="!isLandlord && invoice.status !== 'PAID' && activeTab === 'summary'"
+            :variant="paymentNotified ? 'secondary' : 'primary'" size="sm" :disabled="paymentNotified"
             @click="sendPaymentNotification">
             <AppIcon name="check-circle" class="!w-4 !h-4" />
             <span>{{ paymentNotified ? 'Đã báo chuyển khoản' : 'Tôi đã thanh toán' }}</span>
@@ -131,14 +143,13 @@
 
               <!-- Tenant Info Card -->
               <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
-                <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Thông tin khách thuê đại diện</h3>
+                <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Thông tin khách
+                  thuê đại diện</h3>
                 <div class="grid grid-cols-1 gap-y-3 text-xs">
                   <DetailField label="Đại diện thuê:" layout="inline">
-                    <span 
-                      v-if="isLandlord && invoice.contract?.tenant?.id" 
-                      @click="navigateToTenant(invoice.contract.tenant.id)" 
-                      class="font-bold text-primary hover:underline cursor-pointer"
-                    >
+                    <span v-if="isLandlord && invoice.contract?.tenant?.id"
+                      @click="navigateToTenant(invoice.contract.tenant.id)"
+                      class="font-bold text-primary hover:underline cursor-pointer">
                       {{ invoice.contract.tenant.fullName }}
                     </span>
                     <span v-else class="font-bold">
@@ -157,7 +168,8 @@
 
               <!-- Billing Period Card -->
               <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
-                <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Chi tiết kỳ thanh toán
+                <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Chi tiết kỳ thanh
+                  toán
                 </h3>
                 <div class="grid grid-cols-1 gap-y-3 text-xs">
                   <DetailField label="Ngày lập hóa đơn:" :value="formatDate(invoice.invoiceDate)" layout="inline"
@@ -174,7 +186,8 @@
 
               <!-- Room Rent Card -->
               <div class="bg-card border border-border-main rounded-xl p-4 shadow-xs">
-                <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Tiền thuê phòng</h3>
+                <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">Tiền thuê phòng
+                </h3>
                 <div class="grid grid-cols-1 gap-y-3 text-xs">
                   <DetailField label="Đơn giá thuê gốc:" layout="inline" value-class="font-semibold">
                     {{ formatMoney(invoice.contractedRoomPrice) }} đ/tháng
@@ -193,16 +206,24 @@
                 <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">
                   Chỉ số Điện sử dụng
                 </h3>
-                <div class="bg-slate-50 dark:bg-slate-900/30 rounded-lg p-3.5 border border-border-main/50 text-xs flex-grow">
+                <div
+                  class="bg-slate-50 dark:bg-slate-900/30 rounded-lg p-3.5 border border-border-main/50 text-xs flex-grow">
                   <h4 class="font-bold text-primary mb-2 flex items-center gap-1">Điện năng tiêu thụ</h4>
                   <div class="space-y-1.5 text-text-main">
-                    <div class="flex justify-between"><span>Chỉ số cũ:</span> <strong>{{ invoice.oldElectricityIndex }} kWh</strong></div>
-                    <div class="flex justify-between"><span>Chỉ số mới:</span> <strong>{{ invoice.newElectricityIndex }} kWh</strong></div>
-                    <div class="flex justify-between border-b border-border-main/20 pb-1"><span>Tiêu thụ:</span> <strong class="text-primary">{{ invoice.newElectricityIndex - invoice.oldElectricityIndex }} kWh</strong></div>
-                    <div class="flex justify-between pt-1"><span>Đơn giá:</span> <strong>{{ formatMoney(invoice.electricityRate) }} đ/kWh</strong></div>
-                    <div class="flex justify-between font-bold text-sm text-text-main pt-1.5 border-t border-border-main/20">
+                    <div class="flex justify-between"><span>Chỉ số cũ:</span> <strong>{{ invoice.oldElectricityIndex }}
+                        kWh</strong></div>
+                    <div class="flex justify-between"><span>Chỉ số mới:</span> <strong>{{ invoice.newElectricityIndex }}
+                        kWh</strong></div>
+                    <div class="flex justify-between border-b border-border-main/20 pb-1"><span>Tiêu thụ:</span> <strong
+                        class="text-primary">{{ invoice.newElectricityIndex - invoice.oldElectricityIndex }}
+                        kWh</strong></div>
+                    <div class="flex justify-between pt-1"><span>Đơn giá:</span> <strong>{{
+                      formatMoney(invoice.electricityRate) }} đ/kWh</strong></div>
+                    <div
+                      class="flex justify-between font-bold text-sm text-text-main pt-1.5 border-t border-border-main/20">
                       <span>Thành tiền:</span>
-                      <span class="text-primary">{{ formatMoney((invoice.newElectricityIndex - invoice.oldElectricityIndex) * invoice.electricityRate) }} đ</span>
+                      <span class="text-primary">{{ formatMoney((invoice.newElectricityIndex -
+                        invoice.oldElectricityIndex) * invoice.electricityRate) }} đ</span>
                     </div>
                   </div>
                 </div>
@@ -213,27 +234,42 @@
                 <h3 class="text-sm font-bold text-text-main border-b border-border-main pb-2.5 mb-4">
                   Chỉ số Nước sử dụng
                 </h3>
-                <div class="bg-slate-50 dark:bg-slate-900/30 rounded-lg p-3.5 border border-border-main/50 text-xs flex-grow">
+                <div
+                  class="bg-slate-50 dark:bg-slate-900/30 rounded-lg p-3.5 border border-border-main/50 text-xs flex-grow">
                   <h4 class="font-bold text-blue-600 mb-2 flex items-center gap-1">Nước sinh hoạt</h4>
                   <div class="space-y-1.5 text-text-main">
                     <template v-if="invoice.contract?.room?.boardingHouse?.waterBillingType === 'BY_INDEX'">
-                      <div class="flex justify-between"><span>Chỉ số cũ:</span> <strong>{{ invoice.oldWaterIndex }} m³</strong></div>
-                      <div class="flex justify-between"><span>Chỉ số mới:</span> <strong>{{ invoice.newWaterIndex }} m³</strong></div>
-                      <div class="flex justify-between border-b border-border-main/20 pb-1"><span>Tiêu thụ:</span> <strong class="text-blue-600">{{ invoice.newWaterIndex - invoice.oldWaterIndex }} m³</strong></div>
-                      <div class="flex justify-between pt-1"><span>Đơn giá nước:</span> <strong>{{ formatMoney(invoice.waterRate) }} đ/m³</strong></div>
-                      <div class="flex justify-between font-bold text-sm text-text-main pt-1.5 border-t border-border-main/20">
+                      <div class="flex justify-between"><span>Chỉ số cũ:</span> <strong>{{ invoice.oldWaterIndex }}
+                          m³</strong></div>
+                      <div class="flex justify-between"><span>Chỉ số mới:</span> <strong>{{ invoice.newWaterIndex }}
+                          m³</strong></div>
+                      <div class="flex justify-between border-b border-border-main/20 pb-1"><span>Tiêu thụ:</span>
+                        <strong class="text-blue-600">{{ invoice.newWaterIndex - invoice.oldWaterIndex }} m³</strong>
+                      </div>
+                      <div class="flex justify-between pt-1"><span>Đơn giá nước:</span> <strong>{{
+                        formatMoney(invoice.waterRate) }} đ/m³</strong></div>
+                      <div
+                        class="flex justify-between font-bold text-sm text-text-main pt-1.5 border-t border-border-main/20">
                         <span>Thành tiền:</span>
-                        <span class="text-blue-600">{{ formatMoney((invoice.newWaterIndex - invoice.oldWaterIndex) * invoice.waterRate) }} đ</span>
+                        <span class="text-blue-600">{{ formatMoney((invoice.newWaterIndex - invoice.oldWaterIndex) *
+                          invoice.waterRate) }} đ</span>
                       </div>
                     </template>
                     <template v-else>
-                      <div class="flex justify-between"><span>Hình thức đóng:</span> <strong>{{ invoice.contract?.room?.boardingHouse?.waterBillingType === 'FIXED_PER_PERSON' ? 'Cố định theo đầu người' : 'Cố định theo phòng' }}</strong></div>
-                      <div class="flex justify-between"><span>Số lượng tính:</span> <strong>{{ invoice.contract?.room?.boardingHouse?.waterBillingType === 'FIXED_PER_PERSON' ? invoice.contract?.numberOfTenants + ' người' : '1 phòng' }}</strong></div>
-                      <div class="flex justify-between border-b border-border-main/20 pb-1"><span>Đơn giá:</span> <strong>{{ formatMoney(invoice.waterRate) }} đ</strong></div>
-                      <div class="flex justify-between font-bold text-sm text-text-main pt-1.5 border-t border-border-main/20">
+                      <div class="flex justify-between"><span>Hình thức đóng:</span> <strong>{{
+                        invoice.contract?.room?.boardingHouse?.waterBillingType === 'FIXED_PER_PERSON' ? 'Cố định theo
+                          đầu người' : 'Cố định theo phòng' }}</strong></div>
+                      <div class="flex justify-between"><span>Số lượng tính:</span> <strong>{{
+                        invoice.contract?.room?.boardingHouse?.waterBillingType === 'FIXED_PER_PERSON' ?
+                          invoice.contract?.numberOfTenants + ' người' : '1 phòng' }}</strong></div>
+                      <div class="flex justify-between border-b border-border-main/20 pb-1"><span>Đơn giá:</span>
+                        <strong>{{ formatMoney(invoice.waterRate) }} đ</strong></div>
+                      <div
+                        class="flex justify-between font-bold text-sm text-text-main pt-1.5 border-t border-border-main/20">
                         <span>Thành tiền:</span>
                         <span class="text-blue-600">
-                          {{ formatMoney(invoice.contract?.room?.boardingHouse?.waterBillingType === 'FIXED_PER_PERSON' ? invoice.contract?.numberOfTenants * invoice.waterRate : invoice.waterRate) }} đ
+                          {{ formatMoney(invoice.contract?.room?.boardingHouse?.waterBillingType === 'FIXED_PER_PERSON'
+                            ? invoice.contract?.numberOfTenants * invoice.waterRate : invoice.waterRate) }} đ
                         </span>
                       </div>
                     </template>
@@ -247,7 +283,8 @@
                   Dịch vụ & Phụ phí
                 </h3>
                 <div class="flex-grow flex flex-col justify-start">
-                  <div v-if="invoiceItems.length === 0" class="text-center py-8 text-text-sub italic text-xs flex-grow flex items-center justify-center">
+                  <div v-if="invoiceItems.length === 0"
+                    class="text-center py-8 text-text-sub italic text-xs flex-grow flex items-center justify-center">
                     Không có phụ phí dịch vụ phát sinh.
                   </div>
                   <div v-else class="flex flex-col gap-2">
@@ -374,7 +411,8 @@
           <div class="overflow-x-auto border border-black dark:border-white rounded-lg mt-1">
             <table class="w-full text-sm text-left border-collapse table-fixed min-w-0 sm:min-w-[500px]">
               <thead>
-                <tr class="bg-slate-50 dark:bg-slate-900/40 border-b border-black dark:border-white text-[11px] font-bold uppercase tracking-wider">
+                <tr
+                  class="bg-slate-50 dark:bg-slate-900/40 border-b border-black dark:border-white text-[11px] font-bold uppercase tracking-wider">
                   <th class="py-2 px-3 w-[45%] text-black dark:text-white">Mục chi phí</th>
                   <th class="text-right py-2 px-3 w-[20%] text-black dark:text-white">Đơn giá</th>
                   <th class="text-center py-2 px-3 w-[12%] text-black dark:text-white">SL</th>
@@ -535,7 +573,7 @@
                   <div class="sm:col-span-2"><strong>Địa chỉ dãy trọ:</strong> {{
                     invoice.contract?.room?.boardingHouse?.address ||
                     '......................................................'
-                    }}</div>
+                  }}</div>
                 </div>
               </div>
 
@@ -571,7 +609,7 @@
                         <strong>Tiền thuê phòng</strong>
                       </td>
                       <td class="text-right py-2 px-3 text-black">{{ formatMoney(invoice.contract?.contractedRoomPrice)
-                        }} đ
+                      }} đ
                       </td>
                       <td class="text-center py-2 px-3 text-black">1</td>
                       <td class="text-right py-2 px-3 font-bold text-black">{{ formatMoney(invoice.roomPrice) }} đ</td>
